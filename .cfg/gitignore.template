@@ -1,0 +1,20 @@
+build/
+
+# MacOS
+**/.DS_Store
+
+# JetBrains IDEs
+.idea/
+**/*.iws
+**/*.ipr
+**/*.iml
+out/
+
+# Vim
+*~
+[._]*.un~
+
+# Emacs
+*~
+\#*\#
+.\#*
