@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Run this file to perform one-time setup
 # This script is idempotent so it is safe to re-run if anything gets messed up
