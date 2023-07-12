@@ -10,7 +10,7 @@ ZSH_THEME="verbose"
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
 
-zstyle ':omz:update' mode disabled
+zstyle ':omz:update' mode auto
 
 # Uncomment the following line to disable colors in ls.
 # DISABLE_LS_COLORS="true"
@@ -34,7 +34,6 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 # The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
 # HIST_STAMPS="mm/dd/yyyy"
 
-# Would you like to use another custom folder than $ZSH/custom?
 ZSH_CUSTOM="$HOME/.cfg/.oh-my-zsh.custom"
 
 ZSH_AUTOSUGGEST_STRATEGY=(match_prev_cmd completion)
@@ -165,6 +164,7 @@ alias gbranch='git branch | cat'
 alias git-latest="git log --format='%D' | grep -E -v -e '^$' -e 'HEAD' -e 'tag:' | awk -F',' '{ print \$1 }' | head -n 1"
 alias grestore="git restore --staged . && gco -- . && git clean -fd"
 alias gprune='git fetch --all --prune'
+alias gfixup='git log -n 50 --pretty=format:"%h %s" --no-merges | fzf | cut -c -7 | xargs -o git commit --fixup'
 
 # git rebase -i "latest" -> interactive rebase off of the most recent branch besides the current
 function grbl() {
@@ -177,8 +177,6 @@ function gwsl() {
 
 # mvn aliases
 alias mvnskip='mvn -DskipTests -Dmaven.javadoc.skip '
-
-alias ghs='gh -R https://linkedin.ghe.com/grid/spark'
 
 alias restart='shutdown -r 0'
 
@@ -271,6 +269,18 @@ fi
 [ -f ~/.github/token_personal ] && alias ghp='GITHUB_TOKEN=$(cat ~/.github/token_personal) gh'
 [ -f ~/.github/token_enterprise ] && alias ghe='GITHUB_TOKEN=$(cat ~/.github/token_enterprise) gh'
 
+# Init GitHub Copilot CLI, if installed
+if [ "$(command -v github-copilot-cli)" != "" ]; then
+    # load aliases ?? git? gh?
+    eval "$(github-copilot-cli alias -- "$0")"
+fi
+
+# Init 1Password CLI, if installed
+if [ "$(command -v op)" != "" ]; then
+    eval "$(op completion zsh)"; compdef _op op
+    source "$HOME/.config/op/plugins.sh"
+fi
+
 # iTerm2 shell integration
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
@@ -300,11 +310,7 @@ precmd_functions=($precmd_functions _title_internal)
 
 eval "$(_META_COMPLETE=source_zsh meta)"
 
-alias cfg='git --git-dir=$HOME/.cfg.git/ --work-tree=$HOME'
+alias cfg='git --git-dir="$HOME/.cfg.git/" --work-tree="$HOME"'
 
-# Local configs
-source "$HOME/.zshrc.local"
-
-# Some crap added by LinkedIn tooling automatically, unclear if I want it but so far it hasn't caused issues ... I think
-export VOLTA_HOME="$HOME/.volta"
-export PATH="$VOLTA_HOME/bin:$PATH"
+# Source local configs if they are present
+[ -f ~/.zshrc.local] && source "$HOME/.zshrc.local"

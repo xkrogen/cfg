@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Run the following command to initialize the dotfiles repo
-# > sh -c "$(curl -fsSL https://raw.githubusercontent.com/xkrogen/dotfiles/master/scripts/init.sh)"
+# > sh -c "$(curl -fsSL https://raw.githubusercontent.com/xkrogen/cfg/master/.cfg/scripts/init.sh)"
 
 git clone --bare https://github.com/xkrogen/dotfiles "$HOME/.cfg.git"
 
