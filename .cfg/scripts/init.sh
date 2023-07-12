@@ -14,12 +14,17 @@ mkdir -p "$HOME/.cfg-bak"
 if cfg checkout; then
   echo "Checked out config.";
 else
-    echo "Backing up pre-existing dot files into $HOME/.cfg-bak"
+    echo ""
+    echo "Checkout failed, backing up pre-existing dot files into ~/.cfg-bak ..."
+    echo ""
     cfg checkout 2>&1 \
         | grep -E "\s+\." \
         | sed -e 's/^[[:space:]]*//' \
         | tr '\n' '\0' \
-        | xargs -0 sh -c 'for f do echo "Moving \"$HOME/$f\" into \"$HOME/.cfg-bak/\" ..."; if [[ "$f" =~ / ]]; then mkdir -p "$(dirname "$HOME/$f")"; fi; echo "mv $f $HOME/.cfg-bak/"; done' _
+        | xargs -0 sh -c 'for f do echo "Moving \"~/$f\" into ~/.cfg-bak/ ..."; if [[ "$f" =~ / ]]; then target_dir="$(dirname "$HOME/.cfg-bak/$f")"; mkdir -p "$target_dir"; else target_dir="$HOME/.cfg-bak/"; fi; mv "$HOME/$f" "$target_dir"; done' _
+    echo ""
+    echo "Attempting checkout again..."
+    echo ""
+    cfg checkout
 fi
-cfg checkout
 cfg config status.showUntrackedFiles no
