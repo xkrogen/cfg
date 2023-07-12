@@ -313,4 +313,4 @@ eval "$(_META_COMPLETE=source_zsh meta)"
 alias cfg='git --git-dir="$HOME/.cfg.git/" --work-tree="$HOME"'
 
 # Source local configs if they are present
-[ -f ~/.zshrc.local] && source "$HOME/.zshrc.local"
+[ -f ~/.zshrc.local ] && source "$HOME/.zshrc.local"
