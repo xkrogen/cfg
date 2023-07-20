@@ -13,6 +13,8 @@ cfg_dir="$( cd "$(dirname "$( dirname "${BASH_SOURCE[0]}" )" )" >/dev/null 2>&1 
 # brew installs
 brew_install_list=(
     bash
+    fd
+    fzf
     tmux
     wget
     zsh
@@ -26,7 +28,6 @@ omz_plugins[zsh-syntax-highlighting]="git@github.com:zsh-users/zsh-syntax-highli
 
 # Volta/npm packages
 npm_install_list=(
-    lineselect
     @githubnext/github-copilot-cli
 )
 
@@ -85,3 +86,5 @@ fi
 #################################################################################
 
 git config --global core.excludesfile "$cfg_dir/.gitignore_global"
+# install fzf key bindings and completion for zsh
+"$(brew --prefix)/opt/fzf/install" --no-fish --no-bash --key-bindings --no-update-rc --completion

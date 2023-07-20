@@ -217,12 +217,6 @@ alias -g LL="2>&1 | less"
 alias -g NE="2> /dev/null"
 alias -g NUL="> /dev/null 2>&1"
 
-alias dud='du -d 1 -h'
-alias fd='find . -type d -name'
-alias ff='find . -type f -name'
-alias hgrep="fc -El 0 | grep"
-alias rgrep="grep -R . -e " # recursive grep
-
 _editor_fts=(cpp cxx cc c hh h txt TXT tex java md scala xml out)
 for ft in $_editor_fts; do alias -s $ft=$EDITOR; done
 #list whats inside packed file
@@ -233,37 +227,17 @@ alias -s gz="tar ztf" # Assume all .gz are .tar.gz
 # Make zsh autocomplete know about hosts already accessed by SSH
 zstyle -e ':completion:*:(ssh|scp|sftp|rsh|rsync):hosts' hosts 'reply=(${=${${(f)"$(cat {/etc/ssh_,~/.ssh/known_}hosts(|2)(N) /dev/null)"}%%[# ]*}//,/ })'
 
-## FASD CONFIG - only if fasd is present
-if [ "$(command -v fasd)" != "" ]; then
-    fasd_cache="${ZSH_CACHE_DIR}/fasd-init-cache"
-    if [ "$(command -v fasd)" -nt "$fasd_cache" -o ! -s "$fasd_cache" ]; then
-        fasd --init auto >| "$fasd_cache"
-    fi
-    source "$fasd_cache"
-    unset fasd_cache
-
-    alias a='fasd -a'        # any
-    alias s='fasd -si'       # show / search / select
-    alias d='fasd -d'        # directory
-    alias f='fasd -f'        # file
-    alias sd='fasd -sid'     # interactive directory selection
-    alias sf='fasd -sif'     # interactive file selection
-    alias z='fasd_cd -d'     # cd, same functionality as j in autojump
-    alias zz='fasd_cd -d -i' # cd with interactive selection
-
-    alias e='f -e "emacs -nw"' # quick opening files with emacs (in term)
-    alias ew='f -e emacs' # quick opening files with emacs (in window)
-    if [ "$OS_OSX" = "true" ]; then
-        alias oo='a -e open'
-        alias o='open'
-    else
-        alias oo='a -e xdg-open' # quick opening files with xdg-open
-        alias o='xdg-open ' # easily use default program to open on x systems
-    fi
-fi
-
 ## Configure FZF if it is present
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# If 'fd' is present, use it instead of the default find command for fzf path/dir listing
+if command -v fd &>/dev/null; then
+    _fzf_compgen_path() {
+      fd --hidden --follow --exclude ".git" . "$1"
+    }
+    _fzf_compgen_dir() {
+      fd --type d --hidden --follow --exclude ".git" . "$1"
+    }
+fi
 
 # Create GitHub CLI token-specific aliases, if the token files exist
 [ -f ~/.github/token_personal ] && alias ghp='GITHUB_TOKEN=$(cat ~/.github/token_personal) gh'
