@@ -17,18 +17,24 @@ brew_install_list=(
     wget
     zsh
 )
+
 # oh-my-zsh plugins
 declare -A omz_plugins
 omz_plugins[gradle-completion]="git@github.com:gradle/gradle-completion.git"
 omz_plugins[zsh-autosuggestions]="git@github.com:zsh-users/zsh-autosuggestions.git"
 omz_plugins[zsh-syntax-highlighting]="git@github.com:zsh-users/zsh-syntax-highlighting.git"
 
+# Volta/npm packages
+npm_install_list=(
+    lineselect
+    @githubnext/github-copilot-cli
+)
 
 #################################################################################
 # brew installations
 #################################################################################
 
-if [ "$(command -v brew)" == "" ]; then
+if ! command -v brew &>/dev/null; then
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 brew install "${brew_install_list[@]}"
@@ -54,12 +60,13 @@ for p in "${!omz_plugins[@]}"; do
 done
 
 #################################################################################
-# SSH configs
+# Volta package manager setup
 #################################################################################
 
-# If no SSH config file is present, create one that simply loads the `config.custom` file
-# This is helpful for systems that already contain a managed SSH config file
-[ -f ~/.ssh/config ] || echo "Include ~/.ssh/config.custom" > ~/.ssh/config
+if ! command -v volta &>/dev/null; then
+    curl https://get.volta.sh | bash -s -- --skip-setup
+fi
+volta install "${npm_install_list[@]}"
 
 #################################################################################
 # TMUX plugin manager setup

@@ -270,19 +270,19 @@ fi
 [ -f ~/.github/token_enterprise ] && alias ghe='GITHUB_TOKEN=$(cat ~/.github/token_enterprise) gh'
 
 # Init GitHub Copilot CLI, if installed
-if [ "$(command -v github-copilot-cli)" != "" ]; then
+if command -v github-copilot-cli &>/dev/null; then
     # load aliases ?? git? gh?
     eval "$(github-copilot-cli alias -- "$0")"
 fi
 
 # Init 1Password CLI, if installed
-if [ "$(command -v op)" != "" ]; then
+if command -v op &>/dev/null; then
     eval "$(op completion zsh)"; compdef _op op
     source "$HOME/.config/op/plugins.sh"
 fi
 
 # Init Volta, if installed
-if [ "$(command -v volta)" != ""]; then
+if command -v volta &>/dev/null; then
     export VOLTA_HOME="$HOME/.volta"
     export PATH="$VOLTA_HOME/bin:$PATH"
 fi
