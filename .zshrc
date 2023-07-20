@@ -281,6 +281,12 @@ if [ "$(command -v op)" != "" ]; then
     source "$HOME/.config/op/plugins.sh"
 fi
 
+# Init Volta, if installed
+if [ "$(command -v volta)" != ""]; then
+    export VOLTA_HOME="$HOME/.volta"
+    export PATH="$VOLTA_HOME/bin:$PATH"
+fi
+
 # iTerm2 shell integration
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
