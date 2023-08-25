@@ -261,6 +261,20 @@ if command -v volta &>/dev/null; then
     export PATH="$VOLTA_HOME/bin:$PATH"
 fi
 
+# Init walk to be used with cd, if installed
+if command -v walk &>/dev/null; then
+    function walkcd {
+      cd "$(walk "$@")"
+    }
+fi
+
+# Configs for 'bat'
+export BAT_THEME="Coldark-Dark"
+# Use 'bat' for git diff to get line numbers, syntax highlighting, etc.
+batdiff() {
+    git diff --name-only --relative --diff-filter=d "$@" | xargs bat --diff
+}
+
 # iTerm2 shell integration
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
@@ -294,3 +308,5 @@ alias cfg='git --git-dir="$HOME/.cfg.git/" --work-tree="$HOME"'
 
 # Source local configs if they are present
 [ -f ~/.zshrc.local ] && source "$HOME/.zshrc.local"
+
+source /Users/ekrogen/.config/broot/launcher/bash/br

@@ -13,9 +13,13 @@ cfg_dir="$( cd "$(dirname "$( dirname "${BASH_SOURCE[0]}" )" )" >/dev/null 2>&1 
 # brew installs
 brew_install_list=(
     bash
+    bat
+    exa
     fd
     fzf
     tmux
+    ripgrep
+    walk
     wget
     zsh
 )
