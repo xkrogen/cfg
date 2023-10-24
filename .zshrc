@@ -53,11 +53,12 @@ plugins=(
   pip
   colored-man-pages
   emacs
-  gradle-completion
   gitfast
   zsh-autosuggestions
   zsh-syntax-highlighting
 )
+# temporarily (?) disable gradle-completion
+# gradle-completion
 
 # User configuration
 
