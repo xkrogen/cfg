@@ -269,6 +269,11 @@ if command -v walk &>/dev/null; then
     }
 fi
 
+# Init br, if installed
+if command -v br &>/dev/null; then
+    source /Users/ekrogen/.config/broot/launcher/bash/br
+fi
+
 # Configs for 'bat'
 export BAT_THEME="Coldark-Dark"
 # Use 'bat' for git diff to get line numbers, syntax highlighting, etc.
@@ -309,5 +314,3 @@ alias cfg='git --git-dir="$HOME/.cfg.git/" --work-tree="$HOME"'
 
 # Source local configs if they are present
 [ -f ~/.zshrc.local ] && source "$HOME/.zshrc.local"
-
-source /Users/ekrogen/.config/broot/launcher/bash/br
