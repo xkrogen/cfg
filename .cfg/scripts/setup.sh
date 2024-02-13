@@ -17,6 +17,9 @@ brew_install_list=(
     exa
     fd
     fzf
+    gh
+    jenv
+    pipx
     tmux
     ripgrep
     walk
@@ -31,9 +34,7 @@ omz_plugins[zsh-autosuggestions]="git@github.com:zsh-users/zsh-autosuggestions.g
 omz_plugins[zsh-syntax-highlighting]="git@github.com:zsh-users/zsh-syntax-highlighting.git"
 
 # Volta/npm packages
-npm_install_list=(
-    @githubnext/github-copilot-cli
-)
+npm_install_list=()
 
 #################################################################################
 # brew installations
@@ -71,7 +72,9 @@ done
 if ! command -v volta &>/dev/null; then
     curl https://get.volta.sh | bash -s -- --skip-setup
 fi
-volta install "${npm_install_list[@]}"
+if [ ${#npm_install_list[@]} -eq 0 ]; then
+  volta install "${npm_install_list[@]}"
+fi
 
 #################################################################################
 # TMUX plugin manager setup

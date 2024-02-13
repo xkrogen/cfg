@@ -101,6 +101,8 @@ else
     OS_OSX=false
 fi
 
+export PATH="$HOME/.local/bin:$PATH"
+
 alias dev='cd ~/dev'
 alias py2='python2'
 alias py3='python3'
@@ -225,8 +227,11 @@ alias -s zip="unzip -l"
 alias -s tar="tar tf"
 alias -s gz="tar ztf" # Assume all .gz are .tar.gz
 
+alias ??='gh copilot suggest'
+
+# This seems to cause performance issues; disabling for now
 # Make zsh autocomplete know about hosts already accessed by SSH
-zstyle -e ':completion:*:(ssh|scp|sftp|rsh|rsync):hosts' hosts 'reply=(${=${${(f)"$(cat {/etc/ssh_,~/.ssh/known_}hosts(|2)(N) /dev/null)"}%%[# ]*}//,/ })'
+# zstyle -e ':completion:*:(ssh|scp|sftp|rsh|rsync):hosts' hosts 'reply=(${=${${(f)"$(cat {/etc/ssh_,~/.ssh/known_}hosts(|2)(N) /dev/null)"}%%[# ]*}//,/ })'
 
 ## Configure FZF if it is present
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -243,12 +248,6 @@ fi
 # Create GitHub CLI token-specific aliases, if the token files exist
 [ -f ~/.github/token_personal ] && alias ghp='GITHUB_TOKEN=$(cat ~/.github/token_personal) gh'
 [ -f ~/.github/token_enterprise ] && alias ghe='GITHUB_TOKEN=$(cat ~/.github/token_enterprise) gh'
-
-# Init GitHub Copilot CLI, if installed
-if command -v github-copilot-cli &>/dev/null; then
-    # load aliases ?? git? gh?
-    eval "$(github-copilot-cli alias -- "$0")"
-fi
 
 # Init 1Password CLI, if installed
 if command -v op &>/dev/null; then
@@ -280,6 +279,12 @@ export BAT_THEME="Coldark-Dark"
 batdiff() {
     git diff --name-only --relative --diff-filter=d "$@" | xargs bat --diff
 }
+
+# Init jenv, if installed
+if command -v jenv &>/dev/null; then
+    export PATH="$HOME/.jenv/bin:$PATH"
+    eval "$(jenv init -)"
+fi
 
 # iTerm2 shell integration
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
