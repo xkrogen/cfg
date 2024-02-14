@@ -49,6 +49,7 @@ if ! command -v brew &>/dev/null; then
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     if [[ "$OS_OSX" = "false" ]]; then
         eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+        export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
     fi
 fi
 brew install "${brew_install_list[@]}"
@@ -103,3 +104,10 @@ fi
 git config --global core.excludesfile "$cfg_dir/.gitignore_global"
 # install fzf key bindings and completion for zsh
 "$(brew --prefix)/opt/fzf/install" --no-fish --no-bash --key-bindings --no-update-rc --completion
+
+echo "Attempting to set zsh as default shell ..."
+if ! chsh -s "$(command -v zsh)"; then
+    echo "Failed to set zsh as default shell. If the error was about invalid shell, try running the following and trying again:"
+    # shellcheck disable=SC2016
+    echo '> sudo echo $(command -v zsh) >> /etc/shells'
+fi
