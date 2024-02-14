@@ -273,8 +273,8 @@ if command -v walk &>/dev/null; then
 fi
 
 # Init br, if installed
-if command -v br &>/dev/null; then
-    source /Users/ekrogen/.config/broot/launcher/bash/br
+if command -v br &>/dev/null && [ -d "$HOME/.config/broot" ]; then
+    source "$HOME/.config/broot/launcher/bash/br"
 fi
 
 # Configs for 'bat'
