@@ -107,7 +107,6 @@ git config --global core.excludesfile "$cfg_dir/.gitignore_global"
 
 echo "Attempting to set zsh as default shell ..."
 if ! chsh -s "$(command -v zsh)"; then
-    echo "Failed to set zsh as default shell. If the error was about invalid shell, try running the following and trying again:"
-    # shellcheck disable=SC2016
-    echo '> sudo echo $(command -v zsh) >> /etc/shells'
+    echo "Failed to set zsh as default shell. If the error was about invalid shell, try running the following and try again:"
+    echo "sudo sh -c 'echo $(command -v zsh) >> /etc/shells'"
 fi
