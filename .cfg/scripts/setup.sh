@@ -104,3 +104,6 @@ fi
 git config --global core.excludesfile "$cfg_dir/.gitignore_global"
 # install fzf key bindings and completion for zsh
 "$(brew --prefix)/opt/fzf/install" --no-fish --no-bash --key-bindings --no-update-rc --completion
+
+echo "NOTE: Upon first time running tmux, press prefix + I to install plugins"
+echo "      (see setup instructions at https://github.com/tmux-plugins/tpm)"
