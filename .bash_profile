@@ -7,19 +7,12 @@ fi
 
 # User specific environment and startup programs
 
-PATH=$PATH:$HOME/bin
+PATH=$PATH:/home/linuxbrew/.linuxbrew/bin:$HOME/bin
 
-if [ -x /bin/ssh-add ] ; then
-	MYNAME=`/usr/bin/whoami`
-	if [ -f ~/.ssh/${MYNAME}_at_linkedin.com_ssh_key ] ; then
-        /usr/bin/keychain ~/.ssh/${MYNAME}_at_linkedin.com_ssh_key
-      	. ~/.keychain/`hostname`-sh
-	fi
+# Source local configs if they are present
+[ -f ~/.bash_profile.local ] && source "$HOME/.bash_profile.local"
+
+if command -v zsh && [[ "$SHELL" != "$(command -v zsh)" ]] && [[ "$DISABLE_ZSH" != "true" ]]; then
+  export SHELL="$(command -v zsh)"
+  exec $SHELL --login
 fi
-
-export JAVA_HOME=/export/apps/jdk/JDK-11_0_10_9-msft
-export JDK_HOME=/export/apps/jdk/JDK-11_0_10_9-msft
-export NLS_LANG=American_America.UTF8
-
-
-export PATH=$PATH:$JAVA_HOME/bin:/usr/local/bin:/usr/local/mysql/bin:/usr/local/linkedin/bin:/export/content/granular/bin/
