@@ -89,7 +89,7 @@ fi
 # TMUX plugin manager setup
 #################################################################################
 
-tmux_plugin_dir="$HOME/.tmux.plugins"
+tmux_plugin_dir="$HOME/.tmux/plugins"
 if [ ! -d "$tmux_plugin_dir/tpm" ]; then
     mkdir -p "$tmux_plugin_dir"
     git clone "git@github.com:tmux-plugins/tpm" "$tmux_plugin_dir/tpm"
@@ -104,9 +104,3 @@ fi
 git config --global core.excludesfile "$cfg_dir/.gitignore_global"
 # install fzf key bindings and completion for zsh
 "$(brew --prefix)/opt/fzf/install" --no-fish --no-bash --key-bindings --no-update-rc --completion
-
-echo "Attempting to set zsh as default shell ..."
-if ! chsh -s "$(command -v zsh)"; then
-    echo "Failed to set zsh as default shell. If the error was about invalid shell, try running the following and try again:"
-    echo "sudo sh -c 'echo $(command -v zsh) >> /etc/shells'"
-fi
