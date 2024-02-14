@@ -7,7 +7,7 @@ fi
 
 # User specific environment and startup programs
 
-PATH="$PATH:/home/linuxbrew/.linuxbrew/bin:$HOME/bin"
+export PATH="$PATH:/home/linuxbrew/.linuxbrew/bin:$HOME/bin"
 
 alias cfg='git --git-dir="$HOME/.cfg.git/" --work-tree="$HOME"'
 
