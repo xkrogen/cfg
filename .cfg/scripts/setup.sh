@@ -5,6 +5,11 @@
 # It will also update things if they are outdated
 
 cfg_dir="$( cd "$(dirname "$( dirname "${BASH_SOURCE[0]}" )" )" >/dev/null 2>&1 && pwd)"
+if [ "$(uname)" = "Darwin" ]; then
+    OS_OSX=true
+else
+    OS_OSX=false
+fi
 
 #################################################################################
 # installation lists
@@ -14,9 +19,9 @@ cfg_dir="$( cd "$(dirname "$( dirname "${BASH_SOURCE[0]}" )" )" >/dev/null 2>&1 
 brew_install_list=(
     bash
     bat
-    exa
     fd
     fzf
+    gcc
     gh
     jenv
     pipx
@@ -42,6 +47,9 @@ npm_install_list=()
 
 if ! command -v brew &>/dev/null; then
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    if [[ "$OS_OSX" = "false" ]]; then
+        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    fi
 fi
 brew install "${brew_install_list[@]}"
 
@@ -51,7 +59,7 @@ brew install "${brew_install_list[@]}"
 
 # Install oh-my-zsh if it is not already installed; else update
 if [ ! -d ~/.oh-my-zsh ]; then
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --keep-zshrc
 fi
 
 omz_plugin_dir="$cfg_dir/.oh-my-zsh.custom/plugins"
@@ -72,7 +80,7 @@ done
 if ! command -v volta &>/dev/null; then
     curl https://get.volta.sh | bash -s -- --skip-setup
 fi
-if [ ${#npm_install_list[@]} -eq 0 ]; then
+if [ ${#npm_install_list[@]} -gt 0 ]; then
   volta install "${npm_install_list[@]}"
 fi
 

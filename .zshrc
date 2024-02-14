@@ -245,6 +245,10 @@ if command -v fd &>/dev/null; then
     }
 fi
 
+if [[ "$OS_OSX" = "false" ]] && [[ -d /home/linuxbrew/.linuxbrew ]]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+
 # Create GitHub CLI token-specific aliases, if the token files exist
 [ -f ~/.github/token_personal ] && alias ghp='GITHUB_TOKEN=$(cat ~/.github/token_personal) gh'
 [ -f ~/.github/token_enterprise ] && alias ghe='GITHUB_TOKEN=$(cat ~/.github/token_enterprise) gh'
