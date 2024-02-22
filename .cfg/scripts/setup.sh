@@ -26,6 +26,7 @@ brew_install_list=(
     jenv
     pipx
     tmux
+    rename
     ripgrep
     walk
     wget
