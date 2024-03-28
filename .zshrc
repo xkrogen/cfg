@@ -312,6 +312,22 @@ function title {
     fi
 }
 
+jenv_add_jdks() {
+    if [ "$OS_OSX" = true ]; then
+        for jdk in /Library/Java/JavaVirtualMachines/*.jdk; do
+            jenv add "$jdk/Contents/Home"
+        done
+    else
+        if [ "$#" != 1 ]; then
+            echo "Must provide Java base directory for discovering where JDKs can be discovered, e.g. '/usr/lib/jvm/'" 1>&2
+            return 1
+        fi
+        for jdk in "$1/"*; do
+            jenv add "$jdk"
+        done
+    fi
+}
+
 # Define precmd_functions if not already defined
 [[ -z $precmd_functions ]] && precmd_functions=()
 # Enable title function as an additional precmd function
