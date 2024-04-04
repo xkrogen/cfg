@@ -12,7 +12,7 @@ else
 fi
 
 #################################################################################
-# installation lists
+# brew installations
 #################################################################################
 
 # brew installs
@@ -34,18 +34,6 @@ brew_install_list=(
     ynqa/tap/jnv
 )
 
-# oh-my-zsh plugins
-declare -A omz_plugins
-omz_plugins[gradle-completion]="git@github.com:gradle/gradle-completion.git"
-omz_plugins[zsh-autosuggestions]="git@github.com:zsh-users/zsh-autosuggestions.git"
-omz_plugins[zsh-syntax-highlighting]="git@github.com:zsh-users/zsh-syntax-highlighting.git"
-
-# Volta/npm packages
-npm_install_list=()
-
-#################################################################################
-# brew installations
-#################################################################################
 
 if ! command -v brew &>/dev/null; then
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -55,6 +43,24 @@ if ! command -v brew &>/dev/null; then
     fi
 fi
 brew install "${brew_install_list[@]}"
+
+export PATH="/opt/homebrew/bin:$PATH"
+
+#################################################################################
+# other installation lists
+#################################################################################
+
+# note that this has to be done AFTER brew installations because
+# modern bash is required
+
+# oh-my-zsh plugins
+declare -A omz_plugins
+omz_plugins[gradle-completion]="git@github.com:gradle/gradle-completion.git"
+omz_plugins[zsh-autosuggestions]="git@github.com:zsh-users/zsh-autosuggestions.git"
+omz_plugins[zsh-syntax-highlighting]="git@github.com:zsh-users/zsh-syntax-highlighting.git"
+
+# Volta/npm packages
+npm_install_list=()
 
 #################################################################################
 # oh-my-zsh install and plugins
