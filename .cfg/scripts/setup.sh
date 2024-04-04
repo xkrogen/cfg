@@ -44,7 +44,7 @@ if ! command -v brew &>/dev/null; then
 fi
 brew install "${brew_install_list[@]}"
 
-export PATH="/opt/homebrew/bin:$PATH"
+export PATH="$(brew --prefix)/bin:$PATH"
 
 #################################################################################
 # other installation lists
