@@ -25,6 +25,8 @@ brew_install_list=(
     gh
     jenv
     pipx
+    tldr
+    tree
     tmux
     rename
     ripgrep

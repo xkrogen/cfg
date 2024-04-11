@@ -116,7 +116,7 @@ else
     OS_OSX=false
 fi
 
-export PATH="$HOME/.local/bin:$PATH"
+export PATH="$(brew --prefix)/bin:$HOME/.local/bin:$PATH"
 
 alias dev='cd ~/dev'
 alias py2='python2'
