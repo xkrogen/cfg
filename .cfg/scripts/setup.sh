@@ -23,6 +23,7 @@ brew_install_list=(
     fzf
     gcc
     gh
+    gron
     jenv
     pipx
     tldr
