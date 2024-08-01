@@ -19,6 +19,7 @@ fi
 brew_install_list=(
     bash
     bat
+    cloc
     fd
     fzf
     gcc

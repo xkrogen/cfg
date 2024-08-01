@@ -82,13 +82,6 @@ source $ZSH/oh-my-zsh.sh
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
-# Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
-
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
@@ -135,22 +128,6 @@ function cdl() {
 }
 
 alias ungz='tar xzf '
-
-# If Emacs is installed, set it to be the default editor
-# Use emacsclient if available
-if [ "$EMACS_PLUGIN_LAUNCHER" != "" ]; then
-    alias emacs="$EMACS_PLUGIN_LAUNCHER -nw"
-    alias emacsw="$EMACS_PLUGIN_LAUNCHER"
-    export EDITOR="$EMACS_PLUGIN_LAUNCHER -nw"
-    export VISUAL="$EDITOR"
-elif [ "$(command -v emacs)" != "" ]; then
-    alias emacs="\emacs -nw"
-    alias emacsw="\emacs"
-    export EDITOR="\emacs -nw"
-    export VISUAL="$EDITOR"
-fi
-alias emacs-clean='rm -f *\~ \#*\# .\#*'
-alias emacs-cleanr='find . -name "*~" -o -name "#*#" -o -name ".#*" | xargs rm -f'
 
 if [ "$OS_OSX" = true ]; then
     alias clip='pbcopy'
@@ -351,6 +328,8 @@ precmd_functions=($precmd_functions _title_internal)
 eval "$(_META_COMPLETE=source_zsh meta)"
 
 alias cfg='git --git-dir="$HOME/.cfg.git/" --work-tree="$HOME"'
+
+export EDITOR=vi
 
 # Source local configs if they are present
 [ -f ~/.zshrc.local ] && source "$HOME/.zshrc.local"
