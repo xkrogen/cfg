@@ -278,7 +278,7 @@ batdiff() {
 
 # Init jenv, if installed
 if command -v jenv &>/dev/null; then
-    export PATH="$HOME/.jenv/bin:$PATH"
+    export PATH="$HOME/.jenv/shims:$PATH"
     eval "$(jenv init -)"
 fi
 
@@ -330,6 +330,7 @@ eval "$(_META_COMPLETE=source_zsh meta)"
 alias cfg='git --git-dir="$HOME/.cfg.git/" --work-tree="$HOME"'
 
 export EDITOR=vi
+bindkey -e
 
 # Source local configs if they are present
 [ -f ~/.zshrc.local ] && source "$HOME/.zshrc.local"
