@@ -97,7 +97,6 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-
 ###############
 # USER CONFIG #
 ###############
@@ -334,3 +333,13 @@ bindkey -e
 
 # Source local configs if they are present
 [ -f ~/.zshrc.local ] && source "$HOME/.zshrc.local"
+
+# bun completions
+[ -s "/Users/ekrogen/.bun/_bun" ] && source "/Users/ekrogen/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# lab (lugenx/lab)
+export LABPATH="$HOME/dev"
