@@ -69,11 +69,11 @@ plugins=(
   colored-man-pages
   emacs
   gitfast
+  gradle-completion
   zsh-autosuggestions
   zsh-syntax-highlighting
 )
 # temporarily (?) disable gradle-completion
-# gradle-completion
 
 # User configuration
 
@@ -240,14 +240,12 @@ if [[ "$OS_OSX" = "false" ]] && [[ -d /home/linuxbrew/.linuxbrew ]]; then
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
-# Create GitHub CLI token-specific aliases, if the token files exist
-[ -f ~/.github/token_personal ] && alias ghp='GITHUB_TOKEN=$(cat ~/.github/token_personal) gh'
-[ -f ~/.github/token_enterprise ] && alias ghe='GITHUB_TOKEN=$(cat ~/.github/token_enterprise) gh'
-
 # Init 1Password CLI, if installed
 if command -v op &>/dev/null; then
     eval "$(op completion zsh)"; compdef _op op
-    source "$HOME/.config/op/plugins.sh"
+    if [[ -f "$HOME/.config/op/plugins.sh" ]]; then
+        source "$HOME/.config/op/plugins.sh"
+    fi
 fi
 
 # Init Volta, if installed
@@ -281,6 +279,36 @@ if command -v jenv &>/dev/null; then
     eval "$(jenv init -)"
 fi
 
+jenv_add_jdks() {
+    if [ "$OS_OSX" = true ]; then
+        echo "Adding JDKs from /Library/Java/JavaVirtualMachines"
+        for jdk in $(ls -1 /Library/Java/JavaVirtualMachines/ | grep ".jdk$" | sort -t'-' -k1,1Vr -r); do
+            echo "Adding JDK: $jdk"
+            jenv add "/Library/Java/JavaVirtualMachines/$jdk/Contents/Home"
+        done
+        echo "Adding OpenJDK from /opt/homebrew/opt/"
+        setopt nomatch
+        for jdk in /opt/homebrew/opt/openjdk*; do
+            echo "Adding JDK: $jdk"
+            jenv add "$jdk/libexec/openjdk.jdk/Contents/Home"
+        done
+        unsetopt nomatch
+    else
+        if [ "$#" != 1 ]; then
+            echo "Must provide Java base directory for discovering where JDKs can be discovered, e.g. '/usr/lib/jvm/'" 1>&2
+            return 1
+        fi
+        for jdk in "$1/"*; do
+            jenv add "$jdk"
+        done
+    fi
+}
+
+jenv_refresh_jdks() {
+    jenv versions | grep -v "\\*" | xargs -I _ jenv remove _
+    jenv_add_jdks
+}
+
 # iTerm2 shell integration
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
@@ -303,21 +331,6 @@ function title {
     fi
 }
 
-jenv_add_jdks() {
-    if [ "$OS_OSX" = true ]; then
-        for jdk in /Library/Java/JavaVirtualMachines/*.jdk; do
-            jenv add "$jdk/Contents/Home"
-        done
-    else
-        if [ "$#" != 1 ]; then
-            echo "Must provide Java base directory for discovering where JDKs can be discovered, e.g. '/usr/lib/jvm/'" 1>&2
-            return 1
-        fi
-        for jdk in "$1/"*; do
-            jenv add "$jdk"
-        done
-    fi
-}
 
 # Define precmd_functions if not already defined
 [[ -z $precmd_functions ]] && precmd_functions=()
