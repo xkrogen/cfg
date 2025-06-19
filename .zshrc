@@ -1,3 +1,23 @@
+# Enable timing for zsh startup
+zmodload zsh/datetime
+typeset -F SECONDS=0
+timer_start=$EPOCHREALTIME
+
+# Function to log cumulative timing at checkpoints
+debug_timing_checkpoint() {
+    local elapsed=$(( (EPOCHREALTIME - timer_start) * 1000 ))
+    # Store checkpoint in array for summary at end
+    checkpoints+=("$1: ${elapsed}ms")
+    # Show live checkpoint if debugging enabled
+    if [[ "$ZSH_TIMING_DEBUG" == "1" ]]; then
+        echo "Checkpoint - $1: ${elapsed}ms"
+    fi
+}
+
+# Initialize array for checkpoints
+typeset -a checkpoints
+checkpoints=()
+
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
 
@@ -60,24 +80,24 @@ setopt HIST_REDUCE_BLANKS    # Remove superfluous blanks from each command line 
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 
-#  git
-#  git-extras
 
 plugins=(
-  mvn
-  pip
-  colored-man-pages
-  emacs
-  gitfast
-  gradle-completion
-  zsh-autosuggestions
-  zsh-syntax-highlighting
+    mvn
+    pip
+    emacs
+    gitfast
+    zsh-autosuggestions
+    colored-man-pages
+    git
+    git-extras
+    gradle-completion
+    zsh-syntax-highlighting
 )
-# temporarily (?) disable gradle-completion
 
 # User configuration
 
 source $ZSH/oh-my-zsh.sh
+debug_timing_checkpoint "Oh-My-Zsh"
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
@@ -109,6 +129,7 @@ else
 fi
 
 export PATH="$(brew --prefix)/bin:$HOME/.local/bin:$PATH"
+debug_timing_checkpoint "Homebrew prefix"
 
 alias dev='cd ~/dev'
 alias py2='python2'
@@ -235,6 +256,7 @@ if command -v fd &>/dev/null; then
       fd --type d --hidden --follow --exclude ".git" . "$1"
     }
 fi
+debug_timing_checkpoint "FZF"
 
 if [[ "$OS_OSX" = "false" ]] && [[ -d /home/linuxbrew/.linuxbrew ]]; then
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
@@ -247,12 +269,14 @@ if command -v op &>/dev/null; then
         source "$HOME/.config/op/plugins.sh"
     fi
 fi
+debug_timing_checkpoint "1Password CLI"
 
 # Init Volta, if installed
 if command -v volta &>/dev/null; then
     export VOLTA_HOME="$HOME/.volta"
     export PATH="$VOLTA_HOME/bin:$PATH"
 fi
+debug_timing_checkpoint "Volta"
 
 # Init walk to be used with cd, if installed
 if command -v walk &>/dev/null; then
@@ -260,11 +284,13 @@ if command -v walk &>/dev/null; then
       cd "$(walk "$@")"
     }
 fi
+debug_timing_checkpoint "Walk"
 
 # Init br, if installed
 if command -v br &>/dev/null && [ -d "$HOME/.config/broot" ]; then
     source "$HOME/.config/broot/launcher/bash/br"
 fi
+debug_timing_checkpoint "Broot"
 
 # Configs for 'bat'
 export BAT_THEME="Coldark-Dark"
@@ -278,6 +304,7 @@ if command -v jenv &>/dev/null; then
     export PATH="$HOME/.jenv/shims:$PATH"
     eval "$(jenv init -)"
 fi
+debug_timing_checkpoint "jenv"
 
 jenv_add_jdks() {
     if [ "$OS_OSX" = true ]; then
@@ -309,8 +336,10 @@ jenv_refresh_jdks() {
     jenv_add_jdks
 }
 
+
 # iTerm2 shell integration
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+debug_timing_checkpoint "iTerm2 shell integration"
 
 # iTerm2 tab titles
 function _title_internal {
@@ -331,13 +360,12 @@ function title {
     fi
 }
 
-
 # Define precmd_functions if not already defined
 [[ -z $precmd_functions ]] && precmd_functions=()
 # Enable title function as an additional precmd function
 precmd_functions=($precmd_functions _title_internal)
 
-eval "$(_META_COMPLETE=source_zsh meta)"
+debug_timing_checkpoint "precmd_functions"
 
 alias cfg='git --git-dir="$HOME/.cfg.git/" --work-tree="$HOME"'
 
@@ -356,3 +384,5 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 
 # lab (lugenx/lab)
 export LABPATH="$HOME/dev"
+
+debug_timing_checkpoint "final"
