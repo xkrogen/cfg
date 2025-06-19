@@ -1,0 +1,52 @@
+{
+  "servers": {
+    "DS_MCP": {
+      "type": "stdio",
+      "command": "/Users/ekrogen/dev/mcp-ds/build/mcp-ds/environments/development-venv/bin/python",
+      "args": ["/Users/ekrogen/dev/mcp-ds/mcp-ds/src/mcpds/ds_mcp_server.py"],
+      "env": {
+      }
+    },
+    "mcp-deepwiki": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "mcp-deepwiki@latest"]
+    },
+    "fetch": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["mcp-server-fetch"]
+    },
+    "git": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["mcp-server-git"]
+    },
+    "g-search": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "g-search-mcp"]
+    },
+    "memory": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-memory"
+      ]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
+      ]
+    },
+    "github": {
+      "command": "bash",
+      "args": [
+        "-c",
+        "GITHUB_PERSONAL_ACCESS_TOKEN=\"$(op item get --reveal --fields label=credential 'GitHub Token (Enterprise)')\" docker run -i --rm -e GITHUB_PERSONAL_ACCESS_TOKEN ghcr.io/github/github-mcp-server"
+      ]
+    }
+  }
+}
