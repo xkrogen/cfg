@@ -59,9 +59,9 @@ export PATH="$(brew --prefix)/bin:$PATH"
 
 # oh-my-zsh plugins
 declare -A omz_plugins
-omz_plugins[gradle-completion]="git@github.com:gradle/gradle-completion.git"
-omz_plugins[zsh-autosuggestions]="git@github.com:zsh-users/zsh-autosuggestions.git"
-omz_plugins[zsh-syntax-highlighting]="git@github.com:zsh-users/zsh-syntax-highlighting.git"
+omz_plugins[gradle-completion]="https://github.com/gradle/gradle-completion.git"
+omz_plugins[zsh-autosuggestions]="https://github.com/zsh-users/zsh-autosuggestions.git"
+omz_plugins[zsh-syntax-highlighting]="https://github.com/zsh-users/zsh-syntax-highlighting.git"
 
 # Volta/npm packages
 npm_install_list=()
