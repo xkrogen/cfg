@@ -2,8 +2,21 @@
 
 # Run the following command to initialize the dotfiles repo
 # > sh -c "$(curl -fsSL https://raw.githubusercontent.com/xkrogen/cfg/master/.cfg/scripts/init.sh)"
+# To clone using HTTPS instead of GIT:
+# > sh -c "$(curl -fsSL https://raw.githubusercontent.com/xkrogen/cfg/master/.cfg/scripts/init.sh --https)"
 
-git clone --bare git@github.com:xkrogen/cfg.git "$HOME/.cfg.git"
+if [[ $# -ge 1 ]]; then
+    if [[ "$1" == "--https" ]]; then
+        repo_url='https://github.com/xkrogen/cfg.git'
+    else
+        echo "Unrecognized argument: $1" 1>&2
+        exit 1
+    fi
+else
+    repo_url='git@github.com:xkrogen/cfg.git'
+fi
+
+git clone --bare "$repo_url" "$HOME/.cfg.git"
 
 function cfg {
    git --git-dir="$HOME/.cfg.git/" --work-tree="$HOME" "$@"
@@ -12,7 +25,7 @@ function cfg {
 mkdir -p "$HOME/.cfg-bak"
 
 if cfg checkout; then
-  echo "Checked out config.";
+    echo "Checked out config.";
 else
     echo ""
     echo "Checkout failed, backing up pre-existing dot files into ~/.cfg-bak ..."
