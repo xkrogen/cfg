@@ -80,11 +80,11 @@ setopt HIST_REDUCE_BLANKS    # Remove superfluous blanks from each command line 
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 
-
 plugins=(
     mvn
     pip
     emacs
+    direnv
     gitfast
     zsh-autosuggestions
     colored-man-pages
@@ -126,6 +126,10 @@ if [ "$(uname)" = "Darwin" ]; then
     OS_OSX=true
 else
     OS_OSX=false
+fi
+
+if [[ "$OS_OSX" = "false" ]] && [[ -d /home/linuxbrew/.linuxbrew ]]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
 export PATH="$(brew --prefix)/bin:$HOME/.local/bin:$PATH"
@@ -258,10 +262,6 @@ if command -v fd &>/dev/null; then
 fi
 debug_timing_checkpoint "FZF"
 
-if [[ "$OS_OSX" = "false" ]] && [[ -d /home/linuxbrew/.linuxbrew ]]; then
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-fi
-
 # Init 1Password CLI, if installed
 if command -v op &>/dev/null; then
     eval "$(op completion zsh)"; compdef _op op
@@ -319,6 +319,11 @@ jenv_add_jdks() {
             echo "Adding JDK: $jdk"
             jenv add "$jdk/libexec/openjdk.jdk/Contents/Home"
         done
+        echo "Adding OpenJDK from /opt/jvm/"
+        for jdk in $(ls -1 /opt/jvm/ | grep ".jdk$" | sort -t'-' -k1,1Vr -r); do
+            echo "Adding JDK: $jdk"
+            jenv add "/opt/jvm/$jdk/Contents/Home"
+        done
         unsetopt nomatch
     else
         if [ "$#" != 1 ]; then
@@ -335,7 +340,6 @@ jenv_refresh_jdks() {
     jenv versions | grep -v "\\*" | xargs -I _ jenv remove _
     jenv_add_jdks
 }
-
 
 # iTerm2 shell integration
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
@@ -386,3 +390,8 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 export LABPATH="$HOME/dev"
 
 debug_timing_checkpoint "final"
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/ekrogen/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions
