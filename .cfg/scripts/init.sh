@@ -3,7 +3,7 @@
 # Run the following command to initialize the dotfiles repo
 # > sh -c "$(curl -fsSL https://raw.githubusercontent.com/xkrogen/cfg/master/.cfg/scripts/init.sh)"
 # To clone using HTTPS instead of GIT:
-# > export GIT_CLONE_HTTPS=1 sh -c "$(curl -fsSL https://raw.githubusercontent.com/xkrogen/cfg/master/.cfg/scripts/init.sh)"
+# > GIT_CLONE_HTTPS=1 sh -c "$(curl -fsSL https://raw.githubusercontent.com/xkrogen/cfg/master/.cfg/scripts/init.sh)"
 
 if [[ -v GIT_CLONE_HTTPS ]]; then
     repo_url='https://github.com/xkrogen/cfg.git'
