@@ -376,22 +376,23 @@ alias cfg='git --git-dir="$HOME/.cfg.git/" --work-tree="$HOME"'
 export EDITOR=vi
 bindkey -e
 
-# Source local configs if they are present
-[ -f ~/.zshrc.local ] && source "$HOME/.zshrc.local"
-
-# bun completions
-[ -s "/Users/ekrogen/.bun/_bun" ] && source "/Users/ekrogen/.bun/_bun"
-
-# bun
+# bun setup
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
 # lab (lugenx/lab)
 export LABPATH="$HOME/dev"
 
-debug_timing_checkpoint "final"
-# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+# taskfile setup (taskfile.dev)
+eval "$(task --completion zsh)"
+
+# Docker Desktop - Docker CLI completions
 fpath=(/Users/ekrogen/.docker/completions $fpath)
 autoload -Uz compinit
 compinit
-# End of Docker CLI completions
+
+# Source local configs if they are present
+[ -f ~/.zshrc.local ] && source "$HOME/.zshrc.local"
+
+debug_timing_checkpoint "final"
