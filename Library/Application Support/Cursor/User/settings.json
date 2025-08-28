@@ -1,0 +1,223 @@
+{
+    "window.commandCenter": 1,
+    "workbench.colorTheme": "Cursor Dark High Contrast",
+    "redhat.telemetry.enabled": false,
+    "files.autoSave": "afterDelay",
+    "cursor.composer.cmdPFilePicker2": true,
+    "cursor.composer.shouldShowMarkdownHoverParticipantActions2": true,
+    "workbench.commandPalette.experimental.suggestCommands": true,
+    "window.autoDetectColorScheme": true,
+    "cursor.cpp.enablePartialAccepts": true,
+    "editor.linkedEditing": true,
+    "editor.minimap.enabled": false,
+    "editor.rulers": [
+        {
+            "column": 80,
+            "color": "#00FF0010"
+        },
+        {
+            "column": 100,
+            "color": "#BDB76B15"
+        },
+        {
+            "column": 120,
+            "color": "#FA807219"
+        }
+    ],
+    "editor.unicodeHighlight.includeComments": true,
+    "workbench.colorCustomizations": {
+        "[Default Dark Modern]": {
+            "tab.activeBorderTop": "#00FF00",
+            "tab.unfocusedActiveBorderTop": "#00FF0088",
+            "textCodeBlock.background": "#00000055"
+        },
+        "editor.wordHighlightStrongBorder": "#FF6347",
+        "editor.wordHighlightBorder": "#FFD700",
+        "editor.selectionHighlightBorder": "#A9A9A9"
+    },
+    "workbench.editor.revealIfOpen": true,
+    "emmet.variables": {
+        "lang": "en"
+    },
+    "trailing-spaces.backgroundColor": "rgba(255,0,0,0.1)",
+    "trailing-spaces.includeEmptyLines": false,
+    "terminal.integrated.tabs.hideCondition": "never",
+    "terminal.integrated.enablePersistentSessions": false,
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.configuration.detectJdksAtStart": false,
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.debug.settings.hotCodeReplace": "auto",
+    "java.dependency.packagePresentation": "hierarchical",
+    "java.maxConcurrentBuilds": 12,
+    "java.sources.organizeImports.staticStarThreshold": 1,
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-1.8",
+            "path": "/Library/Java/JavaVirtualMachines/jdk1.8.0_282-msft.jdk/Contents/Home"
+        },
+        {
+            "name": "JavaSE-11",
+            "path": "/Library/Java/JavaVirtualMachines/jdk11.0.21-2-msft.jdk/Contents/Home"
+        },
+        {
+            "name": "JavaSE-17",
+            "path": "/Library/Java/JavaVirtualMachines/jdk17.0.5-msft.jdk/Contents/Home",
+            "default": true
+        },
+        {
+            "name": "JavaSE-21",
+            "path": "/opt/homebrew/Cellar/openjdk@21/21.0.8/libexec/openjdk.jdk/Contents/Home"
+        },
+        {
+            "name": "JavaSE-22",
+            "path": "/opt/jvm/jdk-22.0.2.jdk/Contents/Home"
+        },
+        {
+            "name": "JavaSE-23",
+            "path": "/opt/jvm/jdk-23.0.2.jdk/Contents/Home"
+        },
+        {
+            "name": "JavaSE-24",
+            "path": "/opt/homebrew/Cellar/openjdk/24.0.2/libexec/openjdk.jdk/Contents/Home"
+        }
+    ],
+    "terminal.integrated.profiles.osx": {
+        "zsh": {
+            "path": "zsh",,
+            "args": [
+                "-l"
+            ]
+            "env": {
+                "JAVA_HOME": "/Library/Java/JavaVirtualMachines/jdk17.0.5-msft.jdk/Contents/Home",
+                "ZDOTDIR": "/Users/ekrogen/Library/Application Support/Cursor/User/globalStorage/pleiades.java-extension-pack-jdk"
+            }
+        },
+        "JavaSE-1.8 LTS": {
+            "overrideName": true,
+            "env": {
+                "ZDOTDIR": "/Users/ekrogen/Library/Application Support/Cursor/User/globalStorage/pleiades.java-extension-pack-jdk",
+                "JAVA_HOME": "/Library/Java/JavaVirtualMachines/jdk1.8.0_282-msft.jdk/Contents/Home"
+            },
+            "path": "zsh",
+            "args": [
+                "-l"
+            ]
+        },
+        "JavaSE-11 LTS": {
+            "overrideName": true,
+            "env": {
+                "ZDOTDIR": "/Users/ekrogen/Library/Application Support/Cursor/User/globalStorage/pleiades.java-extension-pack-jdk",
+                "JAVA_HOME": "/Library/Java/JavaVirtualMachines/jdk11.0.21-2-msft.jdk/Contents/Home"
+            },
+            "path": "zsh",
+            "args": [
+                "-l"
+            ]
+        },
+        "JavaSE-17 LTS": {
+            "overrideName": true,
+            "env": {
+                "ZDOTDIR": "/Users/ekrogen/Library/Application Support/Cursor/User/globalStorage/pleiades.java-extension-pack-jdk",
+                "JAVA_HOME": "/Library/Java/JavaVirtualMachines/jdk17.0.5-msft.jdk/Contents/Home"
+            },
+            "path": "zsh",
+            "args": [
+                "-l"
+            ]
+        },
+        "JavaSE-21 LTS": {
+            "overrideName": true,
+            "env": {
+                "ZDOTDIR": "/Users/ekrogen/Library/Application Support/Cursor/User/globalStorage/pleiades.java-extension-pack-jdk",
+                "JAVA_HOME": "/opt/homebrew/Cellar/openjdk@21/21.0.8/libexec/openjdk.jdk/Contents/Home"
+            },
+            "path": "zsh",
+            "args": [
+                "-l"
+            ]
+        },
+        "JavaSE-22": {
+            "overrideName": true,
+            "env": {
+                "ZDOTDIR": "/Users/ekrogen/Library/Application Support/Cursor/User/globalStorage/pleiades.java-extension-pack-jdk",
+                "JAVA_HOME": "/opt/jvm/jdk-22.0.2.jdk/Contents/Home"
+            },
+            "path": "zsh",
+            "args": [
+                "-l"
+            ]
+        },
+        "JavaSE-23": {
+            "overrideName": true,
+            "env": {
+                "ZDOTDIR": "/Users/ekrogen/Library/Application Support/Cursor/User/globalStorage/pleiades.java-extension-pack-jdk",
+                "JAVA_HOME": "/opt/jvm/jdk-23.0.2.jdk/Contents/Home"
+            },
+            "path": "zsh",
+            "args": [
+                "-l"
+            ]
+        },
+        "JavaSE-24": {
+            "overrideName": true,
+            "env": {
+                "ZDOTDIR": "/Users/ekrogen/Library/Application Support/Cursor/User/globalStorage/pleiades.java-extension-pack-jdk",
+                "JAVA_HOME": "/opt/homebrew/Cellar/openjdk/24.0.2/libexec/openjdk.jdk/Contents/Home"
+            },
+            "path": "zsh",
+            "args": [
+                "-l"
+            ]
+        }
+    },
+    "terminal.integrated.defaultProfile.osx": "JavaSE-17 LTS",
+    "maven.terminal.customEnv": [
+        {
+            "environmentVariable": "JAVA_HOME",
+            "value": "/Library/Java/JavaVirtualMachines/jdk17.0.5-msft.jdk/Contents/Home"
+        },
+        {
+            "environmentVariable": "ZDOTDIR",
+            "value": "/Users/ekrogen/Library/Application Support/Cursor/User/globalStorage/pleiades.java-extension-pack-jdk"
+        }
+    ],
+    "java.import.gradle.java.home": "/Library/Java/JavaVirtualMachines/jdk17.0.5-msft.jdk/Contents/Home",
+    "maven.executable.path": "/Users/ekrogen/Library/Application Support/Cursor/User/globalStorage/pleiades.java-extension-pack-jdk/maven/latest/bin/mvn",
+    "java.import.gradle.home": "/Users/ekrogen/Library/Application Support/Cursor/User/globalStorage/pleiades.java-extension-pack-jdk/gradle/latest",
+    "search.quickOpen.includeSymbols": true,
+    "git.confirmSync": false,
+    "todo-tree.general.tags": [
+        "TODO ETK",
+        "HACK",
+        "FIXME",
+        "TODO",
+        "XXX",
+        "BUG"
+    ],
+    "git.blame.editorDecoration.enabled": false,
+    "git.blame.statusBarItem.enabled": true,
+    "git.autofetch": true,
+    "workbench.preferredLightColorTheme": "Default Dark+",
+    "window.openFoldersInNewWindow": "on",
+    "java.editor.reloadChangedSources": "auto",
+    "workbench.editor.enablePreview": false,
+    "explorer.confirmDelete": false,
+    "githubPullRequests.pushBranch": "always",
+    "linkedin-extensions.directory": "/Users/ekrogen/.vscode-linkedin-extensions",
+    "vs-kubernetes": {
+        "vs-kubernetes.crd-code-completion": "disabled"
+    },
+    "git.replaceTagsWhenPull": true,
+    "workbench.settings.useSplitJSON": true,
+    "java.jdt.ls.java.home": "/Library/Java/JavaVirtualMachines/jdk21.0.6-msft.jdk/Contents/Home",
+    "cursor.composer.shouldChimeAfterChatFinishes": true,
+    "problems.decorations.enabled": false,
+    "problems.visibility": false,
+    "remote.SSH.remotePlatform": {
+        "ingen-grpc-demo_talented-ivy": "linux"
+    },
+    "application.shellEnvironmentResolutionTimeout": 60,
+    "cursor.composer.shouldAllowCustomModes": true,
+    "gradle.allowParallelRun": true,
+    "terminal.integrated.shellIntegration.environmentReporting": true
+}
