@@ -81,17 +81,15 @@ setopt HIST_REDUCE_BLANKS    # Remove superfluous blanks from each command line 
 # Add wisely, as too many plugins slow down shell startup.
 
 plugins=(
-    mvn
-    pip
-    emacs
-    direnv
-    gitfast
-    zsh-autosuggestions
     colored-man-pages
+    direnv
+    emacs
+    fzf
     git
     git-extras
-    gradle-completion
-    zsh-syntax-highlighting
+    gitfast
+    mvn
+    pip
 )
 
 # User configuration
@@ -385,14 +383,25 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 export LABPATH="$HOME/dev"
 
 # taskfile setup (taskfile.dev)
-eval "$(task --completion zsh)"
+if command -v task &>/dev/null; then
+    eval "$(task --completion zsh)"
+fi
 
 # Docker Desktop - Docker CLI completions
 fpath=(/Users/ekrogen/.docker/completions $fpath)
 autoload -Uz compinit
 compinit
 
+
 # Source local configs if they are present
 [ -f ~/.zshrc.local ] && source "$HOME/.zshrc.local"
 
 debug_timing_checkpoint "final"
+
+if command -v atuin &>/dev/null; then
+    eval "$(atuin init zsh --disable-up-arrow)"
+fi
+
+# Keep this last: https://github.com/zsh-users/zsh-syntax-highlighting#why-must-zsh-syntax-highlightingzsh-be-sourced-at-the-end-of-the-zshrc-file
+source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"

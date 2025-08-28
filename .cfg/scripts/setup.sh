@@ -17,6 +17,7 @@ fi
 
 # brew installs
 brew_install_list=(
+    atuin
     bash
     bat
     cloc
@@ -24,9 +25,11 @@ brew_install_list=(
     fzf
     gcc
     gh
+    gradle-completion
     gron
     jenv
     pipx
+    the_silver_searcher
     tldr
     tree
     tmux
@@ -34,8 +37,10 @@ brew_install_list=(
     ripgrep
     walk
     wget
-    zsh
     ynqa/tap/jnv
+    zsh
+    zsh-autosuggestions
+    zsh-syntax-highlighting
 )
 
 
@@ -54,15 +59,6 @@ export PATH="$(brew --prefix)/bin:$PATH"
 # other installation lists
 #################################################################################
 
-# note that this has to be done AFTER brew installations because
-# modern bash is required
-
-# oh-my-zsh plugins
-declare -A omz_plugins
-omz_plugins[gradle-completion]="https://github.com/gradle/gradle-completion.git"
-omz_plugins[zsh-autosuggestions]="https://github.com/zsh-users/zsh-autosuggestions.git"
-omz_plugins[zsh-syntax-highlighting]="https://github.com/zsh-users/zsh-syntax-highlighting.git"
-
 # Volta/npm packages
 npm_install_list=()
 
@@ -74,17 +70,6 @@ npm_install_list=()
 if [ ! -d ~/.oh-my-zsh ]; then
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --keep-zshrc
 fi
-
-omz_plugin_dir="$cfg_dir/.oh-my-zsh.custom/plugins"
-mkdir -p "$omz_plugin_dir"
-# mapping of plugin-name to plugin-repo
-for p in "${!omz_plugins[@]}"; do
-    if [ ! -d "$omz_plugin_dir/$p" ]; then
-        git clone "${omz_plugins[$p]}" "$omz_plugin_dir/$p"
-    else
-        (cd "$omz_plugin_dir/$p" && git pull)
-    fi
-done
 
 #################################################################################
 # Volta package manager setup
