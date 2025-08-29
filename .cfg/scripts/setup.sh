@@ -33,7 +33,6 @@ brew_install_list=(
     tldr
     tree
     tmux
-    rename
     ripgrep
     walk
     wget
