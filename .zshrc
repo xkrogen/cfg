@@ -92,6 +92,19 @@ plugins=(
     pip
 )
 
+# Ensure FZF_BASE is set for the oh-my-zsh fzf plugin
+if [ -z "$FZF_BASE" ]; then
+    if [ -d "$HOME/.fzf" ]; then
+        export FZF_BASE="$HOME/.fzf"
+    elif command -v brew &>/dev/null && [ -d "$(brew --prefix fzf 2>/dev/null)" ]; then
+        export FZF_BASE="$(brew --prefix fzf 2>/dev/null)"
+    elif [ -d "/opt/homebrew/opt/fzf" ]; then
+        export FZF_BASE="/opt/homebrew/opt/fzf"
+    elif [ -d "/usr/local/opt/fzf" ]; then
+        export FZF_BASE="/usr/local/opt/fzf"
+    fi
+fi
+
 # User configuration
 
 source $ZSH/oh-my-zsh.sh
