@@ -1,39 +1,5 @@
 {
   "mcpServers": {
-    "DS_MCP": {
-      "command": "/Users/ekrogen/dev/mcp-ds/build/mcp-ds/environments/development-venv/bin/python",
-      "args": [
-        "/Users/ekrogen/dev/mcp-ds/mcp-ds/src/mcpds/ds_mcp_server.py"
-      ],
-      "env": {}
-    },
-    "deepwiki": {
-      "command": "/Users/ekrogen/.cfg/scripts/mcp.sh",
-      "args": [
-        "npx",
-        "mcp-deepwiki@latest"
-      ]
-    },
-    "memory": {
-      "command": "/Users/ekrogen/.cfg/scripts/mcp.sh",
-      "args": [
-        "npx",
-        "@modelcontextprotocol/server-memory"
-      ]
-    },
-    "playwright": {
-      "command": "/Users/ekrogen/.cfg/scripts/mcp.sh",
-      "args": [
-        "npx",
-        "@playwright/mcp@latest"
-      ]
-    },
-    "github": {
-      "command": "/Users/ekrogen/.cfg/scripts/mcp.sh",
-      "args": [
-        "github"
-      ]
-    },
     "captain": {
       "type": "stdio",
       "command": "/export/content/granular/bin/captain",
@@ -41,42 +7,9 @@
         "start"
       ],
       "env": {
-        "WORKSPACE": "/Users/ekrogen/Downloads"
+        "WORKSPACE": "/Users/ekrogen/Downloads",
+        "NAMESPACES": "data.*"
       }
-    },
-    "trino": {
-      "command": "/Users/ekrogen/.cfg/scripts/mcp.sh",
-      "args": [
-        "mcp-toolbox-trino"
-      ]
-    },
-    "spark-history-server-stdio": {
-      "command": "/Users/ekrogen/.cfg/scripts/mcp.sh",
-      "args": [
-        "uvx",
-        "--from",
-        "mcp-apache-spark-history-server",
-        "spark-mcp"
-      ],
-      "env": {
-        "SHS_MCP_TRANSPORT": "stdio",
-        "SHS_SERVERS_HOLDEM_URL": "https://shs-ltx1-holdem.grid.linkedin.com/"
-      }
-    },
-    "ddai-spark-mcp": {
-      "command":  "/Users/ekrogen/.cfg/scripts/mcp.sh",
-      "args":  [
-        "ddai-spark-mcp"
-      ]
-    },
-    "spark-history-server": {
-      "url": "http://localhost:18888/mcp"
-    },
-    "glean": {
-      "command": "/Users/ekrogen/.cfg/scripts/mcp.sh",
-      "args": [
-        "glean"
-      ]
     }
   }
 }
