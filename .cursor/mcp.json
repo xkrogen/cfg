@@ -2,14 +2,20 @@
   "mcpServers": {
     "captain": {
       "type": "stdio",
-      "command": "/export/content/granular/bin/captain",
+      "command": "captain",
       "args": [
         "start"
       ],
       "env": {
-        "WORKSPACE": "/Users/ekrogen/Downloads",
-        "NAMESPACES": "data.*"
+        "NAMESPACES": "data.*,jira,google,github"
       }
+    },
+    "playwright-extension": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest",
+        "--extension"
+      ]
     }
   }
 }
