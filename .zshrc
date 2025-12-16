@@ -143,7 +143,24 @@ if [[ "$OS_OSX" = "false" ]] && [[ -d /home/linuxbrew/.linuxbrew ]]; then
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
-export PATH="$(brew --prefix)/bin:$HOME/.local/bin:$PATH"
+# Determine Homebrew prefix, prioritizing /opt/homebrew (Apple Silicon) over /usr/local (Intel)
+if [ "$OS_OSX" = "true" ]; then
+    if [ -d "/opt/homebrew" ]; then
+        BREW_PREFIX="/opt/homebrew"
+    elif [ -d "/usr/local" ]; then
+        BREW_PREFIX="/usr/local"
+    elif command -v brew &>/dev/null; then
+        BREW_PREFIX="$(brew --prefix 2>/dev/null)"
+    fi
+else
+    if command -v brew &>/dev/null; then
+        BREW_PREFIX="$(brew --prefix 2>/dev/null)"
+    fi
+fi
+
+if [ -n "$BREW_PREFIX" ]; then
+    export PATH="$BREW_PREFIX/bin:$HOME/.local/bin:$HOME/.cfg/bin:$PATH"
+fi
 debug_timing_checkpoint "Homebrew prefix"
 
 alias dev='cd ~/dev'
@@ -414,6 +431,8 @@ debug_timing_checkpoint "final"
 if command -v atuin &>/dev/null; then
     eval "$(atuin init zsh --disable-up-arrow)"
 fi
+
+source <(tree-me shellenv)
 
 # Keep this last: https://github.com/zsh-users/zsh-syntax-highlighting#why-must-zsh-syntax-highlightingzsh-be-sourced-at-the-end-of-the-zshrc-file
 source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"

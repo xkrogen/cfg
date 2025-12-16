@@ -52,6 +52,7 @@
     "java.maxConcurrentBuilds": 12,
     "java.sources.organizeImports.staticStarThreshold": 1,
     "java.configuration.runtimes": [
+
         {
             "name": "JavaSE-1.8",
             "path": "/Library/Java/JavaVirtualMachines/jdk1.8.0_282-msft.jdk/Contents/Home"
@@ -79,7 +80,11 @@
         },
         {
             "name": "JavaSE-24",
-            "path": "/opt/homebrew/Cellar/openjdk/24.0.2/libexec/openjdk.jdk/Contents/Home"
+            "path": "/opt/jvm/jdk-24.0.2.jdk/Contents/Home"
+        },
+        {
+            "name": "JavaSE-25",
+            "path": "/opt/homebrew/Cellar/openjdk/25.0.1/libexec/openjdk.jdk/Contents/Home"
         }
     ],
     "terminal.integrated.profiles.osx": {
@@ -163,7 +168,18 @@
             "overrideName": true,
             "env": {
                 "ZDOTDIR": "/Users/ekrogen/Library/Application Support/Cursor/User/globalStorage/pleiades.java-extension-pack-jdk",
-                "JAVA_HOME": "/opt/homebrew/Cellar/openjdk/24.0.2/libexec/openjdk.jdk/Contents/Home"
+                "JAVA_HOME": "/opt/jvm/jdk-24.0.2.jdk/Contents/Home"
+            },
+            "path": "zsh",
+            "args": [
+                "-l"
+            ]
+        },
+        "JavaSE-25": {
+            "overrideName": true,
+            "env": {
+                "ZDOTDIR": "/Users/ekrogen/Library/Application Support/Cursor/User/globalStorage/pleiades.java-extension-pack-jdk",
+                "JAVA_HOME": "/opt/homebrew/Cellar/openjdk/25.0.1/libexec/openjdk.jdk/Contents/Home"
             },
             "path": "zsh",
             "args": [
