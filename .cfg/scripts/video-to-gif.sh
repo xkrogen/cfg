@@ -26,6 +26,10 @@ for file in "$@"; do
         output="${dir}/${name}_${i}.gif"
     fi
 
-    ffmpeg -i "$file" -pix_fmt rgb8 -r 10 -f gif "$output" </dev/null
+    # Two-pass encoding: generate optimal palette, then apply it
+    palette=$(mktemp /tmp/palette_XXXXXX.png)
+    ffmpeg -i "$file" -vf "fps=10,palettegen" -y "$palette" </dev/null &&
+    ffmpeg -i "$file" -i "$palette" -filter_complex "fps=10[x];[x][1:v]paletteuse" -y "$output" </dev/null
+    rm -f "$palette"
     echo "$output"
 done
