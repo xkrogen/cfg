@@ -29,7 +29,7 @@ for file in "$@"; do
     # Two-pass encoding: generate optimal palette, then apply it
     palette=$(mktemp /tmp/palette_XXXXXX.png)
     ffmpeg -i "$file" -vf "fps=10,palettegen" -y "$palette" </dev/null &&
-    ffmpeg -i "$file" -i "$palette" -filter_complex "fps=10[x];[x][1:v]paletteuse" -y "$output" </dev/null
+    ffmpeg -i "$file" -i "$palette" -filter_complex "fps=10[x];[x][1:v]paletteuse=dither=bayer:bayer_scale=3:diff_mode=rectangle" -y "$output" </dev/null
     rm -f "$palette"
     echo "$output"
 done
