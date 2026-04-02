@@ -217,7 +217,7 @@ alias gfixup='git log -n 50 --pretty=format:"%h %s" --no-merges | fzf | cut -c -
 function grbl() {
   grb -i $(git-latest)
 }
-alias gws='git rebase --whitespace=fix'
+# alias gws='git rebase --whitespace=fix'  # conflicts with googleworkspace-cli
 function gwsl() {
   git rebase --whitespace=fix $(git-latest)
 }
@@ -437,3 +437,5 @@ source <(tree-me shellenv)
 # Keep this last: https://github.com/zsh-users/zsh-syntax-highlighting#why-must-zsh-syntax-highlightingzsh-be-sourced-at-the-end-of-the-zshrc-file
 source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+
+if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
