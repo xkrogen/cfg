@@ -299,9 +299,6 @@ if command -v op &>/dev/null; then
 fi
 debug_timing_checkpoint "1Password CLI"
 
-# Init Volta, if installed
-if command -v volta &>/dev/null; then
-fi
 debug_timing_checkpoint "Volta"
 
 # Init walk to be used with cd, if installed
