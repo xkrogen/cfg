@@ -301,8 +301,6 @@ debug_timing_checkpoint "1Password CLI"
 
 # Init Volta, if installed
 if command -v volta &>/dev/null; then
-    export VOLTA_HOME="$HOME/.volta"
-    export PATH="$VOLTA_HOME/bin:$PATH"
 fi
 debug_timing_checkpoint "Volta"
 
