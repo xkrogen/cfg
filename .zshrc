@@ -92,7 +92,9 @@ plugins=(
     pip
 )
 
-# Ensure FZF_BASE is set for the oh-my-zsh fzf plugin
+# Ensure FZF_BASE is set for the oh-my-zsh fzf plugin. This runs before
+# .zshrc.local adds linuxbrew to PATH, so `brew --prefix fzf` may fail on
+# Linux; fall through to the known linuxbrew install path.
 if [ -z "$FZF_BASE" ]; then
     if [ -d "$HOME/.fzf" ]; then
         export FZF_BASE="$HOME/.fzf"
@@ -102,6 +104,8 @@ if [ -z "$FZF_BASE" ]; then
         export FZF_BASE="/opt/homebrew/opt/fzf"
     elif [ -d "/usr/local/opt/fzf" ]; then
         export FZF_BASE="/usr/local/opt/fzf"
+    elif [ -d "/home/linuxbrew/.linuxbrew/opt/fzf" ]; then
+        export FZF_BASE="/home/linuxbrew/.linuxbrew/opt/fzf"
     fi
 fi
 
