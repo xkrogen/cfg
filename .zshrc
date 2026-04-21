@@ -431,8 +431,6 @@ if command -v atuin &>/dev/null; then
     eval "$(atuin init zsh --disable-up-arrow)"
 fi
 
-source <(tree-me shellenv)
-
 # Keep this last: https://github.com/zsh-users/zsh-syntax-highlighting#why-must-zsh-syntax-highlightingzsh-be-sourced-at-the-end-of-the-zshrc-file
 source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
