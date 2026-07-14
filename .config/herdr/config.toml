@@ -1,0 +1,63 @@
+onboarding = false
+
+# Mirrors ~/.tmux.conf: prefix is Ctrl+a (not the herdr/tmux default Ctrl+b),
+# plus the same non-prefix chords tmux used for pane focus, tab switching,
+# and pane resizing. tmux features with no herdr equivalent (synchronize-panes,
+# paste-buffer, and reordering tabs in place) are intentionally left out.
+[keys]
+prefix = "ctrl+a"
+
+focus_pane_left = ["prefix+h", "alt+shift+left"]
+focus_pane_down = ["prefix+j", "alt+shift+down"]
+focus_pane_up = ["prefix+k", "alt+shift+up"]
+focus_pane_right = ["prefix+l", "alt+shift+right"]
+
+next_tab = ["prefix+n", "alt+tab"]
+previous_tab = ["prefix+p", "alt+shift+tab"]
+
+# Cycle through agents in the sidebar agent panel (distinct from pane focus).
+next_agent = "prefix+a"
+previous_agent = "prefix+shift+a"
+
+# tmux's default split bindings (unchanged in your tmux.conf): prefix+%
+# splits side-by-side, prefix+" splits stacked. Kept alongside herdr's own
+# prefix+v / prefix+minus defaults.
+split_vertical = ["prefix+v", "prefix+%"]
+split_horizontal = ["prefix+minus", "prefix+\""]
+
+[[keys.command]]
+key = "ctrl+shift+left"
+type = "shell"
+command = "herdr pane resize --direction left --amount 0.05"
+description = "resize pane left"
+
+[[keys.command]]
+key = "ctrl+shift+right"
+type = "shell"
+command = "herdr pane resize --direction right --amount 0.05"
+description = "resize pane right"
+
+[[keys.command]]
+key = "ctrl+shift+up"
+type = "shell"
+command = "herdr pane resize --direction up --amount 0.05"
+description = "resize pane up"
+
+[[keys.command]]
+key = "ctrl+shift+down"
+type = "shell"
+command = "herdr pane resize --direction down --amount 0.05"
+description = "resize pane down"
+
+[ui]
+show_agent_labels_on_pane_borders = true
+agent_panel_sort = "spaces"
+[ui.toast]
+delivery = "system"
+
+[ui.sound]
+enabled = true
+
+[experimental]
+switch_ascii_input_source_in_prefix = false
+pane_history = true
