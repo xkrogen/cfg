@@ -19,6 +19,11 @@ previous_tab = ["prefix+p", "alt+shift+tab"]
 next_agent = "prefix+a"
 previous_agent = "prefix+shift+a"
 
+# Indexed jumps: switch_tab is already a default binding; workspace and
+# agent jumps are unset by default and must be bound explicitly.
+switch_workspace = "prefix+shift+1..9"
+focus_agent = "prefix+alt+1..9"
+
 # tmux's default split bindings (unchanged in your tmux.conf): prefix+%
 # splits side-by-side, prefix+" splits stacked. Kept alongside herdr's own
 # prefix+v / prefix+minus defaults.
