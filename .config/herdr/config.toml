@@ -1,5 +1,15 @@
 onboarding = false
 
+# On rdev/Linux, "auto" (the default) keeps new pane shells non-login. This
+# LinkedIn rdev only adds GULL-installed tool dirs (e.g. /export/content/
+# linkedin/bin, where captain lives) via a login-only shell init step, so
+# non-login panes were missing them entirely -- breaking anything that
+# execs those tools directly with no further shell in between, like an
+# MCP server spawn from within a Copilot session. Force login shells for
+# every new pane so they get the same PATH a real `ssh` session would.
+[terminal]
+shell_mode = "login"
+
 # Mirrors ~/.tmux.conf: prefix is Ctrl+a (not the herdr/tmux default Ctrl+b),
 # plus the same non-prefix chords tmux used for pane focus, tab switching,
 # and pane resizing. tmux features with no herdr equivalent (synchronize-panes,
