@@ -30,6 +30,11 @@ focus_agent = "prefix+alt+1..9"
 split_vertical = ["prefix+v", "prefix+%"]
 split_horizontal = ["prefix+minus", "prefix+\""]
 
+# tmux defaults: prefix+, renames the current window, prefix+d detaches.
+# Kept alongside herdr's own prefix+shift+t / prefix+q defaults.
+rename_tab = ["prefix+shift+t", "prefix+comma"]
+detach = ["prefix+q", "prefix+d"]
+
 [[keys.command]]
 key = "ctrl+shift+left"
 type = "shell"
