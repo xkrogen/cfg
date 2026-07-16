@@ -59,7 +59,7 @@ key = "prefix+u"
 type = "shell"
 description = "ping current pane (trigger done/unread state when backgrounded)"
 command = '''
-"$HERDR_BIN_PATH" pane send-text "$HERDR_ACTIVE_PANE_ID" "!sleep 1"
+"$HERDR_BIN_PATH" pane send-text "$HERDR_ACTIVE_PANE_ID" "!sleep 5"
 sleep 0.1
 "$HERDR_BIN_PATH" pane send-keys "$HERDR_ACTIVE_PANE_ID" enter
 '''
