@@ -43,6 +43,26 @@ split_horizontal = ["prefix+minus", "prefix+\""]
 # tmux defaults: prefix+, renames the current window, prefix+d detaches.
 # Kept alongside herdr's own prefix+shift+t / prefix+q defaults.
 rename_tab = ["prefix+shift+t", "prefix+comma"]
+
+# Switch to the last-focused pane (across tabs/workspaces) -- unset by
+# default. Paired with the "ping" custom command below: press prefix+u to
+# background-check a pane (send a real, near-instant shell command so herdr's
+# screen-scan state detection has something to catch), then prefix+shift+u
+# to jump back to wherever you were. Can't be one keypress: [[keys.command]]
+# runs as a separate process talking only to herdr's socket API, which has
+# no method for "last focused pane" -- that's tracked and executed entirely
+# inside the running client's own UI loop, not exposed for scripts to call.
+last_pane = "prefix+shift+u"
+
+[[keys.command]]
+key = "prefix+u"
+type = "shell"
+description = "ping current pane (trigger done/unread state when backgrounded)"
+command = '''
+"$HERDR_BIN_PATH" pane send-text "$HERDR_ACTIVE_PANE_ID" "!sleep 1"
+sleep 0.1
+"$HERDR_BIN_PATH" pane send-keys "$HERDR_ACTIVE_PANE_ID" enter
+'''
 detach = ["prefix+q", "prefix+d"]
 
 [[keys.command]]
