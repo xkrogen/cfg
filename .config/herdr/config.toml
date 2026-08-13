@@ -1,5 +1,8 @@
 onboarding = false
 
+[theme]
+name = "terminal"
+
 # On rdev/Linux, "auto" (the default) keeps new pane shells non-login. This
 # LinkedIn rdev only adds GULL-installed tool dirs (e.g. /export/content/
 # linkedin/bin, where captain lives) via a login-only shell init step, so
@@ -54,6 +57,8 @@ rename_tab = ["prefix+shift+t", "prefix+comma"]
 # inside the running client's own UI loop, not exposed for scripts to call.
 last_pane = "prefix+shift+u"
 
+detach = ["prefix+q", "prefix+d"]
+
 [[keys.command]]
 key = "prefix+u"
 type = "shell"
@@ -63,7 +68,12 @@ command = '''
 sleep 0.1
 "$HERDR_BIN_PATH" pane send-keys "$HERDR_ACTIVE_PANE_ID" enter
 '''
-detach = ["prefix+q", "prefix+d"]
+
+[[keys.command]]
+key = "prefix+shift+r"
+type = "shell"
+description = "resync all Copilot pane display names (fixes stale 'copilot' labels)"
+command = "~/.copilot/bin/herdr-resync-display-names.sh"
 
 [[keys.command]]
 key = "ctrl+shift+left"
@@ -91,7 +101,7 @@ description = "resize pane down"
 
 [ui]
 show_agent_labels_on_pane_borders = true
-agent_panel_sort = "spaces"
+agent_panel_sort = "priority"
 [ui.toast]
 delivery = "system"
 
