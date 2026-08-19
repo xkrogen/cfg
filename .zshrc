@@ -111,7 +111,7 @@ fi
 
 # User configuration
 
-source $ZSH/oh-my-zsh.sh
+[ -r "$ZSH/oh-my-zsh.sh" ] && source "$ZSH/oh-my-zsh.sh"
 debug_timing_checkpoint "Oh-My-Zsh"
 
 # You may need to manually set your language environment
@@ -432,7 +432,13 @@ if command -v atuin &>/dev/null; then
 fi
 
 # Keep this last: https://github.com/zsh-users/zsh-syntax-highlighting#why-must-zsh-syntax-highlightingzsh-be-sourced-at-the-end-of-the-zshrc-file
-source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+if command -v brew >/dev/null 2>&1; then
+    _brew_prefix="$(brew --prefix 2>/dev/null)"
+    [ -r "$_brew_prefix/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ] \
+        && source "$_brew_prefix/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+    [ -r "$_brew_prefix/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ] \
+        && source "$_brew_prefix/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+    unset _brew_prefix
+fi
 
 if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
