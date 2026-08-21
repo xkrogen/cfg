@@ -18,6 +18,7 @@ fi
 # brew installs
 brew_install_list=(
     atuin
+    azure-cli
     bash
     bat
     cloc
@@ -25,6 +26,7 @@ brew_install_list=(
     fzf
     gcc
     gh
+    googleworkspace-cli
     gradle-completion
     gron
     jenv
@@ -79,6 +81,14 @@ if ! command -v volta &>/dev/null; then
 fi
 if [ ${#npm_install_list[@]} -gt 0 ]; then
   volta install "${npm_install_list[@]}"
+fi
+
+#################################################################################
+# Native installers
+#################################################################################
+
+if [ ! -x "$HOME/.local/bin/herdr" ]; then
+    curl -fsSL https://herdr.dev/install.sh | sh
 fi
 
 #################################################################################
