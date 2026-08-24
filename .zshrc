@@ -425,6 +425,10 @@ compinit
 # Source local configs if they are present
 [ -f ~/.zshrc.local ] && source "$HOME/.zshrc.local"
 
+# Managed command shims must win regardless of package-manager path ordering.
+typeset -U path
+path=("$HOME/.copilot/bin" "$HOME/.local/bin" $path)
+
 debug_timing_checkpoint "final"
 
 if command -v atuin &>/dev/null; then
