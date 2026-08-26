@@ -125,6 +125,19 @@ every_boot() {
         log "kubectl-in already present."
     fi
 
+    # 5. Worktrunk lives on the ephemeral Homebrew volume, so restore it after
+    #    pod restarts before invoking the persistent git-sprout shim.
+    if ! command -v wt >/dev/null 2>&1; then
+        log "installing worktrunk..."
+        if USER="$(id -un)" LOGNAME="$(id -un)" command brew install worktrunk >>"$LOG" 2>&1; then
+            log "worktrunk installed."
+        else
+            log "WARN: failed to install worktrunk."
+        fi
+    else
+        log "worktrunk already present."
+    fi
+
     # Touch the sentinel only if we got this far without bailing out. Any
     # individual step failure above is logged but non-fatal — partial success
     # still beats needing to rerun the whole thing on every attach.

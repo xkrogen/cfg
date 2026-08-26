@@ -36,6 +36,7 @@ brew_install_list=(
     tldr
     tree
     tmux
+    worktrunk
     ripgrep
     walk
     wget
