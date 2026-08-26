@@ -76,9 +76,10 @@ if [ -x "$cfg_dir/setup_linkedin.sh" ]; then
 fi
 
 # 4b. Install rdev tooling — both persistent ($HOME: volta node20, uv, TWG,
-#     captain dynamic-discovery) and ephemeral (GULL refresh, captain upgrade,
-#     trino CLI). The ephemeral half also runs on every rdev-tmux attach via
-#     the /var/tmp sentinel it drops, so daily pod restarts self-heal.
+#     git-sprout, captain dynamic-discovery) and ephemeral (GULL refresh,
+#     captain upgrade, trino CLI). The ephemeral half also runs on every
+#     rdev-tmux attach via the /var/tmp sentinel it drops, so daily pod
+#     restarts self-heal.
 if [ -x "$cfg_dir/init_rdev_tools.sh" ]; then
     "$cfg_dir/init_rdev_tools.sh" all || echo "WARN: init_rdev_tools.sh returned non-zero (see ~/.rdev_init_tools.log)."
 fi

@@ -26,6 +26,7 @@ brew_install_list=(
     fzf
     gcc
     gh
+    alltuner/tap/git-sprout
     googleworkspace-cli
     gradle-completion
     gron
@@ -55,6 +56,7 @@ fi
 brew install "${brew_install_list[@]}"
 
 export PATH="$(brew --prefix)/bin:$PATH"
+"$cfg_dir/scripts/install_git_sprout.sh"
 
 #################################################################################
 # other installation lists

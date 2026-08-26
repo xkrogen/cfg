@@ -87,5 +87,10 @@
         "key": "alt+j",
         "command": "-editor.action.inlineDiffs.nextChange",
         "when": "editorTextFocus && inlineDiffs.activeEditorWithDiffs"
+    },
+    {
+        "key": "alt+cmd+s",
+        "command": "workbench.action.toggleUnifiedSidebarFromKeyboard",
+        "when": "!isAuxiliaryWindowFocusedContext"
     }
 ]

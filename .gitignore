@@ -1,2 +1,8 @@
 **/.idea
 
+.config/gh/hosts.yml
+.copilot-local.env
+
+# Darwin regenerates these assistant skills per CLI version.
+/.copilot/skills/darwin-cli/
+/.claude/skills/darwin-cli/

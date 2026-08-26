@@ -9,7 +9,7 @@
                                 "description": "Change caps_lock to command+control+option+shift.",
                                 "from": {
                                     "key_code": "caps_lock",
-                                    "modifiers": { "optional": ["any"] }
+                                    "modifiers": {}
                                 },
                                 "to": [
                                     {

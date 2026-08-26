@@ -184,11 +184,20 @@ one_time() {
         log "Teamwork Graph CLI already installed."
     fi
 
-    # 4. GitHub HTTPS auth — avoids depending on a forwarded SSH agent after
+    # 4. Git-sprout — the Cargo build survives pod restarts and avoids the
+    #    Homebrew Linux bottle's incompatible glibc requirement.
+    if [ -x "$HOME/.cfg/scripts/install_git_sprout.sh" ]; then
+        "$HOME/.cfg/scripts/install_git_sprout.sh" >>"$LOG" 2>&1 \
+            || log "WARN: git-sprout setup failed."
+    else
+        log "WARN: git-sprout installer is missing."
+    fi
+
+    # 5. GitHub HTTPS auth — avoids depending on a forwarded SSH agent after
     # detaching from the RDEV. No credential is stored in dotfiles.
     configure_github_https
 
-    # 5. Captain dynamic-discovery — enables the compact tool interface for
+    # 6. Captain dynamic-discovery — enables the compact tool interface for
     #    Copilot. It writes under $HOME and persists across pod restarts.
     if command -v captain >/dev/null 2>&1; then
         if [ ! -f "$HOME/.copilot/.captain-dynamic-discovery-setup" ]; then
@@ -221,7 +230,8 @@ case "$mode" in
         # Detection is cheap; full one_time is idempotent but noisy in the log.
         if ! command -v uv >/dev/null 2>&1 \
             || ! ls -d "$HOME/.volta/tools/image/node/20."* >/dev/null 2>&1 \
-            || [ ! -x "$HOME/.local/bin/twg" ]; then
+            || [ ! -x "$HOME/.local/bin/twg" ] \
+            || [ ! -x "$HOME/.local/bin/git-sprout" ]; then
             one_time
         else
             log "one_time tooling already present; skipping one_time."
