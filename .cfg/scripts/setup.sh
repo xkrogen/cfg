@@ -93,6 +93,7 @@ fi
 if [ ! -x "$HOME/.local/bin/herdr" ]; then
     curl -fsSL https://herdr.dev/install.sh | sh
 fi
+"$cfg_dir/scripts/install_herdr_skill.sh"
 
 #################################################################################
 # TMUX plugin manager setup
