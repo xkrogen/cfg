@@ -46,6 +46,9 @@ brew_install_list=(
     zsh-syntax-highlighting
 )
 
+if [ "${CFG_SKIP_JDTLS:-0}" != "1" ]; then
+    brew_install_list+=(jdtls)
+fi
 
 if ! command -v brew &>/dev/null; then
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -58,13 +61,6 @@ brew install "${brew_install_list[@]}"
 
 export PATH="$(brew --prefix)/bin:$PATH"
 "$cfg_dir/scripts/install_git_sprout.sh"
-
-#################################################################################
-# other installation lists
-#################################################################################
-
-# Volta/npm packages
-npm_install_list=()
 
 #################################################################################
 # oh-my-zsh install and plugins
@@ -82,9 +78,7 @@ fi
 if ! command -v volta &>/dev/null; then
     curl https://get.volta.sh | bash -s -- --skip-setup
 fi
-if [ ${#npm_install_list[@]} -gt 0 ]; then
-  volta install "${npm_install_list[@]}"
-fi
+"$cfg_dir/scripts/install_pyright.sh" || exit $?
 
 #################################################################################
 # Native installers
@@ -94,6 +88,7 @@ if [ ! -x "$HOME/.local/bin/herdr" ]; then
     curl -fsSL https://herdr.dev/install.sh | sh
 fi
 "$cfg_dir/scripts/install_herdr_skill.sh"
+"$cfg_dir/scripts/install_px0.sh" || exit $?
 
 #################################################################################
 # TMUX plugin manager setup
