@@ -115,12 +115,14 @@ if [ "$1" = -s ]; then echo "${TEST_SYSTEM:-Darwin}"; else echo "${TEST_ARCH:-ar
     def test_pyright_default_cached_only_and_launcher(self):
         volta = self.home / ".volta/bin/volta"
         volta.parent.mkdir(parents=True)
+        self.write_tool("volta-shim", "#!/bin/sh\n")
+        (volta.parent / "node").symlink_to(self.tools / "volta-shim")
         volta.write_text("""#!/bin/sh
 case "$1 $2" in
   "list node") printf '%s\\n' "$NODE_LIST" ;;
   "list pyright") if [ -e "$HOME/.volta/installed" ]; then echo 'package pyright@1.1.414 / pyright, pyright-langserver / node@16.19.0 npm@built-in (default)'; fi ;;
   "install node@22") touch "$HOME/.volta/node-installed" ;;
-  "install pyright") touch "$HOME/.volta/installed"; touch "$HOME/.volta/bin/pyright-langserver"; chmod +x "$HOME/.volta/bin/pyright-langserver" ;;
+  "install pyright") touch "$HOME/.volta/installed"; ln -sf "$HOME/.volta/bin/volta-shim" "$HOME/.volta/bin/pyright-langserver" ;;
   "run pyright-langserver") shift 2; printf 'cwd=%s args=%s stdin=' "$PWD" "$*"; cat ;;
   *) exit 2 ;;
 esac
@@ -129,12 +131,14 @@ esac
         self.env["NODE_LIST"] = "runtime node@16.19.0 (default)\nruntime node@22.21.0"
         self.run_script("install_pyright.sh")
         self.assertFalse((self.home / ".volta/node-installed").exists())
+        self.assertTrue((volta.parent / "volta-shim").is_file())
         launcher = self.home / ".local/bin/pyright-langserver"
         result = subprocess.run([str(launcher), "--stdio", "extra"], input="payload", env=self.env,
                                 cwd=self.fixtures, text=True, capture_output=True, timeout=5)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(result.stdout, f"cwd={self.fixtures.resolve()} args=--stdio extra stdin=payload")
         self.env["NODE_LIST"] = "runtime node@22.21.0"
+        (volta.parent / "volta-shim").unlink()
         self.run_script("install_pyright.sh")
         self.assertTrue((self.home / ".volta/node-installed").exists())
         self.env["NODE_LIST"] = "runtime node@12.22.0 (default)"

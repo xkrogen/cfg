@@ -13,6 +13,20 @@ if [ ! -x "$volta" ]; then
     install -m 755 "$source" "$volta"
 fi
 
+# Volta's package shims point into its home. A system-provided Volta can
+# create those links without placing the shim executable on persistent storage.
+if [ ! -x "$HOME/.volta/bin/volta-shim" ]; then
+    shim=$(command -v volta-shim || :)
+    if [ -z "$shim" ] && [ -L "$HOME/.volta/bin/node" ]; then
+        shim=$(readlink "$HOME/.volta/bin/node")
+    fi
+    if [ ! -x "$shim" ]; then
+        echo "Volta shim is missing; run ~/.cfg/scripts/setup.sh first" >&2
+        exit 1
+    fi
+    install -m 755 "$shim" "$HOME/.volta/bin/volta-shim"
+fi
+
 # Query defaults from HOME: a project's volta pin is not the global default.
 nodes=$(cd "$HOME" && "$volta" list node --format plain)
 if [[ "$nodes" =~ node@([0-9]+)(\.[0-9]+)*[[:space:]]+\(default\) ]]; then
