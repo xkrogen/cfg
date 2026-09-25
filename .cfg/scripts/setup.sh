@@ -46,10 +46,6 @@ brew_install_list=(
     zsh-syntax-highlighting
 )
 
-if [ "${CFG_SKIP_JDTLS:-0}" != "1" ]; then
-    brew_install_list+=(jdtls)
-fi
-
 if ! command -v brew &>/dev/null; then
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     if [[ "$OS_OSX" = "false" ]]; then
@@ -58,6 +54,10 @@ if ! command -v brew &>/dev/null; then
     fi
 fi
 brew install "${brew_install_list[@]}"
+# The other Brew packages remain best effort; Java tooling is required unless skipped.
+if [ "${CFG_SKIP_JDTLS:-0}" != "1" ]; then
+    brew install jdtls || exit $?
+fi
 
 export PATH="$(brew --prefix)/bin:$PATH"
 "$cfg_dir/scripts/install_git_sprout.sh"

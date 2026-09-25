@@ -199,13 +199,57 @@ esac
         self.run_script("install_jdtls.sh")
         self.assertEqual(jdtls.stat().st_ino, inode)
 
-    def test_setup_wires_generic_packages_and_opt_out(self):
-        content = (SCRIPTS / "setup.sh").read_text()
-        self.assertIn('brew_install_list+=(jdtls)', content)
-        self.assertIn('CFG_SKIP_JDTLS:-0', content)
-        self.assertIn('scripts/install_px0.sh', content)
-        self.assertIn('scripts/install_pyright.sh', content)
-        self.assertNotIn("npm_install_list", content)
+    def test_setup_propagates_required_jdtls_failure_without_changing_other_brew_failures(self):
+        scripts = self.home / ".cfg/scripts"
+        scripts.mkdir(parents=True)
+        (scripts / "setup.sh").write_text((SCRIPTS / "setup.sh").read_text())
+        for name in ("install_git_sprout.sh", "install_pyright.sh",
+                     "install_herdr_skill.sh", "install_px0.sh"):
+            installer = scripts / name
+            installer.write_text(f'#!/bin/sh\necho {name} >> "$FIXTURE_ROOT/installers"\n')
+            installer.chmod(0o755)
+        for directory in (".oh-my-zsh", ".tmux/plugins/tpm", ".local/bin"):
+            (self.home / directory).mkdir(parents=True)
+        (self.home / ".local/bin/herdr").touch(mode=0o755)
+        prefix = self.fixtures / "prefix/opt/fzf"
+        prefix.mkdir(parents=True)
+        fzf_install = prefix / "install"
+        fzf_install.write_text("#!/bin/sh\nexit 0\n")
+        fzf_install.chmod(0o755)
+        self.write_tool("volta", "#!/bin/sh\nexit 0\n")
+        self.write_tool("jenv", "#!/bin/sh\nexit 0\n")
+        self.write_tool("git", "#!/bin/sh\nexit 0\n")
+        self.write_tool("brew", """#!/bin/sh
+if [ "$1" = --prefix ]; then echo "$FIXTURE_ROOT/prefix"; exit 0; fi
+echo "$*" >> "$FIXTURE_ROOT/brew_calls"
+if [ "$1" = install ]; then
+    case " $* " in *" jdtls "*) [ "${FAIL_JDTLS:-0}" != 1 ] || exit 17 ;; esac
+    if [ "$#" -gt 2 ] && [ "${FAIL_BULK:-0}" = 1 ]; then exit 19; fi
+fi
+""")
+
+        def run_setup(**overrides):
+            result = subprocess.run(["bash", str(scripts / "setup.sh")],
+                                    env={**self.env, **overrides}, cwd=self.home,
+                                    capture_output=True, text=True, timeout=30)
+            calls = (self.fixtures / "brew_calls").read_text().splitlines()
+            (self.fixtures / "brew_calls").unlink()
+            return result, calls
+
+        failed, calls = run_setup(FAIL_JDTLS="1")
+        self.assertEqual(failed.returncode, 17, failed.stdout + failed.stderr)
+        self.assertTrue(any("jdtls" in call for call in calls))
+        self.assertNotIn("Upon first time running tmux", failed.stdout)
+
+        skipped, calls = run_setup(FAIL_JDTLS="1", CFG_SKIP_JDTLS="1")
+        self.assertEqual(skipped.returncode, 0, skipped.stdout + skipped.stderr)
+        self.assertFalse(any("jdtls" in call for call in calls))
+        self.assertIn("install_pyright.sh", (self.fixtures / "installers").read_text())
+        self.assertIn("install_px0.sh", (self.fixtures / "installers").read_text())
+
+        best_effort, calls = run_setup(FAIL_BULK="1")
+        self.assertEqual(best_effort.returncode, 0, best_effort.stdout + best_effort.stderr)
+        self.assertTrue(any("jdtls" in call for call in calls))
 
 
 if __name__ == "__main__":
