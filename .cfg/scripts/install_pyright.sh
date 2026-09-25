@@ -11,6 +11,10 @@ if [ ! -x "$volta" ]; then
     fi
     mkdir -p "$HOME/.volta/bin"
     install -m 755 "$source" "$volta"
+    migrator="$(dirname "$source")/volta-migrate"
+    if [ -x "$migrator" ] && [ ! -x "$HOME/.volta/bin/volta-migrate" ]; then
+        install -m 755 "$migrator" "$HOME/.volta/bin/volta-migrate"
+    fi
 fi
 
 # Volta's package shims point into its home. A system-provided Volta can

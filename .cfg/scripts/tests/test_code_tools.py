@@ -150,6 +150,21 @@ esac
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("Pyright is missing", result.stderr)
 
+    def test_system_volta_migrator_and_shim_become_persistent(self):
+        self.write_tool("volta", """#!/bin/sh
+case "$1 $2" in
+  "list node") echo 'runtime node@20.19.1 (default)' ;;
+  "list pyright") echo 'package pyright@1.1.414 / pyright-langserver (default)' ;;
+  "install pyright") ln -s "$HOME/.volta/bin/volta-shim" "$HOME/.volta/bin/pyright-langserver" ;;
+  *) exit 2 ;;
+esac
+""")
+        self.write_tool("volta-shim", "#!/bin/sh\n")
+        self.write_tool("volta-migrate", "#!/bin/sh\n")
+        self.run_script("install_pyright.sh")
+        for name in ("volta", "volta-shim", "volta-migrate"):
+            self.assertTrue((self.home / ".volta/bin" / name).is_file())
+
     def test_jdtls_complete_reuse_and_bad_archive_preserves(self):
         dest = self.home / ".local/share/jdtls/1.61.0"
         (dest / "bin").mkdir(parents=True)
