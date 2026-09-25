@@ -89,6 +89,7 @@ if [ ! -x "$HOME/.local/bin/herdr" ]; then
 fi
 "$cfg_dir/scripts/install_herdr_skill.sh"
 "$cfg_dir/scripts/install_px0.sh" || exit $?
+"$cfg_dir/scripts/install_terminal_browser.sh" || exit $?
 
 #################################################################################
 # TMUX plugin manager setup

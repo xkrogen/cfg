@@ -199,14 +199,83 @@ esac
         self.run_script("install_jdtls.sh")
         self.assertEqual(jdtls.stat().st_ino, inode)
 
+    def browser_archive(self, platform, *, broken_controller=False):
+        archive = self.fixtures / f"terminal-browser-{platform}.tar.gz"
+        with tarfile.open(archive, "w:gz") as output:
+            for name, data in (
+                ("bin/terminal-browser", b"#!/bin/sh\nprintf '<%s>\\n' \"$@\"\n"),
+                ("agent-browser/bin/agent-browser",
+                 b"#!/bin/sh\nexit 23\n" if broken_controller else b"#!/bin/sh\nexit 0\n"),
+            ):
+                entry = tarfile.TarInfo("terminal-browser/" + name)
+                entry.size = len(data)
+                entry.mode = 0o755
+                output.addfile(entry, BytesIO(data))
+
+    def test_terminal_browser_platforms_repeat_and_launcher_recovery(self):
+        # As in the jdtls fixture, only the positive digest check is stubbed.
+        # The mismatch test uses the real verifier; the official Linux bundle
+        # is also exercised independently before publishing the installer.
+        self.write_tool("python3", "#!/bin/sh\nexit 0\n")
+        for system, arch, platform in (("Darwin", "arm64", "darwin-arm64"),
+                                       ("Darwin", "x86_64", "darwin-x64"),
+                                       ("Linux", "x86_64", "linux-x64"),
+                                       ("Linux", "aarch64", "linux-arm64")):
+            with self.subTest(platform=platform):
+                home = self.home / platform
+                home.mkdir()
+                self.env.update(HOME=str(home), TEST_SYSTEM=system, TEST_ARCH=arch)
+                self.browser_archive(platform)
+                self.run_script("install_terminal_browser.sh")
+                app = home / ".local/share/terminal-browser/app"
+                launcher = home / ".local/bin/terminal-browser"
+                inode = (app / "bin/terminal-browser").stat().st_ino
+                result = subprocess.run([str(launcher), "argument with spaces", "--json"],
+                                        env=self.env, capture_output=True, text=True, timeout=5)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual(result.stdout, "<argument with spaces>\n<--json>\n")
+                self.env["FAIL_ASSET"] = f"terminal-browser-{platform}.tar.gz"
+                self.run_script("install_terminal_browser.sh")
+                launcher.unlink()
+                self.run_script("install_terminal_browser.sh")
+                self.assertTrue(launcher.is_file())
+                self.assertEqual((app / "bin/terminal-browser").stat().st_ino, inode)
+                self.assertFalse(list(app.parent.glob(".terminal-browser.*")))
+                self.env.pop("FAIL_ASSET")
+
+    def test_terminal_browser_rejects_bad_downloads_and_unsupported_platforms(self):
+        self.env.update(TEST_SYSTEM="Linux", TEST_ARCH="x86_64")
+        self.browser_archive("linux-x64")
+        self.assertIn("checksum mismatch",
+                      self.run_script("install_terminal_browser.sh", ok=False).stderr)
+        self.env["FAIL_ASSET"] = "terminal-browser-linux-x64.tar.gz"
+        self.assertIn("fixture download failed",
+                      self.run_script("install_terminal_browser.sh", ok=False).stderr)
+        self.env["TEST_ARCH"] = "mips"
+        self.assertIn("Unsupported terminal-browser platform",
+                      self.run_script("install_terminal_browser.sh", ok=False).stderr)
+        self.assertFalse((self.home / ".local/bin/terminal-browser").exists())
+        self.assertFalse(list((self.home / ".local/share/terminal-browser").iterdir()))
+
+    def test_terminal_browser_checks_controller_before_publishing(self):
+        self.write_tool("python3", "#!/bin/sh\nexit 0\n")
+        self.env.update(TEST_SYSTEM="Linux", TEST_ARCH="x86_64")
+        self.browser_archive("linux-x64", broken_controller=True)
+        result = self.run_script("install_terminal_browser.sh", ok=False)
+        self.assertEqual(result.returncode, 23)
+        self.assertFalse((self.home / ".local/bin/terminal-browser").exists())
+        self.assertFalse((self.home / ".local/share/terminal-browser/app").exists())
+        self.assertFalse(list((self.home / ".local/share/terminal-browser").iterdir()))
+
     def test_setup_propagates_required_jdtls_failure_without_changing_other_brew_failures(self):
         scripts = self.home / ".cfg/scripts"
         scripts.mkdir(parents=True)
         (scripts / "setup.sh").write_text((SCRIPTS / "setup.sh").read_text())
         for name in ("install_git_sprout.sh", "install_pyright.sh",
-                     "install_herdr_skill.sh", "install_px0.sh"):
+                     "install_herdr_skill.sh", "install_px0.sh", "install_terminal_browser.sh"):
             installer = scripts / name
-            installer.write_text(f'#!/bin/sh\necho {name} >> "$FIXTURE_ROOT/installers"\n')
+            installer.write_text(f'#!/bin/sh\necho {name} >> "$FIXTURE_ROOT/installers"\n'
+                                 f'if [ "${{FAIL_INSTALLER:-}}" = "{name}" ]; then exit 29; fi\n')
             installer.chmod(0o755)
         for directory in (".oh-my-zsh", ".tmux/plugins/tpm", ".local/bin"):
             (self.home / directory).mkdir(parents=True)
@@ -246,6 +315,11 @@ fi
         self.assertFalse(any("jdtls" in call for call in calls))
         self.assertIn("install_pyright.sh", (self.fixtures / "installers").read_text())
         self.assertIn("install_px0.sh", (self.fixtures / "installers").read_text())
+        self.assertIn("install_terminal_browser.sh", (self.fixtures / "installers").read_text())
+
+        browser_failed, _ = run_setup(FAIL_INSTALLER="install_terminal_browser.sh")
+        self.assertEqual(browser_failed.returncode, 29, browser_failed.stdout + browser_failed.stderr)
+        self.assertNotIn("Upon first time running tmux", browser_failed.stdout)
 
         best_effort, calls = run_setup(FAIL_BULK="1")
         self.assertEqual(best_effort.returncode, 0, best_effort.stdout + best_effort.stderr)

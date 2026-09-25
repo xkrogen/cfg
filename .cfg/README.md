@@ -18,3 +18,12 @@ configuration. `~/.cfg/scripts/install_jdtls.sh` separately installs the
 checksum-verified jdtls 1.61.0 distribution under `~/.local/share/jdtls`
 for a custom launcher; it does not configure a JVM. For the ordinary Homebrew
 installation, use `brew upgrade jdtls` to update an existing installation.
+
+Standard setup also installs the official terminal-browser v0.11.1 bundle into
+`~/.local/share/terminal-browser`, with a launcher in `~/.local/bin`. Run
+`~/.cfg/scripts/install_terminal_browser.sh` to install only this tool. Fresh
+installs support macOS and Linux on x64/arm64 and verify the published archive
+checksum and both bundled executables before publishing the installation.
+Existing installations are left at their current version; upgrades are a
+separate, explicit operation. The installer does not stop browser processes,
+run terminal configuration, install system libraries, or require Node on PATH.
