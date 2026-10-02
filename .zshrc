@@ -431,10 +431,6 @@ path=("$HOME/.copilot/bin" "$HOME/.local/bin" $path)
 
 debug_timing_checkpoint "final"
 
-if command -v atuin &>/dev/null; then
-    eval "$(atuin init zsh --disable-up-arrow)"
-fi
-
 # Keep this last: https://github.com/zsh-users/zsh-syntax-highlighting#why-must-zsh-syntax-highlightingzsh-be-sourced-at-the-end-of-the-zshrc-file
 if command -v brew >/dev/null 2>&1; then
     _brew_prefix="$(brew --prefix 2>/dev/null)"

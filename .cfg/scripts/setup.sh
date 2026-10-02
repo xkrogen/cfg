@@ -17,7 +17,6 @@ fi
 
 # brew installs
 brew_install_list=(
-    atuin
     azure-cli
     bash
     bat
