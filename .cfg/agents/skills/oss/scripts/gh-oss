@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Usage: gh-oss <gh arguments...>
+# Runs a GitHub CLI command against github.com as the xkrogen account without
+# changing global gh authentication. Output is the delegated gh command's output.
+
+set -euo pipefail
+
+if [[ $# -eq 0 ]]; then
+    printf 'Usage: gh-oss <gh arguments...>\n' >&2
+    exit 64
+fi
+
+token="$(env -u GH_HOST -u GH_TOKEN -u GITHUB_TOKEN gh auth token --hostname github.com --user xkrogen)"
+if [[ -z "$token" ]]; then
+    printf 'No github.com token is available for xkrogen. Authenticate xkrogen before using gh-oss.\n' >&2
+    exit 1
+fi
+
+exec env -u GITHUB_TOKEN GH_HOST=github.com GH_TOKEN="$token" gh "$@"

@@ -31,8 +31,8 @@ run terminal configuration, install system libraries, or require Node on PATH.
 ## Agent instruction and skill layout
 
 - `~/.agents/skills`: shared generic skills, versioned in personal cfg under
-  `.cfg/agents/skills`. Includes wrap-up/handoff, coding-guidelines, disk-cleanup, gh-stack,
-  make-pages-interactive, voice-transcription, and skill-simplifier.
+  `.cfg/agents/skills`. Includes wrap-up, coding-guidelines, disk-cleanup, gh-stack,
+  make-pages-interactive, voice-transcription, skill-simplifier, and oss.
 - `~/.copilot/skills`: work-specific skills, owned by cfgli/the work overlay.
 - `~/.codex/skills`: personal-only skills, owned by personal cfg.
 - `~/.codex/AGENTS.md`: personal global instructions sourced from `.cfg/codex/AGENTS.md`.

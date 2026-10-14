@@ -1,12 +1,11 @@
 ---
 name: wrap-up
-description: Close out a work or personal session or prepare a handoff by updating durable context, recording outcomes and next steps, and completing the authorized Git workflow. Use when Erik asks to wrap up, save session context, or hand work to another agent.
+description: Close out a work or personal session by updating durable context, recording outcomes and next steps, and completing the authorized Git workflow. Use when Erik asks to wrap up or save session context.
 ---
 
-# Shared wrap-up and handoff
+# Shared wrap-up
 
-Leave enough current, durable context for the next agent to continue without the
-chat transcript. Read the repository's instructions and recent session notes first.
+Keep maintained docs and session records current at the end of the session. Read the repository's instructions and recent session notes first.
 
 ## Where the record belongs
 
@@ -37,7 +36,7 @@ current authorized session and its artifacts, without cross-context history sear
   commands/paths needed to resume; reference existing artifacts instead of pasting
   them repeatedly. Keep credentials and sensitive raw content out of the record.
 - Include only decisions supported by the session. Do not invent missing results,
-  run unrelated fixes, or install a memory system to complete a handoff.
+  run unrelated fixes, or install a memory system as part of session closeout.
 
 ## Git and delivery
 
@@ -54,7 +53,6 @@ never infer that credentials or visibility carry across contexts. If no remote i
 configured, retain the commit and report the missing destination. Do not create a hosted repo or guess
 visibility. If a push fails, record the real error and preserve the local commit.
 
-Finish with a short continuation summary: outcome, durable paths, commit/push
-status, and next action/blocker. Ask about the next session's goal only if it is
-materially unclear; no routine confirmation is needed for already authorized
-documentation or Git work.
+Finish with a short closeout summary: outcome, updated durable records, commit/push
+status, and any unresolved work. No routine confirmation is needed for already
+authorized documentation or Git work. Do not generate a separate handoff document.
