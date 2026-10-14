@@ -30,38 +30,36 @@ run terminal configuration, install system libraries, or require Node on PATH.
 
 ## Agent instruction and skill layout
 
-- `~/.agents/skills`: shared generic skills, versioned in personal cfg under
-  `.cfg/agents/skills`. Includes wrap-up, coding-guidelines, disk-cleanup, gh-stack,
+cfg is a bare Git repository with `$HOME` as its worktree. Track actual files
+where the tools read them; do not install agent configuration as symlinks into
+`.cfg`. The bare checkout restores tracked files directly; no installer is needed.
+
+- `~/.agents/skills`: real shared skill directories tracked in personal cfg.
+  Includes wrap-up, coding-guidelines, disk-cleanup, gh-stack,
   make-pages-interactive, voice-transcription, skill-simplifier, and oss.
-- `~/.copilot/skills`: work-specific skills, owned by cfgli/the work overlay.
-- `~/.codex/skills`: personal-only skills, owned by personal cfg.
-- `~/.codex/AGENTS.md`: personal global instructions sourced from `.cfg/codex/AGENTS.md`.
+- `~/.codex/AGENTS.md`: real personal global instruction file tracked in cfg.
+- `~/.codex/skills`: personal-only skills; `~/.copilot/skills`: work-only skills
+  owned by cfgli/the work overlay. Shared implementations belong in personal cfg.
+- `~/.cfg/dotfiles/.agents -> ../../.agents` and
+  `~/.cfg/dotfiles/.codex -> ../../.codex`: parent-directory browsing references,
+  following the existing dotfiles convention. These links do not imply tracking
+  every file in either runtime directory. Stage only intended configuration paths.
 
-Tracked relative symlinks deploy the global Codex file and shared skill directories.
-There are no duplicate installations of the shared skills in the Copilot or
-Codex-specific roots. Sharing methods does not share work/personal data or accounts;
-see `.cfg/agents/README.md`.
+Sharing methods does not share work/personal data, accounts or authorization.
+Credentials, transcripts, caches, indexes and runtime state stay outside Git.
+No duplicate approved skills remain in Copilot/Codex-specific roots. The standalone
+handoff and its combined behavior are removed; wrap-up only closes out docs,
+session records and authorized Git work. Diagramming remains work-only; public-docs
+was not selected for sharing.
 
-To recreate or repair links:
+OSS preserves xkrogen per-command authentication and personal-fork behavior with
+generic enterprise boundaries. Voice transcription uses the existing executable
+on PATH and local storage; this layout change does not relocate its helper,
+recordings, authentication, ledger or transcripts. Interactive-page work conventions
+remain in cfgli's `.copilot/skill-overlays`.
 
-```sh
-python3 "$HOME/.cfg/scripts/install_codex_personal.py"
-```
-
-The installer honors CODEX_HOME, supports `--codex-home` and `--skills-home` for
-isolated/custom targets, and refuses conflicting files, links, or an active Codex
-AGENTS.override.md. It migrates only recognized formerly managed Codex skill links;
-it never deletes arbitrary work/personal skill directories. Copilot-copy removal
-is separately tracked in the work overlay. Reload skills/start a new agent session
-as needed for discovery.
-
-No distill-knowledge, writing, or multi-model-comparison skill was installed.
-Hindsight is a pending user investigation. General personal records remain in
-agent-space and project-specific records with their project; cfg owns deployed
-instructions and shared/personal skill sources.
-
-Installer regression checks:
-
-```sh
-python3 -B -m unittest discover -s "$HOME/.cfg/codex/tests" -v
-```
+The former `install_codex_personal.py` and its link-installer tests were retired
+when configuration moved to real runtime paths. General personal records remain
+in agent-space; project-specific records stay in their project. No distill-knowledge,
+writing, or multi-model-comparison skill was selected. Hindsight is a pending
+user investigation.

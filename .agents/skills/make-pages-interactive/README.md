@@ -54,8 +54,8 @@ Plus glue:
 
 ## Install
 
-Managed by personal cfg; run `python3 ~/.cfg/scripts/install_codex_personal.py`
-to restore its link under `~/.agents/skills`.
+Managed by personal cfg as real files under `~/.agents/skills`. The bare cfg
+checkout restores these files directly; no separate installer is required.
 
 ---
 
