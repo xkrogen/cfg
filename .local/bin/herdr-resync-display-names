@@ -1,0 +1,13 @@
+#!/bin/sh
+# Shared keybinding dispatcher: each agent owns its own native metadata reader.
+set -u
+if [ "${HERDR_ENV:-}" != 1 ]; then
+    echo 'Display-name refresh must run inside Herdr.' >&2
+    exit 1
+fi
+result=0
+if [ -x "$HOME/.copilot/bin/herdr-resync-display-names.sh" ]; then
+    "$HOME/.copilot/bin/herdr-resync-display-names.sh" || result=1
+fi
+python3 "$HOME/.codex/bin/named-session.py" refresh || result=1
+exit "$result"

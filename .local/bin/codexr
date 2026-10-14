@@ -1,0 +1,3 @@
+#!/bin/sh
+# Resume exactly one saved native Codex session by its current name.
+exec python3 "$HOME/.codex/bin/named-session.py" resume "$@"

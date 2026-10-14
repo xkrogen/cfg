@@ -72,8 +72,8 @@ sleep 0.1
 [[keys.command]]
 key = "prefix+shift+r"
 type = "shell"
-description = "resync all Copilot pane display names (fixes stale 'copilot' labels)"
-command = "~/.copilot/bin/herdr-resync-display-names.sh"
+description = "resync native Copilot and Codex session display names"
+command = "~/.local/bin/herdr-resync-display-names"
 
 [[keys.command]]
 key = "ctrl+shift+left"
