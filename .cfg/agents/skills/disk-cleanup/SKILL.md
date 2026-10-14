@@ -3,7 +3,7 @@ name: disk-cleanup
 description: Inspect and reclaim local disk space when Erik explicitly requests cleanup. Identify exact targets, preserve valuable state, perform authorized deletion narrowly, and verify results. Not for formatting disks, flashing installers, or routine unrelated maintenance.
 ---
 
-# Personal disk cleanup
+# Shared disk cleanup
 
 Start with read-only inspection of the actual machine and requested scope. Use
 appropriate installed tools to establish free space and the largest relevant
@@ -53,5 +53,7 @@ differences between estimated sizes and actual reclaimed space (for example,
 snapshots, open files, or shared storage); do not claim all deleted bytes became
 free immediately. Report actual errors and skipped targets.
 
-Record meaningful personal results in agent-space by default, or in the relevant
-project repo when project-specific, without copying sensitive listings into Git.
+Record results in the active context's authorized repository/system without copying
+sensitive listings into Git. For personal work, default to agent-space unless the
+results are specific to another project repo. Work results stay in work systems;
+shared cleanup methods do not authorize cross-context data or account access.

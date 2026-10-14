@@ -3,10 +3,14 @@
 ## Work and personal boundary
 
 Codex is for my personal/fun work. Copilot is for work. Keep their context,
-accounts, credentials, instructions, skills/runtime state, artifacts, transcripts,
-and search indexes separate. Do not import work content or expose it through
-summaries or shared retrieval. A specifically requested review may extract general
-preferences and reusable methods without corporate context.
+accounts, credentials, tool-specific instructions/runtime state, artifacts,
+transcripts, and search indexes separate. Generic shared skills are the explicit
+exception: `~/.agents/skills` is shared, `~/.copilot/skills` is work-only, and
+`~/.codex/skills` is personal-only. Shared skill sources belong in personal cfg,
+not cfgli. Sharing a method does not share task data, accounts, or permissions.
+Do not import work content or expose it through summaries or shared retrieval.
+A specifically requested review may extract general preferences and reusable
+methods without corporate context.
 
 ## How to work with me
 

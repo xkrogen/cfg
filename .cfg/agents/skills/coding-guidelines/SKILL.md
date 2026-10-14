@@ -1,9 +1,9 @@
 ---
 name: coding-guidelines
-description: Apply Erik's personal code-quality preferences to substantive implementation, refactoring, or code review. Focus on clear contracts, existing patterns, scoped solutions, and meaningful validation; not a required ceremony for trivial edits.
+description: Apply Erik's code-quality preferences to substantive implementation, refactoring, or code review. Focus on clear contracts, existing patterns, scoped solutions, and meaningful validation; not a required ceremony for trivial edits.
 ---
 
-# Personal coding guidelines
+# Shared coding guidelines
 
 Read applicable project instructions and nearby code before choosing a design.
 Use these decision criteria in the work; do not dump a checklist into every reply.
@@ -43,6 +43,9 @@ concrete defects; explain when a suggestion adds speculative complexity or chang
 scope. Once sufficient checks pass, continue to completion rather than repeatedly
 testing without a new concern. Report actual checks, failures, and remaining limits.
 
-Follow personal Git conventions: agent-managed, no PRs; direct master commits and
-pushes normally, feature branches with squash integration for parallel work.
-Keep repository-specific code conventions and documented legacy branch state.
+Follow the active repository's Git and publication conventions. In personal repos,
+use agent-managed no-PR integration: direct master commits/pushes normally and
+feature branches with squash integration for parallel work, honoring documented
+legacy branches. In work repos, follow work review/publication rules instead.
+Sharing these methods does not authorize moving code, context, or credentials
+between work and personal systems.

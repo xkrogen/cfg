@@ -28,35 +28,38 @@ Existing installations are left at their current version; upgrades are a
 separate, explicit operation. The installer does not stop browser processes,
 run terminal configuration, install system libraries, or require Node on PATH.
 
-## Personal Codex setup
+## Agent instruction and skill layout
 
-Personal Codex instructions and skills are versioned under `.cfg/codex/`:
+- `~/.agents/skills`: shared generic skills, versioned in personal cfg under
+  `.cfg/agents/skills`. Currently wrap-up/handoff, coding-guidelines, and disk-cleanup.
+- `~/.copilot/skills`: work-specific skills, owned by cfgli/the work overlay.
+- `~/.codex/skills`: personal-only skills, owned by personal cfg.
+- `~/.codex/AGENTS.md`: personal global instructions sourced from `.cfg/codex/AGENTS.md`.
 
-- `AGENTS.md`: personal/work separation, agent-space as the default notes home,
-  and the agent-managed no-PR Git workflow.
-- `skills/wrap-up`: combined session closeout and handoff.
-- `skills/coding-guidelines`: substantive personal code changes and review.
-- `skills/disk-cleanup`: scoped local cleanup with authorization and verification.
+Tracked relative symlinks deploy the global Codex file and shared skill directories.
+There are no duplicate installations of the three shared skills in the Copilot or
+Codex-specific roots. Sharing methods does not share work/personal data or accounts;
+see `.cfg/agents/README.md`.
 
-The tracked `.codex/AGENTS.md` and three `.codex/skills/` entries are relative
-symlinks to these sources, so a cfg checkout restores the personal setup. To repair
-or recreate links, run:
+To recreate or repair links:
 
 ```sh
 python3 "$HOME/.cfg/scripts/install_codex_personal.py"
 ```
 
-The installer honors `CODEX_HOME`, can target another directory with `--codex-home`,
-and refuses conflicting existing files/links or an active global override. It does
-not alter Copilot, shared agent skills, credentials, or other Codex settings.
-Start a new Codex session to load the global instructions and newly installed skills.
+The installer honors CODEX_HOME, supports `--codex-home` and `--skills-home` for
+isolated/custom targets, and refuses conflicting files, links, or an active Codex
+AGENTS.override.md. It migrates only recognized formerly managed Codex skill links;
+it never deletes arbitrary work/personal skill directories. Copilot-copy removal
+is separately tracked in the work overlay. Reload skills/start a new agent session
+as needed for discovery.
 
-No distill-knowledge, writing, or multi-model-comparison skill is installed.
-Hindsight is a separate user investigation for memory curation, not an installed
-dependency. General decisions/journals remain in agent-space and project-specific
-records in the project repo; cfg owns the deployed instructions and skill sources.
+No distill-knowledge, writing, or multi-model-comparison skill was installed.
+Hindsight is a pending user investigation. General personal records remain in
+agent-space and project-specific records with their project; cfg owns deployed
+instructions and shared/personal skill sources.
 
-Run installer regression checks with:
+Installer regression checks:
 
 ```sh
 python3 -B -m unittest discover -s "$HOME/.cfg/codex/tests" -v
