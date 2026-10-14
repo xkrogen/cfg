@@ -30,7 +30,8 @@ class InstallTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
         links = [(self.target / 'AGENTS.md', SOURCE / 'AGENTS.md')]
         links.extend((self.skills / name, SHARED_SOURCE / name)
-                     for name in ('wrap-up', 'coding-guidelines', 'disk-cleanup'))
+                     for name in ('wrap-up', 'coding-guidelines', 'disk-cleanup', 'gh-stack',
+                                  'make-pages-interactive', 'voice-transcription', 'skill-simplifier'))
         for target, source in links:
             self.assertTrue(target.is_symlink())
             self.assertFalse(os.path.isabs(os.readlink(target)))

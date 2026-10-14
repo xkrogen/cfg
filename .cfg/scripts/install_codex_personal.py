@@ -11,7 +11,8 @@ def install(codex_home, skills_home):
     cfg_root = Path(__file__).resolve().parent.parent
     source_root = cfg_root / 'codex'
     shared_root = cfg_root / 'agents' / 'skills'
-    names = ('wrap-up', 'coding-guidelines', 'disk-cleanup')
+    names = ('wrap-up', 'coding-guidelines', 'disk-cleanup', 'gh-stack',
+             'make-pages-interactive', 'voice-transcription', 'skill-simplifier')
     links = [(source_root / 'AGENTS.md', codex_home / 'AGENTS.md')]
     links.extend((shared_root / name, skills_home / name) for name in names)
     legacy_links = []

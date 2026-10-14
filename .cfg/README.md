@@ -31,13 +31,14 @@ run terminal configuration, install system libraries, or require Node on PATH.
 ## Agent instruction and skill layout
 
 - `~/.agents/skills`: shared generic skills, versioned in personal cfg under
-  `.cfg/agents/skills`. Currently wrap-up/handoff, coding-guidelines, and disk-cleanup.
+  `.cfg/agents/skills`. Includes wrap-up/handoff, coding-guidelines, disk-cleanup, gh-stack,
+  make-pages-interactive, voice-transcription, and skill-simplifier.
 - `~/.copilot/skills`: work-specific skills, owned by cfgli/the work overlay.
 - `~/.codex/skills`: personal-only skills, owned by personal cfg.
 - `~/.codex/AGENTS.md`: personal global instructions sourced from `.cfg/codex/AGENTS.md`.
 
 Tracked relative symlinks deploy the global Codex file and shared skill directories.
-There are no duplicate installations of the three shared skills in the Copilot or
+There are no duplicate installations of the shared skills in the Copilot or
 Codex-specific roots. Sharing methods does not share work/personal data or accounts;
 see `.cfg/agents/README.md`.
 

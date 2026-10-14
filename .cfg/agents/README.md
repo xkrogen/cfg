@@ -8,9 +8,13 @@ Skill scope is defined by discovery directory:
 | `~/.copilot/skills` | Work-specific skills | Work cfgli/overlay |
 | `~/.codex/skills` | Personal Codex-specific skills | Personal cfg |
 
-The shared wrap-up/handoff, coding-guidelines, and disk-cleanup sources are linked
-into `~/.agents/skills`. There are no duplicate installations of these skills in
-Copilot/Codex-specific roots. The old separate handoff is folded into wrap-up.
+The shared set is wrap-up (including handoff), coding-guidelines, disk-cleanup,
+gh-stack, make-pages-interactive, voice-transcription, and skill-simplifier. Sources
+are linked into `~/.agents/skills`; former Copilot copies are removed. Work-only
+interactive-page conventions remain in cfgli's `.copilot/skill-overlays`.
+Voice transcription uses the existing `voice-transcription` executable on PATH
+and existing local storage; this skill migration does not relocate the helper,
+recordings, authentication, ledger or transcripts.
 
 Shared methods must respect the current task's context. Work notes stay in work
 systems; personal notes default to agent-space unless project-specific. Personal
@@ -22,6 +26,5 @@ and personal Codex global instruction link. It removes only recognized formerly
 managed Codex links, preserving unrelated or conflicting files. Copilot copy
 removal is an explicit, separately tracked migration rather than a blanket cleanup.
 
-gh-stack, diagramming, make-pages-interactive, public-docs, skill-simplifier, and
-voice-transcription are review candidates, not installed shared skills. Their
-review and decisions belong in agent-space until adoption.
+Diagramming and OSS remain review-only pending sanitization. Public-docs was not
+selected for sharing. Review decisions and findings belong in agent-space.
