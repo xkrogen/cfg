@@ -1,0 +1,1 @@
+../.cfg/codex/AGENTS.md

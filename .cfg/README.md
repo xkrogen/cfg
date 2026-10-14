@@ -27,3 +27,37 @@ checksum and both bundled executables before publishing the installation.
 Existing installations are left at their current version; upgrades are a
 separate, explicit operation. The installer does not stop browser processes,
 run terminal configuration, install system libraries, or require Node on PATH.
+
+## Personal Codex setup
+
+Personal Codex instructions and skills are versioned under `.cfg/codex/`:
+
+- `AGENTS.md`: personal/work separation, agent-space as the default notes home,
+  and the agent-managed no-PR Git workflow.
+- `skills/wrap-up`: combined session closeout and handoff.
+- `skills/coding-guidelines`: substantive personal code changes and review.
+- `skills/disk-cleanup`: scoped local cleanup with authorization and verification.
+
+The tracked `.codex/AGENTS.md` and three `.codex/skills/` entries are relative
+symlinks to these sources, so a cfg checkout restores the personal setup. To repair
+or recreate links, run:
+
+```sh
+python3 "$HOME/.cfg/scripts/install_codex_personal.py"
+```
+
+The installer honors `CODEX_HOME`, can target another directory with `--codex-home`,
+and refuses conflicting existing files/links or an active global override. It does
+not alter Copilot, shared agent skills, credentials, or other Codex settings.
+Start a new Codex session to load the global instructions and newly installed skills.
+
+No distill-knowledge, writing, or multi-model-comparison skill is installed.
+Hindsight is a separate user investigation for memory curation, not an installed
+dependency. General decisions/journals remain in agent-space and project-specific
+records in the project repo; cfg owns the deployed instructions and skill sources.
+
+Run installer regression checks with:
+
+```sh
+python3 -B -m unittest discover -s "$HOME/.cfg/codex/tests" -v
+```
