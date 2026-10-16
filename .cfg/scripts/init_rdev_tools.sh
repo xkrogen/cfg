@@ -13,7 +13,8 @@
 #                container has already been reprovisioned this lifetime.
 #
 # Both are idempotent. "all" (default) runs every_boot, then one_time if the
-# $HOME-side tools aren't detected yet.
+# $HOME-side tools aren't detected yet. On RDevs every mode first ensures a user
+# D-Bus, even when the package-install sentinel exists, before credential helpers.
 #
 # Usage:
 #   bash ~/.cfg/scripts/init_rdev_tools.sh            # all (default)
@@ -57,6 +58,15 @@ configure_github_https() {
     else
         log "SKIP: gh is not authenticated; run 'gh auth login' once, then re-run init_rdev_tools.sh."
     fi
+}
+
+code_tools_present() {
+    [ -x "$HOME/.local/bin/px0" ] \
+        && [ -x "$HOME/.local/bin/terminal-browser" ] \
+        && [ -x "$HOME/.local/bin/pyright-langserver" ] \
+        && [ -x "$HOME/.volta/bin/pyright-langserver" ] \
+        && [ -x "$HOME/.volta/bin/volta" ] \
+        && (cd "$HOME" && "$HOME/.volta/bin/volta" list pyright --format plain 2>/dev/null) | grep -q '^package pyright@'
 }
 
 # ----------------------------------------------------------------------------
@@ -151,6 +161,7 @@ every_boot() {
 # ----------------------------------------------------------------------------
 one_time() {
     log "one_time starting at $(date -Is)"
+    local code_tools_failed=0
 
     # 1. volta Node 20 — the tool-image dir is what the ~/.zshrc.local PATH
     #    fix prepends. Without a 20.x toolchain installed, the glob in zshrc
@@ -166,6 +177,14 @@ one_time() {
     else
         log "WARN: volta not installed yet; skipping node@20 (setup.sh handles volta bootstrap)."
     fi
+
+    # Persistent code tools use the public installers.
+    for tool in px0 pyright terminal_browser; do
+        if ! "$HOME/.cfg/scripts/install_$tool.sh" >>"$LOG" 2>&1; then
+            log "ERROR: install_$tool.sh failed (see $LOG)."
+            code_tools_failed=1
+        fi
+    done
 
     # 2. uv (Astral) — standalone installer, drops uv/uvx into ~/.local/bin.
     if ! command -v uv >/dev/null 2>&1 && [ ! -x "$HOME/.local/bin/uv" ]; then
@@ -228,12 +247,31 @@ one_time() {
     fi
 
     log "one_time finished at $(date -Is)"
+    return "$code_tools_failed"
 }
 
 # ----------------------------------------------------------------------------
 # Entry
 # ----------------------------------------------------------------------------
 mode="${1:-all}"
+case "$mode" in
+    all|every_boot|one_time) ;;
+    *)
+        echo "usage: $(basename "$0") [all|every_boot|one_time]" >&2
+        exit 2
+        ;;
+esac
+if [ -n "${RDEV_ID:-}" ]; then
+    cfg_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    bash "$cfg_dir/ensure_rdev_dbus.sh" || {
+        log "ERROR: user D-Bus bootstrap failed; aborting tool setup."
+        exit 1
+    }
+    if [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
+        export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u)/bus"
+        export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+    fi
+fi
 case "$mode" in
     every_boot) every_boot ;;
     one_time)   one_time ;;
@@ -244,14 +282,11 @@ case "$mode" in
         if ! command -v uv >/dev/null 2>&1 \
             || ! ls -d "$HOME/.volta/tools/image/node/20."* >/dev/null 2>&1 \
             || [ ! -x "$HOME/.local/bin/twg" ] \
-            || [ ! -x "$HOME/.local/bin/git-sprout" ]; then
+            || [ ! -x "$HOME/.local/bin/git-sprout" ] \
+            || ! code_tools_present; then
             one_time
         else
             log "one_time tooling already present; skipping one_time."
         fi
-        ;;
-    *)
-        echo "usage: $(basename "$0") [all|every_boot|one_time]" >&2
-        exit 2
         ;;
 esac

@@ -46,6 +46,16 @@ fi
 
 cfg_dir="$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" >/dev/null 2>&1 && pwd)/scripts"
 
+# Credential helpers used by setup must share a bus instead of autolaunching.
+bash "$cfg_dir/ensure_rdev_dbus.sh" || {
+    echo "ERROR: user D-Bus bootstrap failed; aborting rdev_finish_setup."
+    exit 1
+}
+if [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
+    export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u)/bus"
+    export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+fi
+
 # 1. Recover xkrogen/cfg base layer if rdev's init-phase got killed before it
 #    finished. init.sh is idempotent — it clones into ~/.cfg.git and checks
 #    out .zshrc/.bashrc/etc. Without this, .zshrc.local is never sourced
@@ -76,12 +86,16 @@ if [ -x "$cfg_dir/setup_linkedin.sh" ]; then
 fi
 
 # 4b. Install rdev tooling — both persistent ($HOME: volta node20, uv, TWG,
-#     git-sprout, captain dynamic-discovery) and ephemeral (GULL refresh,
+#     git-sprout, code tools, captain dynamic-discovery) and ephemeral (GULL refresh,
 #     captain upgrade, trino CLI). The ephemeral half also runs on every
 #     rdev-tmux attach via the /var/tmp sentinel it drops, so daily pod
 #     restarts self-heal.
+code_tools_status=0
 if [ -x "$cfg_dir/init_rdev_tools.sh" ]; then
-    "$cfg_dir/init_rdev_tools.sh" all || echo "WARN: init_rdev_tools.sh returned non-zero (see ~/.rdev_init_tools.log)."
+    "$cfg_dir/init_rdev_tools.sh" all || {
+        code_tools_status=$?
+        echo "ERROR: init_rdev_tools.sh returned $code_tools_status (see ~/.rdev_init_tools.log)."
+    }
 fi
 
 # 5. Session history: clone the shared archive repo and tag this machine with a
@@ -235,4 +249,8 @@ fi
 #    3.6a binary, but rdev's init re-spawned the 3.2a server on every
 #    pod restart, and the two would collide.
 
+if [ "$code_tools_status" -ne 0 ]; then
+    echo "=== rdev_finish_setup failed (code tools returned $code_tools_status) at $(date -Is) ==="
+    exit "$code_tools_status"
+fi
 echo "=== rdev_finish_setup finished at $(date -Is) ==="
