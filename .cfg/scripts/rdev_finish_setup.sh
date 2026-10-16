@@ -69,8 +69,10 @@ fi
 # 2. Re-run xkrogen/cfg setup.sh: the initial rdev-phase run often gets killed
 #    partway (tmux tpm clone needs the agent, brew install may not finish).
 #    setup.sh is idempotent.
+#    CFG_SKIP_JDTLS=1: the work layer's setup_linkedin.sh installs the jdtls
+#    launcher from the distribution that init_rdev_tools.sh provides (step 4b).
 if [ -x "$HOME/.cfg/scripts/setup.sh" ]; then
-    USER="$(whoami)" "$HOME/.cfg/scripts/setup.sh" || echo "WARN: setup.sh returned non-zero (may be safe to ignore)."
+    USER="$(whoami)" CFG_SKIP_JDTLS=1 "$HOME/.cfg/scripts/setup.sh" || echo "WARN: setup.sh returned non-zero (may be safe to ignore)."
 fi
 
 # 3. Clone cfgli bare repo (re-entering init_linkedin.sh now that an agent is available)
@@ -79,13 +81,7 @@ fi
     exit 1
 }
 
-# 4. Re-run setup_linkedin.sh (no-op on rdev since ssh-add reinit is gated,
-#    but run it to stay uniform with laptop flow).
-if [ -x "$cfg_dir/setup_linkedin.sh" ]; then
-    "$cfg_dir/setup_linkedin.sh" || echo "WARN: setup_linkedin.sh returned non-zero."
-fi
-
-# 4b. Install rdev tooling — both persistent ($HOME: volta node20, uv, TWG,
+# 4. Install rdev tooling — both persistent ($HOME: volta node20, uv, TWG,
 #     git-sprout, code tools, captain dynamic-discovery) and ephemeral (GULL refresh,
 #     captain upgrade, trino CLI). The ephemeral half also runs on every
 #     rdev-tmux attach via the /var/tmp sentinel it drops, so daily pod
@@ -95,6 +91,16 @@ if [ -x "$cfg_dir/init_rdev_tools.sh" ]; then
     "$cfg_dir/init_rdev_tools.sh" all || {
         code_tools_status=$?
         echo "ERROR: init_rdev_tools.sh returned $code_tools_status (see ~/.rdev_init_tools.log)."
+    }
+fi
+
+# 4b. Run the work-layer hook after the tooling it depends on (setup_linkedin.sh
+#     installs the jdtls launcher from the distribution installed above). Its
+#     ssh-add reinit is gated off on rdev.
+if [ -x "$cfg_dir/setup_linkedin.sh" ]; then
+    "$cfg_dir/setup_linkedin.sh" || {
+        echo "ERROR: setup_linkedin.sh returned non-zero."
+        [ "$code_tools_status" -ne 0 ] || code_tools_status=1
     }
 fi
 
