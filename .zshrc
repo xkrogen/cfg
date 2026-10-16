@@ -442,3 +442,11 @@ if command -v brew >/dev/null 2>&1; then
 fi
 
 if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
+
+# Volta (Node toolchain manager). Keeps an existing VOLTA_HOME and adds its
+# bin to PATH only once, so re-sourcing does not grow PATH.
+export VOLTA_HOME="${VOLTA_HOME:-$HOME/.volta}"
+case ":$PATH:" in
+  *":$VOLTA_HOME/bin:"*) ;;
+  *) export PATH="$VOLTA_HOME/bin:$PATH" ;;
+esac
