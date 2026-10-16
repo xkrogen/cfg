@@ -3,13 +3,8 @@ onboarding = false
 [theme]
 name = "terminal"
 
-# On rdev/Linux, "auto" (the default) keeps new pane shells non-login. This
-# LinkedIn rdev only adds GULL-installed tool dirs (e.g. /export/content/
-# linkedin/bin, where captain lives) via a login-only shell init step, so
-# non-login panes were missing them entirely -- breaking anything that
-# execs those tools directly with no further shell in between, like an
-# MCP server spawn from within a Copilot session. Force login shells for
-# every new pane so they get the same PATH a real `ssh` session would.
+# Login shells load the same tool paths as an interactive login. Child tools
+# launched directly by agent sessions inherit those paths without another shell.
 [terminal]
 shell_mode = "login"
 
@@ -102,13 +97,27 @@ description = "resize pane down"
 [ui]
 show_agent_labels_on_pane_borders = true
 agent_panel_sort = "priority"
+
+[ui.sidebar.agents]
+rows = [
+  ["state_icon", { token = "agent", bold = true }],
+  [{ token = "tab", dim = true }, { token = "machine", dim = true, rules = [{ equals = "Local", hide = true }] }],
+]
+
 [ui.toast]
-delivery = "system"
+# mbox owns notifications and messaging.
+delivery = "off"
+
+[ui.toast.clipboard]
+enabled = false
 
 [ui.sound]
-enabled = true
+enabled = false
 
 [experimental]
 kitty_graphics = true
 switch_ascii_input_source_in_prefix = false
 pane_history = true
+
+[update]
+channel = "stable"
