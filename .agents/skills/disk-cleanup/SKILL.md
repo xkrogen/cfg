@@ -23,6 +23,38 @@ and work in progress. A merged PR, old timestamp, or branch name does not establ
 that a directory is disposable. Never delete dirty worktrees, local commits,
 untracked artifacts, or shared dependency stores merely to meet a space target.
 
+Enumerate worktrees completely. Do not depth-cap the search or trust a partial
+count. Find every main repo with a bounded search for `.git` entries, then run
+`git worktree list --porcelain` in each. Include worktrees nested inside other
+repos and under session/artifact directories, which are easy to miss.
+
+Classify each worktree by its branch's PR state, using
+`gh pr list --repo <owner/repo> --head <branch> --state all`. Derive the repo
+from the origin URL. Handle the buckets as follows:
+- MERGED and clean: removable after a recheck.
+- MERGED but with untracked or dirty files: list the files and ask first.
+- CLOSED without merge, OPEN, or no PR: list them with size, dirty count, and
+  unpushed count, then get explicit approval. Pushed does not mean merged.
+
+Detect unpushed commits with `git log HEAD --not --remotes`. Do not use
+`@{u}..`, which returns nothing when the branch has no upstream and hides the
+unpushed work.
+
+Remove approved worktrees with `git worktree remove <path>` (add `--force` only
+when the user approved the dirty state), then `git branch -D <branch>` in the
+owning main repo, then `git worktree prune`. Never `rm -rf` a worktree. Some
+approved removals discard uncommitted work, so state that cost explicitly before
+acting.
+
+Build-tool caches (Gradle, Maven, and similar) are shared. Before removing a
+version-specific cache, check for a running daemon (for example `gradle --status`
+or `ps`). Caches such as `build-cache-*` and `.tmp` are regenerable; removing
+them slows the next builds while they refill.
+
+Versioned extraction directories (for example `*.pyz_<hash>` under a tool's
+data directory) can be duplicates. Keep the newest per prefix and remove only the
+older siblings after confirming they are not in use.
+
 Do not treat synced folders as a source of free disposable data. Distinguish local
 cache/eviction from deletion that propagates to Dropbox or another sync service;
 obtain authorization for the actual effect. Keep Copilot/work caches and artifacts
