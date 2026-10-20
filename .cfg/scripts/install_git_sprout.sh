@@ -33,9 +33,12 @@ fi
 
 shim_dir="$HOME/.local/bin"
 shim="$shim_dir/git"
-real_git="$(command -v git)"
-if [ "$real_git" = "$shim" ]; then
-    real_git="/usr/bin/git"
+real_git="$(run_brew --prefix)/bin/git"
+if [ ! -x "$real_git" ]; then
+    real_git="$(command -v git)"
+    if [ "$real_git" = "$shim" ]; then
+        real_git="/usr/bin/git"
+    fi
 fi
 
 mkdir -p "$shim_dir"
