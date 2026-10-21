@@ -34,16 +34,19 @@ cfg is a bare Git repository with `$HOME` as its worktree. Track actual files
 where the tools read them; do not install agent configuration as symlinks into
 `.cfg`. The bare checkout restores tracked files directly; no installer is needed.
 
-- `~/.agents/skills`: real shared skill directories tracked in personal cfg.
+- `~/.agents/AGENTS.md`: canonical shared personal global instruction file tracked
+  in cfg, symlinked from `~/.codex/AGENTS.md` and `~/.gemini/AGENTS.md`.
+- `~/.agents/skills`: real shared skill directories tracked in personal cfg,
+  symlinked from `~/.gemini/config/skills` and `~/.gemini/antigravity-cli/skills`.
   Includes wrap-up, coding-guidelines, disk-cleanup, gh-stack,
   make-pages-interactive, voice-transcription, skill-simplifier, and oss.
-- `~/.codex/AGENTS.md`: real personal global instruction file tracked in cfg.
 - `~/.codex/skills`: personal-only skills; `~/.copilot/skills`: work-only skills
   owned by cfgli/the work overlay. Shared implementations belong in personal cfg.
-- `~/.cfg/dotfiles/.agents -> ../../.agents` and
-  `~/.cfg/dotfiles/.codex -> ../../.codex`: parent-directory browsing references,
+- `~/.cfg/dotfiles/.agents -> ../../.agents`,
+  `~/.cfg/dotfiles/.codex -> ../../.codex`, and
+  `~/.cfg/dotfiles/.gemini -> ../../.gemini`: parent-directory browsing references,
   following the existing dotfiles convention. These links do not imply tracking
-  every file in either runtime directory. Stage only intended configuration paths.
+  every file in those runtime directories. Stage only intended configuration paths.
 
 Sharing methods does not share work/personal data, accounts or authorization.
 Credentials, transcripts, caches, indexes and runtime state stay outside Git.
