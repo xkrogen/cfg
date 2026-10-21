@@ -87,6 +87,10 @@ if [ ! -x "$HOME/.local/bin/herdr" ]; then
     curl -fsSL https://herdr.dev/install.sh | sh
 fi
 "$cfg_dir/scripts/install_herdr_skill.sh"
+if [ -x "$HOME/.local/bin/herdr" ]; then
+    "$HOME/.local/bin/herdr" integration install codex || echo "WARN: herdr integration install codex failed."
+    "$HOME/.local/bin/herdr" integration install antigravity-cli || echo "WARN: herdr integration install antigravity-cli failed."
+fi
 "$cfg_dir/scripts/install_px0.sh" || exit $?
 "$cfg_dir/scripts/install_terminal_browser.sh" || exit $?
 

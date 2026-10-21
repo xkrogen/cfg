@@ -38,7 +38,7 @@ where the tools read them; do not install agent configuration as symlinks into
   in cfg, symlinked from `~/.codex/AGENTS.md` and `~/.gemini/AGENTS.md`.
 - `~/.agents/skills`: real shared skill directories tracked in personal cfg,
   symlinked from `~/.gemini/config/skills` and `~/.gemini/antigravity-cli/skills`.
-  Includes wrap-up, coding-guidelines, disk-cleanup, gh-stack,
+  Includes wrap-up, coding-guidelines, disk-cleanup, gh-stack, herdr,
   make-pages-interactive, voice-transcription, skill-simplifier, and oss.
 - `~/.codex/skills`: personal-only skills; `~/.copilot/skills`: work-only skills
   owned by cfgli/the work overlay. Shared implementations belong in personal cfg.
