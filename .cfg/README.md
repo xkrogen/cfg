@@ -67,27 +67,33 @@ in agent-space; project-specific records stay in their project. No distill-knowl
 writing, or multi-model-comparison skill was selected. Hindsight is a pending
 user investigation.
 
-## Named Codex sessions and Herdr
+## Named Codex and Antigravity sessions and Herdr
 
 `codexn <session-name> [codex options]` creates a native named Codex session;
-`codexr <session-name> [codex options]` resumes its exact UUID. Names with spaces
-must be quoted. Existing names on creation, and missing/ambiguous resume names,
-fail rather than silently choosing another session. Native names come from Codex's
-own metadata. Runtime state is not tracked; no transcript or credential is copied.
+`codexr <session-name> [codex options]` resumes its exact UUID. Likewise,
+`agyn <session-name> [agy options]` creates a named Antigravity CLI session and
+`agyr <session-name> [agy options]` resumes its exact conversation UUID via
+`agy --conversation <uuid>`. Names with spaces must be quoted. Existing names on
+creation, and missing/ambiguous resume names, fail rather than silently choosing
+another session. Native names come from each agent's own metadata (`session_index.jsonl`
+for Codex; `annotations/*.pbtxt` and `conversation_summaries.db` for Antigravity).
+Runtime state is not tracked; no transcript or credential is copied.
 
-Real launchers live in `.local/bin`; the implementation is `.codex/bin/named-session.py`.
-No extra permission flags are added. The local wrappers use the supported stdio
-app-server create/name API then launch native resume; remote/worktree startup uses
-native Codex instead. New wrapper sessions require Codex's app-server API.
+Real launchers live in `.local/bin`; the implementations are
+`.codex/bin/named-session.py` and `.gemini/antigravity-cli/bin/named-session.py`.
+No extra permission flags are added. The local Codex wrappers use the supported
+stdio app-server create/name API then launch native resume; remote/worktree
+startup uses native Codex instead. New Codex wrapper sessions require Codex's
+app-server API.
 
 Herdr's Ctrl+a, Shift+R binding invokes `.local/bin/herdr-resync-display-names`,
-which dispatches to independent Copilot and Codex refreshers. Codex names/UUIDs
-are reported automatically on wrapper launch; refresh picks up native renames
-and recovers metadata after restarts using known native identities or UUID argv.
-Copilot's existing work-owned refresher remains separate.
+which dispatches to independent Copilot, Codex, and Antigravity refreshers.
+Session names/UUIDs are reported automatically on wrapper launch; refresh picks up
+native renames and recovers metadata after restarts using known native identities
+or UUID argv. Copilot's existing work-owned refresher remains separate.
 
 Run targeted regression checks with:
 
 ```sh
-python3 -B -m unittest discover -s "$HOME/.cfg/tests" -p test_codex_named_sessions.py -v
+python3 -B -m unittest discover -s "$HOME/.cfg/tests" -p "test_*_named_sessions.py" -v
 ```

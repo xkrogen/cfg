@@ -1,0 +1,3 @@
+#!/bin/sh
+# Start a new native Antigravity CLI session with a user-supplied name.
+exec python3 "$HOME/.gemini/antigravity-cli/bin/named-session.py" new "$@"

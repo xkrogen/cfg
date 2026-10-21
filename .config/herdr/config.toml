@@ -67,7 +67,7 @@ sleep 0.1
 [[keys.command]]
 key = "prefix+shift+r"
 type = "shell"
-description = "resync native Copilot and Codex session display names"
+description = "resync native Copilot, Codex, and Antigravity session display names"
 command = "~/.local/bin/herdr-resync-display-names"
 
 [[keys.command]]

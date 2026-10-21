@@ -10,4 +10,5 @@ if [ -x "$HOME/.cfg/scripts/herdr-resync-display-names.sh" ]; then
     "$HOME/.cfg/scripts/herdr-resync-display-names.sh" || result=1
 fi
 python3 "$HOME/.codex/bin/named-session.py" refresh || result=1
+python3 "$HOME/.gemini/antigravity-cli/bin/named-session.py" refresh || result=1
 exit "$result"

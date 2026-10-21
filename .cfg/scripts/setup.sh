@@ -59,6 +59,12 @@ if [ "${CFG_SKIP_JDTLS:-0}" != "1" ]; then
 fi
 
 export PATH="$(brew --prefix)/bin:$PATH"
+if ! command -v codex &>/dev/null && [ ! -x "$HOME/.local/bin/codex" ]; then
+    brew install --cask codex
+fi
+if ! command -v agy &>/dev/null && [ ! -x "$HOME/.local/bin/agy" ]; then
+    brew install --cask antigravity-cli
+fi
 "$cfg_dir/scripts/install_git_sprout.sh"
 
 #################################################################################
