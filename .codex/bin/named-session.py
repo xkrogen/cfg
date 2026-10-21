@@ -132,13 +132,18 @@ def launch_cwd(args):
 
 
 def herdr(*args):
-    output = subprocess.check_output(['herdr', *args], text=True,
+    binary = os.environ.get('HERDR_BIN_PATH') or 'herdr'
+    output = subprocess.check_output([binary, *args], text=True,
                                      stderr=subprocess.PIPE, timeout=5)
     return json.loads(output) if output.strip() else {}
 
 
 def in_herdr():
     return os.environ.get('HERDR_ENV') == '1' and bool(os.environ.get('HERDR_PANE_ID'))
+
+
+def in_herdr_context():
+    return in_herdr() or bool(os.environ.get('HERDR_SOCKET_PATH') or os.environ.get('HERDR_ACTIVE_PANE_ID'))
 
 
 def report(pane_id, identity, name):
@@ -191,7 +196,7 @@ def pane_identity(pane):
 
 
 def refresh():
-    if not in_herdr():
+    if not in_herdr_context():
         raise SessionError('Herdr refresh requires a Herdr-managed pane (HERDR_ENV=1).')
     names = native_names()
     updated = 0
