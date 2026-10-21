@@ -5,7 +5,7 @@
 #   - clone ekrogen-cfg-overlay as a cfgli bare repo
 #   - run xkrogen/cfg's setup.sh (only the parts that were skipped at init time)
 #   - install Copilot CLI
-#   - install the Copilot Glean MCP and plugins
+#   - register the Copilot marketplaces and install enabled plugins
 #   - wire herdr's native Copilot integration (session-restore identity hook)
 #   - wire the session archive into Copilot
 #
@@ -132,20 +132,12 @@ fi
 #    it avoids rdev's Node-version constraints.
 curl -fsSL https://gh.io/copilot-install | bash || echo "WARN: copilot install failed."
 
-# 7. Configure the Copilot Glean MCP and marketplaces. The declarations in
-#    cfgli identify enabled plugins; this materializes their local catalogs.
+# 7. Configure the Copilot marketplaces. The declarations in cfgli identify
+#    enabled plugins; this materializes their local catalogs. MCP servers come
+#    from the cfgli-shipped mcp-config.json (Glean is reached via Agent Platform),
+#    so this script does not add MCP servers.
 COPILOT_BIN="$HOME/.local/bin/copilot"
 if [ -x "$COPILOT_BIN" ]; then
-    # glean uses OAuth (advertises .well-known/oauth-protected-resource, 401s to
-    # token auth), so add it with no header — Copilot runs the OAuth flow on
-    # first interactive use. Mirrors the cfgli-shipped mcp-config.json entry.
-    if "$COPILOT_BIN" mcp list 2>/dev/null | grep -q "glean_default"; then
-        echo "glean MCP already configured (copilot)."
-    else
-        "$COPILOT_BIN" mcp add glean_default https://linkedin-be.glean.com/mcp/default --transport http \
-            || echo "WARN: failed to add glean MCP (copilot)."
-    fi
-
     # Register each marketplace, then materialize the enabled plugins. Copilot
     # keys plugins as <name>@<marketplace>, so derive the install list from the
     # cfgli-shipped settings.json enabledPlugins map (the same source of truth
