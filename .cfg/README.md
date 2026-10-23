@@ -79,9 +79,9 @@ user investigation.
 The machine-wide USPS skill lives at `~/.agents/skills/agent-mailbox/SKILL.md`.
 Its portable commands use the locally installed release under `~/.local/lib/mbox/current`
 and private routing config `~/.config/mbox/profiles/personal/hooks/codex-machine.json`.
-The private config and credentials are not tracked. User hooks in `~/.codex/hooks.json`
-preserve Herdr integration and add USPS SessionStart, UserPromptSubmit, and Stop handlers.
-Review and trust their current definitions through Codex's `/hooks` UI before use.
+The private config, credentials, and `~/.codex/hooks.json` are not tracked. Configure
+the required USPS hooks locally without replacing existing Herdr hooks. Review and
+trust their definitions through Codex's `/hooks` UI before use.
 
 Delivery uses native queue with the verified Codex CLI 0.163.0-alpha.11 contract.
 Only the USPS SessionStart binding hook remains; existing Herdr hooks are preserved.
@@ -93,23 +93,14 @@ repository owns daemon operational details (`docs/usps.md`).
 
 ## Codex configuration
 
-`.codex/config.toml` and `.codex/hooks.json` are portable: no `/Users/<name>` paths,
-versioned plugin or runtime paths, trust hashes, or secrets. Keep machine-local state
-out of them.
+`~/.codex/config.toml` and `~/.codex/hooks.json` are machine-local, ignored, and
+not managed by cfg. Existing local files retain their notification, plugin,
+runtime, permission, and hook settings. Configure these files on each machine;
+cfg does not generate or synchronize them.
 
-- TOML itself does not expand `~` or `$HOME`. Codex expands a leading `~` only in
-  path-typed fields it resolves itself; `notify`, MCP `command`/`args`, and MCP `env`
-  values are literal. Do not rely on either.
-- Hook `command` strings run through the login shell (`shell -lc`), so
-  `"$HOME/..."` works there. Keep `$HOME` inside double quotes.
-- Project trust (`[projects]`), hook trust (`[hooks.state]`), app-generated marketplace
-  registrations, and the Computer Use `notify` hook are per machine and app-managed.
-  The shared version omits them; the app may write them back into the tracked file
-  as local modifications. Review hook definitions in Codex's `/hooks` UI on each machine.
-- The USPS hook requires the private profile at
-  `~/.config/mbox/profiles/personal/hooks/codex-machine.json`. Without it the hook fails
-  explicitly at SessionStart.
-- `[mcp_servers.hindsight]` is kept disabled. Enable it only after review.
+Shared instructions, skills, and named-session tooling remain tracked separately.
+The personal USPS integration requires its private machine profile and locally
+configured hooks; pulling cfg does not enable it.
 
 ## Named Codex and Antigravity sessions and Herdr
 

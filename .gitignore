@@ -6,6 +6,10 @@
 # Skill installer metadata is machine-local; skills are restored from their sources.
 /.agents/.skill-lock.json
 
+# Codex runtime configuration and hook approvals are machine-local.
+/.codex/config.toml
+/.codex/hooks.json
+
 # Darwin regenerates these assistant skills per CLI version.
 /.copilot/skills/darwin-cli/
 /.claude/skills/darwin-cli/
