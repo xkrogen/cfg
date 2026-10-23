@@ -86,7 +86,7 @@ hooks = true
 
 [tui]
 screen_reader_detection_done = true
-status_line = ["thread-name", "model", "reasoning", "project-name", "run-state", "five-hour-limit", "weekly-limit", "context-window-size", "used-tokens"]
+status_line = ["thread-name", "model", "reasoning", "project-name", "run-state", "five-hour-limit", "weekly-limit", "context-window-size", "used-tokens", "permissions", "approval-mode"]
 status_line_use_colors = true
 
 [projects."/Users/xkrogen/Library/CloudStorage/Dropbox/misc/homelab"]

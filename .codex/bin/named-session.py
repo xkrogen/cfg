@@ -4,6 +4,7 @@ import fcntl
 import json
 import os
 from pathlib import Path
+import re
 import selectors
 import subprocess
 import sys
@@ -204,11 +205,21 @@ def watch(identity, name, parent):
         time.sleep(0.2)
 
 
-def pane_identity(pane):
-    # Check foreground codex resume process first: Codex's shared background
-    # app-server daemon runs SessionStart hooks with the daemon's own inherited
-    # HERDR_PANE_ID, which can overwrite another pane's agent_session with the
-    # newest session's UUID.
+def pane_identity(pane, names=None):
+    # 1. If Codex set terminal_title to "<thread_name> | <project>" and that
+    # thread_name maps to a unique UUID in session_index.jsonl, use it first.
+    # This handles `codex fork` / bare `codex` and guards against the shared
+    # app-server daemon running SessionStart hooks with another pane's HERDR_PANE_ID.
+    if names is not None:
+        raw_title = (pane.get('terminal_title_stripped') or pane.get('terminal_title') or '').strip()
+        if '|' in raw_title:
+            parts = [p.strip() for p in raw_title.split('|') if p.strip()]
+            if len(parts) >= 2:
+                candidate = re.sub(r'^[\u2800-\u28ff\s]+', '', parts[-2]).strip()
+                matches = [uid for uid, title in names.items() if title == candidate]
+                if len(matches) == 1:
+                    return matches[0]
+    # 2. Check foreground codex resume process argv.
     try:
         info = herdr('pane', 'process-info', '--pane', pane['pane_id'])
         for process in info['result']['process_info']['foreground_processes']:
@@ -223,6 +234,7 @@ def pane_identity(pane):
                         continue
     except (OSError, ValueError, KeyError, subprocess.SubprocessError):
         pass
+    # 3. Fall back to Herdr's recorded agent_session UUID.
     session = pane.get('agent_session') or {}
     identity = session.get('value') if session.get('kind') == 'id' else None
     if identity:
@@ -239,14 +251,26 @@ def refresh():
         if pane.get('agent') != 'codex':
             continue
         try:
-            identity = pane_identity(pane)
+            identity = pane_identity(pane, names)
             if not identity:
-                continue  # Never guess identity from screen titles or cwd.
+                continue
             report(pane['pane_id'], identity, names.get(identity, ''))
             updated += 1
         except (ValueError, KeyError, subprocess.SubprocessError) as exc:
             print(f'Codex display refresh failed for {pane["pane_id"]}: {exc}', file=sys.stderr)
     print(f'Codex native names refreshed for {updated} pane(s).')
+
+
+def hook():
+    try:
+        sys.stdin.read()
+        if in_herdr_context():
+            from contextlib import redirect_stdout
+            with redirect_stdout(sys.stderr):
+                refresh()
+    except Exception:
+        pass
+    print('{}')
 
 
 def main():
@@ -255,6 +279,9 @@ def main():
     mode = sys.argv[1]
     if mode == 'refresh':
         refresh()
+        return
+    if mode == 'hook':
+        hook()
         return
     if mode == '_watch':
         watch(sys.argv[2], sys.argv[3], int(sys.argv[4]))
