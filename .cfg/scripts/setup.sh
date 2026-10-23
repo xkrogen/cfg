@@ -59,6 +59,12 @@ if [ "${CFG_SKIP_JDTLS:-0}" != "1" ]; then
 fi
 
 export PATH="$(brew --prefix)/bin:$PATH"
+if ! command -v codex &>/dev/null && [ ! -x "$HOME/.local/bin/codex" ]; then
+    brew install --cask codex
+fi
+if ! command -v agy &>/dev/null && [ ! -x "$HOME/.local/bin/agy" ]; then
+    brew install --cask antigravity-cli
+fi
 "$cfg_dir/scripts/install_git_sprout.sh"
 
 #################################################################################
@@ -87,6 +93,25 @@ if [ ! -x "$HOME/.local/bin/herdr" ]; then
     curl -fsSL https://herdr.dev/install.sh | sh
 fi
 "$cfg_dir/scripts/install_herdr_skill.sh"
+if [ -x "$HOME/.local/bin/herdr" ]; then
+    "$HOME/.local/bin/herdr" integration install codex || echo "WARN: herdr integration install codex failed."
+    "$HOME/.local/bin/herdr" integration install antigravity-cli || echo "WARN: herdr integration install antigravity-cli failed."
+    python3 -c '
+import json
+from pathlib import Path
+p = Path.home() / ".gemini/config/hooks.json"
+data = json.loads(p.read_text()) if p.is_file() else {}
+herdr = data.setdefault("herdr", {})
+cmd = "python3 \"$HOME/.gemini/antigravity-cli/bin/named-session.py\" hook"
+entry = {"command": cmd, "timeout": 10, "type": "command"}
+for event in ("PreInvocation", "Stop"):
+    hooks = herdr.setdefault(event, [])
+    if not any(h.get("command") == cmd for h in hooks):
+        hooks.append(entry)
+p.parent.mkdir(parents=True, exist_ok=True)
+p.write_text(json.dumps(data, indent=2) + "\n")
+'
+fi
 "$cfg_dir/scripts/install_px0.sh" || exit $?
 "$cfg_dir/scripts/install_terminal_browser.sh" || exit $?
 

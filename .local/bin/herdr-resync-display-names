@@ -1,7 +1,8 @@
 #!/bin/sh
 # Shared keybinding dispatcher: each agent owns its own native metadata reader.
 set -u
-if [ "${HERDR_ENV:-}" != 1 ]; then
+export PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:/home/linuxbrew/.linuxbrew/bin:$PATH"
+if [ "${HERDR_ENV:-}" != 1 ] && [ -z "${HERDR_SOCKET_PATH:-}" ] && [ -z "${HERDR_ACTIVE_PANE_ID:-}" ]; then
     echo 'Display-name refresh must run inside Herdr.' >&2
     exit 1
 fi
@@ -10,4 +11,5 @@ if [ -x "$HOME/.cfg/scripts/herdr-resync-display-names.sh" ]; then
     "$HOME/.cfg/scripts/herdr-resync-display-names.sh" || result=1
 fi
 python3 "$HOME/.codex/bin/named-session.py" refresh || result=1
+python3 "$HOME/.gemini/antigravity-cli/bin/named-session.py" refresh || result=1
 exit "$result"

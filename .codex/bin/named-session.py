@@ -4,6 +4,7 @@ import fcntl
 import json
 import os
 from pathlib import Path
+import re
 import selectors
 import subprocess
 import sys
@@ -50,9 +51,13 @@ def resolve_name(name, names):
 class AppServer:
     """Short-lived supported stdio RPC; never send a model turn or edit storage."""
     def __enter__(self):
+        env = dict(os.environ)
+        for key in list(env):
+            if key.startswith('HERDR_'):
+                del env[key]
         self.process = subprocess.Popen(['codex', 'app-server', '--stdio'],
                                         stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                                        stderr=subprocess.DEVNULL)
+                                        stderr=subprocess.DEVNULL, env=env)
         self.selector = selectors.DefaultSelector()
         self.selector.register(self.process.stdout, selectors.EVENT_READ)
         self.buffer = b''
@@ -132,7 +137,8 @@ def launch_cwd(args):
 
 
 def herdr(*args):
-    output = subprocess.check_output(['herdr', *args], text=True,
+    binary = os.environ.get('HERDR_BIN_PATH') or 'herdr'
+    output = subprocess.check_output([binary, *args], text=True,
                                      stderr=subprocess.PIPE, timeout=5)
     return json.loads(output) if output.strip() else {}
 
@@ -141,15 +147,44 @@ def in_herdr():
     return os.environ.get('HERDR_ENV') == '1' and bool(os.environ.get('HERDR_PANE_ID'))
 
 
+def in_herdr_context():
+    return in_herdr() or bool(os.environ.get('HERDR_SOCKET_PATH') or os.environ.get('HERDR_ACTIVE_PANE_ID'))
+
+
 def report(pane_id, identity, name):
-    herdr('pane', 'report-agent-session', pane_id, '--source', 'herdr:codex',
-          '--agent', 'codex', '--agent-session-id', identity)
+    seq = time.time_ns()
+    socket_path = os.environ.get('HERDR_SOCKET_PATH')
+    if socket_path:
+        try:
+            import socket
+            with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as client:
+                client.settimeout(0.5)
+                client.connect(socket_path)
+                req = {
+                    'id': f'herdr:codex:{seq}',
+                    'method': 'pane.report_agent_session',
+                    'params': {
+                        'pane_id': pane_id,
+                        'source': 'herdr:codex',
+                        'agent': 'codex',
+                        'seq': seq,
+                        'agent_session_id': identity,
+                        'session_start_source': 'resume',
+                    },
+                }
+                client.sendall((json.dumps(req) + '\n').encode())
+                client.recv(4096)
+        except OSError:
+            pass
+    else:
+        herdr('pane', 'report-agent-session', pane_id, '--source', 'herdr:codex',
+              '--agent', 'codex', '--agent-session-id', identity, '--seq', str(seq))
     if name:
         herdr('pane', 'report-metadata', pane_id, '--source', 'user:codex-session-name',
-              '--agent', 'codex', '--display-agent', name)
+              '--agent', 'codex', '--display-agent', name, '--seq', str(seq))
     else:
         herdr('pane', 'report-metadata', pane_id, '--source', 'user:codex-session-name',
-              '--agent', 'codex', '--clear-display-agent')
+              '--agent', 'codex', '--clear-display-agent', '--seq', str(seq))
 
 
 def watch(identity, name, parent):
@@ -170,28 +205,45 @@ def watch(identity, name, parent):
         time.sleep(0.2)
 
 
-def pane_identity(pane):
+def pane_identity(pane, names=None):
+    # 1. If Codex set terminal_title to "<thread_name> | <project>" and that
+    # thread_name maps to a unique UUID in session_index.jsonl, use it first.
+    # This handles `codex fork` / bare `codex` and guards against the shared
+    # app-server daemon running SessionStart hooks with another pane's HERDR_PANE_ID.
+    if names is not None:
+        raw_title = (pane.get('terminal_title_stripped') or pane.get('terminal_title') or '').strip()
+        if '|' in raw_title:
+            parts = [p.strip() for p in raw_title.split('|') if p.strip()]
+            if len(parts) >= 2:
+                candidate = re.sub(r'^[\u2800-\u28ff\s]+', '', parts[-2]).strip()
+                matches = [uid for uid, title in names.items() if title == candidate]
+                if len(matches) == 1:
+                    return matches[0]
+    # 2. Check foreground codex resume process argv.
+    try:
+        info = herdr('pane', 'process-info', '--pane', pane['pane_id'])
+        for process in info['result']['process_info']['foreground_processes']:
+            if process.get('name') != 'codex':
+                continue
+            args = process.get('argv') or []
+            for index, arg in enumerate(args[:-1]):
+                if arg == 'resume':
+                    try:
+                        return str(uuid.UUID(args[index + 1]))
+                    except ValueError:
+                        continue
+    except (OSError, ValueError, KeyError, subprocess.SubprocessError):
+        pass
+    # 3. Fall back to Herdr's recorded agent_session UUID.
     session = pane.get('agent_session') or {}
     identity = session.get('value') if session.get('kind') == 'id' else None
     if identity:
         return str(uuid.UUID(identity))
-    # Native Herdr restarts may keep argv but lose ephemeral session metadata.
-    info = herdr('pane', 'process-info', '--pane', pane['pane_id'])
-    for process in info['result']['process_info']['foreground_processes']:
-        if process.get('name') != 'codex':
-            continue
-        args = process.get('argv') or []
-        for index, arg in enumerate(args[:-1]):
-            if arg == 'resume':
-                try:
-                    return str(uuid.UUID(args[index + 1]))
-                except ValueError:
-                    continue
     return None
 
 
 def refresh():
-    if not in_herdr():
+    if not in_herdr_context():
         raise SessionError('Herdr refresh requires a Herdr-managed pane (HERDR_ENV=1).')
     names = native_names()
     updated = 0
@@ -199,14 +251,26 @@ def refresh():
         if pane.get('agent') != 'codex':
             continue
         try:
-            identity = pane_identity(pane)
+            identity = pane_identity(pane, names)
             if not identity:
-                continue  # Never guess identity from screen titles or cwd.
+                continue
             report(pane['pane_id'], identity, names.get(identity, ''))
             updated += 1
         except (ValueError, KeyError, subprocess.SubprocessError) as exc:
             print(f'Codex display refresh failed for {pane["pane_id"]}: {exc}', file=sys.stderr)
     print(f'Codex native names refreshed for {updated} pane(s).')
+
+
+def hook():
+    try:
+        sys.stdin.read()
+        if in_herdr_context():
+            from contextlib import redirect_stdout
+            with redirect_stdout(sys.stderr):
+                refresh()
+    except Exception:
+        pass
+    print('{}')
 
 
 def main():
@@ -215,6 +279,9 @@ def main():
     mode = sys.argv[1]
     if mode == 'refresh':
         refresh()
+        return
+    if mode == 'hook':
+        hook()
         return
     if mode == '_watch':
         watch(sys.argv[2], sys.argv[3], int(sys.argv[4]))
@@ -241,8 +308,12 @@ def main():
                     server.call('thread/name/set', {'threadId': identity, 'name': name})
                 except SessionError as exc:
                     raise SessionError(f'Created {identity}, but naming failed; recover with codex resume {identity}. {exc}') from exc
+        if in_herdr():
+            os.environ['CODEX_THREAD_ID'] = identity
     else:
         identity = resolve_name(name, native_names())
+        if in_herdr():
+            os.environ['CODEX_THREAD_ID'] = identity
 
     if in_herdr():
         subprocess.Popen([sys.executable, str(Path(__file__).resolve()), '_watch', identity,

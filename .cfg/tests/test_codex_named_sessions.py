@@ -110,6 +110,28 @@ else:
         with patch.object(sessions,'herdr',return_value=data):
             self.assertIsNone(sessions.pane_identity({'pane_id':'w1:p2'}))
 
+    def test_refresh_prefers_foreground_resume_uuid_over_stale_pane_session(self):
+        pane = {'pane_id': 'w1:p2', 'agent': 'codex', 'agent_session': {'kind': 'id', 'value': OTHER}}
+        data = {'result': {'process_info': {'foreground_processes': [
+            {'name': 'codex', 'argv': ['codex', 'resume', ID]},
+        ]}}}
+        with patch.object(sessions, 'herdr', return_value=data):
+            self.assertEqual(sessions.pane_identity(pane), ID)
+
+    def test_refresh_resolves_unique_native_name_from_codex_terminal_title(self):
+        names = {ID: 'homelab-vpn-external-setup', OTHER: 'other-session'}
+        pane = {
+            'pane_id': 'w1:p7',
+            'agent': 'codex',
+            'terminal_title': '⠏ homelab-vpn-external-setup | homelab',
+            'terminal_title_stripped': 'homelab-vpn-external-setup | homelab',
+        }
+        data = {'result': {'process_info': {'foreground_processes': [
+            {'name': 'codex', 'argv': ['codex', 'fork', 'homelab-init']},
+        ]}}}
+        with patch.object(sessions, 'herdr', return_value=data):
+            self.assertEqual(sessions.pane_identity(pane, names), ID)
+
     def test_herdr_report_accepts_success_with_empty_stdout(self):
         with patch.object(sessions.subprocess, 'check_output', return_value=''):
             self.assertEqual(sessions.herdr('pane', 'report-metadata', 'w1:p1'), {})
