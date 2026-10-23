@@ -1,5 +1,6 @@
 from contextlib import closing
 import importlib.util
+import io
 import json
 import os
 from pathlib import Path
@@ -124,6 +125,14 @@ home = Path(os.environ['AGY_HOME'])
         for arg in ('-c', '--continue', '--conversation', f'--conversation={ID}'):
             self.assertNotEqual(self.launch('new', 'local', arg).returncode, 0)
         self.assertFalse((self.root / 'launched.json').exists())
+
+    def test_hook_syncs_current_pane_display_agent(self):
+        self.create_db([(ID, 'hooked-title')])
+        with patch.dict(os.environ, dict(self.env, HERDR_ENV='1', HERDR_PANE_ID='w1:p2')), \
+             patch.object(sessions, 'report') as report, \
+             patch('sys.stdin', io.StringIO(json.dumps({'conversationId': ID}))):
+            sessions.hook()
+            report.assert_called_once_with('w1:p2', ID, 'hooked-title')
 
 
 if __name__ == '__main__':

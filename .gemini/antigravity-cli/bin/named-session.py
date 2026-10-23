@@ -259,6 +259,28 @@ def refresh():
     print(f'Antigravity native names refreshed for {updated} pane(s).')
 
 
+def sync_current_pane(identity):
+    if not in_herdr():
+        return
+    try:
+        identity = str(uuid.UUID(identity))
+    except (ValueError, TypeError):
+        return
+    name = native_names().get(identity, '')
+    report(os.environ['HERDR_PANE_ID'], identity, name)
+
+
+def hook():
+    try:
+        payload = json.load(sys.stdin)
+    except Exception:
+        payload = {}
+    if isinstance(payload, dict) and payload.get('conversationId'):
+        try:
+            sync_current_pane(payload['conversationId'])
+        except Exception:
+            pass
+    print('{}')
 def existing_locks():
     lock_dir = agy_home() / 'presence'
     if not lock_dir.is_dir():
@@ -278,6 +300,9 @@ def main():
     mode = sys.argv[1]
     if mode == 'refresh':
         refresh()
+        return
+    if mode == 'hook':
+        hook()
         return
     if mode == '_watch':
         watch(sys.argv[2], sys.argv[3], int(sys.argv[4]), sys.argv[5] if len(sys.argv) > 5 else '')
