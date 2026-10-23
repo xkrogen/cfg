@@ -93,23 +93,27 @@ repository owns daemon operational details (`docs/usps.md`).
 
 ## Codex configuration
 
-`.codex/config.toml` and `.codex/hooks.json` are portable: no `/Users/<name>` paths,
-versioned plugin or runtime paths, trust hashes, or secrets. Keep machine-local state
-out of them.
+Codex's active configuration includes machine-local runtime paths, marketplace
+registrations, plugin settings, project trust, and hook trust. These settings can
+be required for existing functionality; do not remove them for portability or
+publish private machine state to this repository.
 
-- TOML itself does not expand `~` or `$HOME`. Codex expands a leading `~` only in
-  path-typed fields it resolves itself; `notify`, MCP `command`/`args`, and MCP `env`
-  values are literal. Do not rely on either.
-- Hook `command` strings run through the login shell (`shell -lc`), so
-  `"$HOME/..."` works there. Keep `$HOME` inside double quotes.
-- Project trust (`[projects]`), hook trust (`[hooks.state]`), app-generated marketplace
-  registrations, and the Computer Use `notify` hook are per machine and app-managed.
-  The shared version omits them; the app may write them back into the tracked file
-  as local modifications. Review hook definitions in Codex's `/hooks` UI on each machine.
-- The USPS hook requires the private profile at
-  `~/.config/mbox/profiles/personal/hooks/codex-machine.json`. Without it the hook fails
-  explicitly at SessionStart.
-- `[mcp_servers.hindsight]` is kept disabled. Enable it only after review.
+The shared configuration uses `approval_policy = "never"` and
+`sandbox_mode = "danger-full-access"`. Machine-specific paths must be adapted before
+using it on another machine, preserving the existing notification, plugin, runtime,
+and hook behavior. Keep private local modifications unstaged. The tracked files
+are not yet a portable, lossless replacement for every machine's active configuration.
+
+TOML itself does not expand `~` or `$HOME`. Do not substitute those strings into
+literal command arguments or environment values without checking the consuming
+application's expansion rules.
+
+The upstream USPS integration requires a private profile at
+`~/.config/mbox/profiles/personal/hooks/codex-machine.json`; it is not configured on
+every machine. Configure that prerequisite
+and review hook definitions through Codex's `/hooks` UI before enabling it.
+Upstream-only plugins and integrations remain separate from the local recovery;
+restoring existing functionality does not authorize enabling new integrations.
 
 ## Named Codex and Antigravity sessions and Herdr
 
