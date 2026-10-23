@@ -91,6 +91,26 @@ routing config keep the same locations. Homelab also has the supported runtime a
 native source; account sign-in is completed through its device-login flow. Its
 repository owns daemon operational details (`docs/usps.md`).
 
+## Codex configuration
+
+`.codex/config.toml` and `.codex/hooks.json` are portable: no `/Users/<name>` paths,
+versioned plugin or runtime paths, trust hashes, or secrets. Keep machine-local state
+out of them.
+
+- TOML itself does not expand `~` or `$HOME`. Codex expands a leading `~` only in
+  path-typed fields it resolves itself; `notify`, MCP `command`/`args`, and MCP `env`
+  values are literal. Do not rely on either.
+- Hook `command` strings run through the login shell (`shell -lc`), so
+  `"$HOME/..."` works there. Keep `$HOME` inside double quotes.
+- Project trust (`[projects]`), hook trust (`[hooks.state]`), app-generated marketplace
+  registrations, and the Computer Use `notify` hook are per machine and app-managed.
+  The shared version omits them; the app may write them back into the tracked file
+  as local modifications. Review hook definitions in Codex's `/hooks` UI on each machine.
+- The USPS hook requires the private profile at
+  `~/.config/mbox/profiles/personal/hooks/codex-machine.json`. Without it the hook fails
+  explicitly at SessionStart.
+- `[mcp_servers.hindsight]` is kept disabled. Enable it only after review.
+
 ## Named Codex and Antigravity sessions and Herdr
 
 `codexn <session-name> [codex options]` creates a native named Codex session;

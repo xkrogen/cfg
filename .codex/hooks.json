@@ -4,7 +4,7 @@
       {
         "hooks": [
           {
-            "command": "bash '/Users/xkrogen/.codex/herdr-agent-state.sh' session",
+            "command": "bash \"$HOME/.codex/herdr-agent-state.sh\" session",
             "timeout": 10,
             "type": "command"
           }
@@ -14,7 +14,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "'/Users/xkrogen/.volta/tools/image/node/24.22.1/bin/node' '/Users/xkrogen/.local/lib/mbox/current/dist/src/cli.js' codex hooks event --config '/Users/xkrogen/.config/mbox/profiles/personal/hooks/codex-machine.json'",
+            "command": "node \"$HOME/.local/lib/mbox/current/dist/src/cli.js\" codex hooks event --config \"$HOME/.config/mbox/profiles/personal/hooks/codex-machine.json\"",
             "timeout": 2,
             "statusMessage": "Personal mailbox hook"
           }

@@ -3,6 +3,9 @@
 .config/gh/hosts.yml
 .copilot-local.env
 
+# Skill installer metadata is machine-local; skills are restored from their sources.
+/.agents/.skill-lock.json
+
 # Darwin regenerates these assistant skills per CLI version.
 /.copilot/skills/darwin-cli/
 /.claude/skills/darwin-cli/
