@@ -39,7 +39,7 @@ where the tools read them; do not install agent configuration as symlinks into
 - `~/.agents/skills`: real shared skill directories tracked in personal cfg,
   symlinked from `~/.gemini/config/skills` and `~/.gemini/antigravity-cli/skills`.
   Includes wrap-up, coding-guidelines, disk-cleanup, gh-stack, herdr,
-  make-pages-interactive, voice-transcription, skill-simplifier, and oss.
+  make-pages-interactive, transcription, skill-simplifier, and oss.
 - `~/.codex/skills`: personal-only skills; `~/.copilot/skills`: work-only skills
   owned by cfgli/the work overlay. Shared implementations belong in personal cfg.
 - `~/.cfg/dotfiles/.agents -> ../../.agents`,
@@ -56,10 +56,17 @@ session records and authorized Git work. Diagramming remains work-only; public-d
 was not selected for sharing.
 
 OSS preserves xkrogen per-command authentication and personal-fork behavior with
-generic enterprise boundaries. Voice transcription uses the existing executable
-on PATH and local storage; this layout change does not relocate its helper,
-recordings, authentication, ledger or transcripts. Interactive-page work conventions
-remain in cfgli's `.copilot/skill-overlays`.
+generic enterprise boundaries. Interactive-page work conventions remain in cfgli's
+`.copilot/skill-overlays`.
+
+The `transcription` skill (`~/.agents/skills/transcription/SKILL.md`) is fully
+on-device and uses FluidVoice only. Meeting questions use the bundled `fv-serve`
+helper in `/Applications/FluidVoice.app/Contents/Helpers`, which requires FluidMeet
+sharing to be enabled. Authorized local audio files are transcribed through
+FluidVoice's loopback API at `http://127.0.0.1:47733/v1/transcribe`; enable it with
+the `LocalAPIEnabled` preference. It does not require a separate transcription
+helper on PATH. Raw transcripts and run artifacts stay under
+`~/.local/state/transcription/`, outside Git.
 
 The former `install_codex_personal.py` and its link-installer tests were retired
 when configuration moved to real runtime paths. General personal records remain
