@@ -50,9 +50,13 @@ def resolve_name(name, names):
 class AppServer:
     """Short-lived supported stdio RPC; never send a model turn or edit storage."""
     def __enter__(self):
+        env = dict(os.environ)
+        for key in list(env):
+            if key.startswith('HERDR_'):
+                del env[key]
         self.process = subprocess.Popen(['codex', 'app-server', '--stdio'],
                                         stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                                        stderr=subprocess.DEVNULL)
+                                        stderr=subprocess.DEVNULL, env=env)
         self.selector = selectors.DefaultSelector()
         self.selector.register(self.process.stdout, selectors.EVENT_READ)
         self.buffer = b''
@@ -147,14 +151,39 @@ def in_herdr_context():
 
 
 def report(pane_id, identity, name):
-    herdr('pane', 'report-agent-session', pane_id, '--source', 'herdr:codex',
-          '--agent', 'codex', '--agent-session-id', identity)
+    seq = time.time_ns()
+    socket_path = os.environ.get('HERDR_SOCKET_PATH')
+    if socket_path:
+        try:
+            import socket
+            with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as client:
+                client.settimeout(0.5)
+                client.connect(socket_path)
+                req = {
+                    'id': f'herdr:codex:{seq}',
+                    'method': 'pane.report_agent_session',
+                    'params': {
+                        'pane_id': pane_id,
+                        'source': 'herdr:codex',
+                        'agent': 'codex',
+                        'seq': seq,
+                        'agent_session_id': identity,
+                        'session_start_source': 'resume',
+                    },
+                }
+                client.sendall((json.dumps(req) + '\n').encode())
+                client.recv(4096)
+        except OSError:
+            pass
+    else:
+        herdr('pane', 'report-agent-session', pane_id, '--source', 'herdr:codex',
+              '--agent', 'codex', '--agent-session-id', identity, '--seq', str(seq))
     if name:
         herdr('pane', 'report-metadata', pane_id, '--source', 'user:codex-session-name',
-              '--agent', 'codex', '--display-agent', name)
+              '--agent', 'codex', '--display-agent', name, '--seq', str(seq))
     else:
         herdr('pane', 'report-metadata', pane_id, '--source', 'user:codex-session-name',
-              '--agent', 'codex', '--clear-display-agent')
+              '--agent', 'codex', '--clear-display-agent', '--seq', str(seq))
 
 
 def watch(identity, name, parent):
@@ -176,22 +205,28 @@ def watch(identity, name, parent):
 
 
 def pane_identity(pane):
+    # Check foreground codex resume process first: Codex's shared background
+    # app-server daemon runs SessionStart hooks with the daemon's own inherited
+    # HERDR_PANE_ID, which can overwrite another pane's agent_session with the
+    # newest session's UUID.
+    try:
+        info = herdr('pane', 'process-info', '--pane', pane['pane_id'])
+        for process in info['result']['process_info']['foreground_processes']:
+            if process.get('name') != 'codex':
+                continue
+            args = process.get('argv') or []
+            for index, arg in enumerate(args[:-1]):
+                if arg == 'resume':
+                    try:
+                        return str(uuid.UUID(args[index + 1]))
+                    except ValueError:
+                        continue
+    except (OSError, ValueError, KeyError, subprocess.SubprocessError):
+        pass
     session = pane.get('agent_session') or {}
     identity = session.get('value') if session.get('kind') == 'id' else None
     if identity:
         return str(uuid.UUID(identity))
-    # Native Herdr restarts may keep argv but lose ephemeral session metadata.
-    info = herdr('pane', 'process-info', '--pane', pane['pane_id'])
-    for process in info['result']['process_info']['foreground_processes']:
-        if process.get('name') != 'codex':
-            continue
-        args = process.get('argv') or []
-        for index, arg in enumerate(args[:-1]):
-            if arg == 'resume':
-                try:
-                    return str(uuid.UUID(args[index + 1]))
-                except ValueError:
-                    continue
     return None
 
 
@@ -246,8 +281,12 @@ def main():
                     server.call('thread/name/set', {'threadId': identity, 'name': name})
                 except SessionError as exc:
                     raise SessionError(f'Created {identity}, but naming failed; recover with codex resume {identity}. {exc}') from exc
+        if in_herdr():
+            os.environ['CODEX_THREAD_ID'] = identity
     else:
         identity = resolve_name(name, native_names())
+        if in_herdr():
+            os.environ['CODEX_THREAD_ID'] = identity
 
     if in_herdr():
         subprocess.Popen([sys.executable, str(Path(__file__).resolve()), '_watch', identity,

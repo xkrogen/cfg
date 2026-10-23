@@ -131,15 +131,16 @@ def in_herdr_context():
 
 
 def report(pane_id, identity, name):
+    seq = str(time.time_ns())
     herdr('pane', 'report-agent-session', pane_id, '--source', 'herdr:antigravity_cli',
-          '--agent', 'agy', '--agent-session-id', identity)
+          '--agent', 'agy', '--agent-session-id', identity, '--seq', seq)
     if name:
         display = name[:60] + ('...' if len(name) > 60 else '')
         herdr('pane', 'report-metadata', pane_id, '--source', 'user:agy-session-name',
-              '--agent', 'agy', '--display-agent', display)
+              '--agent', 'agy', '--display-agent', display, '--seq', seq)
     else:
         herdr('pane', 'report-metadata', pane_id, '--source', 'user:agy-session-name',
-              '--agent', 'agy', '--clear-display-agent')
+              '--agent', 'agy', '--clear-display-agent', '--seq', seq)
 
 
 def persist_name(identity, name):
