@@ -67,6 +67,21 @@ in agent-space; project-specific records stay in their project. No distill-knowl
 writing, or multi-model-comparison skill was selected. Hindsight is a pending
 user investigation.
 
+## Personal USPS integration
+
+The machine-wide USPS skill lives at `~/.agents/skills/agent-mailbox/SKILL.md`.
+Its portable commands use the locally installed release under `~/.local/lib/mbox/current`
+and private routing config `~/.config/mbox/profiles/personal/hooks/codex-machine.json`.
+The private config and credentials are not tracked. User hooks in `~/.codex/hooks.json`
+preserve Herdr integration and add USPS SessionStart, UserPromptSubmit, and Stop handlers.
+Review and trust their current definitions through Codex's `/hooks` UI before use.
+
+Delivery uses the hook fallback: the installed Codex 0.163.0-alpha.11 differs from
+USPS's native-queue pin of 0.162.1. This fallback processes notices on subsequent
+hook events and does not wake an idle session. Homelab's equivalent files are staged,
+but Codex itself was not installed there by this setup. The homelab repository owns
+the daemon deployment runbook (`docs/usps.md`).
+
 ## Named Codex and Antigravity sessions and Herdr
 
 `codexn <session-name> [codex options]` creates a native named Codex session;
