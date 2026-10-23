@@ -1,0 +1,23 @@
+{
+  "herdr": {
+    "PreInvocation": [
+      {
+        "command": "bash '/Users/xkrogen/.gemini/config/hooks/herdr-agent-state.sh' session",
+        "timeout": 10,
+        "type": "command"
+      },
+      {
+        "command": "python3 \"$HOME/.gemini/antigravity-cli/bin/named-session.py\" hook",
+        "timeout": 10,
+        "type": "command"
+      }
+    ],
+    "Stop": [
+      {
+        "command": "python3 \"$HOME/.gemini/antigravity-cli/bin/named-session.py\" hook",
+        "timeout": 10,
+        "type": "command"
+      }
+    ]
+  }
+}

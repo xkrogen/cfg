@@ -1,0 +1,20 @@
+{
+  "allowNonWorkspaceAccess": true,
+  "altScreenMode": "always",
+  "artifactReviewPolicy": "always-proceed",
+  "colorScheme": "tokyo night",
+  "enableTerminalSandbox": false,
+  "model": "Gemini 4 Argon (Low)",
+  "toolPermission": "always-proceed",
+  "permissions": {
+    "allow": [
+      "command(ls)",
+      "command(git --git-dir=$HOME/.cfg/.git --work-tree=$HOME status -uno)",
+      "command(git --git-dir=$HOME/.cfg --work-tree=$HOME status -uno \u0026\u0026 git --git-dir=$HOME/.cfg --work-tree=$HOME log -n 5 --oneline)",
+      "command(grep)"
+    ]
+  },
+  "trustedWorkspaces": [
+    "/Users/xkrogen"
+  ]
+}
