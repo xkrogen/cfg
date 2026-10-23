@@ -34,16 +34,19 @@ cfg is a bare Git repository with `$HOME` as its worktree. Track actual files
 where the tools read them; do not install agent configuration as symlinks into
 `.cfg`. The bare checkout restores tracked files directly; no installer is needed.
 
-- `~/.agents/skills`: real shared skill directories tracked in personal cfg.
-  Includes wrap-up, coding-guidelines, disk-cleanup, gh-stack,
-  make-pages-interactive, voice-transcription, skill-simplifier, and oss.
-- `~/.codex/AGENTS.md`: real personal global instruction file tracked in cfg.
+- `~/.agents/AGENTS.md`: canonical shared personal global instruction file tracked
+  in cfg, symlinked from `~/.codex/AGENTS.md` and `~/.gemini/AGENTS.md`.
+- `~/.agents/skills`: real shared skill directories tracked in personal cfg,
+  symlinked from `~/.gemini/config/skills` and `~/.gemini/antigravity-cli/skills`.
+  Includes wrap-up, coding-guidelines, disk-cleanup, gh-stack, herdr,
+  make-pages-interactive, transcription, skill-simplifier, and oss.
 - `~/.codex/skills`: personal-only skills; `~/.copilot/skills`: work-only skills
   owned by cfgli/the work overlay. Shared implementations belong in personal cfg.
-- `~/.cfg/dotfiles/.agents -> ../../.agents` and
-  `~/.cfg/dotfiles/.codex -> ../../.codex`: parent-directory browsing references,
+- `~/.cfg/dotfiles/.agents -> ../../.agents`,
+  `~/.cfg/dotfiles/.codex -> ../../.codex`, and
+  `~/.cfg/dotfiles/.gemini -> ../../.gemini`: parent-directory browsing references,
   following the existing dotfiles convention. These links do not imply tracking
-  every file in either runtime directory. Stage only intended configuration paths.
+  every file in those runtime directories. Stage only intended configuration paths.
 
 Sharing methods does not share work/personal data, accounts or authorization.
 Credentials, transcripts, caches, indexes and runtime state stay outside Git.
@@ -53,10 +56,17 @@ session records and authorized Git work. Diagramming remains work-only; public-d
 was not selected for sharing.
 
 OSS preserves xkrogen per-command authentication and personal-fork behavior with
-generic enterprise boundaries. Voice transcription uses the existing executable
-on PATH and local storage; this layout change does not relocate its helper,
-recordings, authentication, ledger or transcripts. Interactive-page work conventions
-remain in cfgli's `.copilot/skill-overlays`.
+generic enterprise boundaries. Interactive-page work conventions remain in cfgli's
+`.copilot/skill-overlays`.
+
+The `transcription` skill (`~/.agents/skills/transcription/SKILL.md`) is fully
+on-device and uses FluidVoice only. Meeting questions use the bundled `fv-serve`
+helper in `/Applications/FluidVoice.app/Contents/Helpers`, which requires FluidMeet
+sharing to be enabled. Authorized local audio files are transcribed through
+FluidVoice's loopback API at `http://127.0.0.1:47733/v1/transcribe`; enable it with
+the `LocalAPIEnabled` preference. It does not require a separate transcription
+helper on PATH. Raw transcripts and run artifacts stay under
+`~/.local/state/transcription/`, outside Git.
 
 The former `install_codex_personal.py` and its link-installer tests were retired
 when configuration moved to real runtime paths. General personal records remain
@@ -64,27 +74,50 @@ in agent-space; project-specific records stay in their project. No distill-knowl
 writing, or multi-model-comparison skill was selected. Hindsight is a pending
 user investigation.
 
-## Named Codex sessions and Herdr
+## Personal USPS integration
+
+The machine-wide USPS skill lives at `~/.agents/skills/agent-mailbox/SKILL.md`.
+Its portable commands use the locally installed release under `~/.local/lib/mbox/current`
+and private routing config `~/.config/mbox/profiles/personal/hooks/codex-machine.json`.
+The private config and credentials are not tracked. User hooks in `~/.codex/hooks.json`
+preserve Herdr integration and add USPS SessionStart, UserPromptSubmit, and Stop handlers.
+Review and trust their current definitions through Codex's `/hooks` UI before use.
+
+Delivery uses native queue with the verified Codex CLI 0.163.0-alpha.11 contract.
+Only the USPS SessionStart binding hook remains; existing Herdr hooks are preserved.
+The Mac hook is enabled/trusted and a real USPS message woke an idle Codex thread,
+which read the exact message and recorded read_reported. The shared skill and private
+routing config keep the same locations. Homelab also has the supported runtime and
+native source; account sign-in is completed through its device-login flow. Its
+repository owns daemon operational details (`docs/usps.md`).
+
+## Named Codex and Antigravity sessions and Herdr
 
 `codexn <session-name> [codex options]` creates a native named Codex session;
-`codexr <session-name> [codex options]` resumes its exact UUID. Names with spaces
-must be quoted. Existing names on creation, and missing/ambiguous resume names,
-fail rather than silently choosing another session. Native names come from Codex's
-own metadata. Runtime state is not tracked; no transcript or credential is copied.
+`codexr <session-name> [codex options]` resumes its exact UUID. Likewise,
+`agyn <session-name> [agy options]` creates a named Antigravity CLI session and
+`agyr <session-name> [agy options]` resumes its exact conversation UUID via
+`agy --conversation <uuid>`. Names with spaces must be quoted. Existing names on
+creation, and missing/ambiguous resume names, fail rather than silently choosing
+another session. Native names come from each agent's own metadata (`session_index.jsonl`
+for Codex; `annotations/*.pbtxt` and `conversation_summaries.db` for Antigravity).
+Runtime state is not tracked; no transcript or credential is copied.
 
-Real launchers live in `.local/bin`; the implementation is `.codex/bin/named-session.py`.
-No extra permission flags are added. The local wrappers use the supported stdio
-app-server create/name API then launch native resume; remote/worktree startup uses
-native Codex instead. New wrapper sessions require Codex's app-server API.
+Real launchers live in `.local/bin`; the implementations are
+`.codex/bin/named-session.py` and `.gemini/antigravity-cli/bin/named-session.py`.
+No extra permission flags are added. The local Codex wrappers use the supported
+stdio app-server create/name API then launch native resume; remote/worktree
+startup uses native Codex instead. New Codex wrapper sessions require Codex's
+app-server API.
 
 Herdr's Ctrl+a, Shift+R binding invokes `.local/bin/herdr-resync-display-names`,
-which dispatches to independent Copilot and Codex refreshers. Codex names/UUIDs
-are reported automatically on wrapper launch; refresh picks up native renames
-and recovers metadata after restarts using known native identities or UUID argv.
-Copilot's existing work-owned refresher remains separate.
+which dispatches to independent Copilot, Codex, and Antigravity refreshers.
+Session names/UUIDs are reported automatically on wrapper launch; refresh picks up
+native renames and recovers metadata after restarts using known native identities
+or UUID argv. Copilot's existing work-owned refresher remains separate.
 
 Run targeted regression checks with:
 
 ```sh
-python3 -B -m unittest discover -s "$HOME/.cfg/tests" -p test_codex_named_sessions.py -v
+python3 -B -m unittest discover -s "$HOME/.cfg/tests" -p "test_*_named_sessions.py" -v
 ```
