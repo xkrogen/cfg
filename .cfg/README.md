@@ -76,11 +76,13 @@ The private config and credentials are not tracked. User hooks in `~/.codex/hook
 preserve Herdr integration and add USPS SessionStart, UserPromptSubmit, and Stop handlers.
 Review and trust their current definitions through Codex's `/hooks` UI before use.
 
-Delivery uses the hook fallback: the installed Codex 0.163.0-alpha.11 differs from
-USPS's native-queue pin of 0.162.1. This fallback processes notices on subsequent
-hook events and does not wake an idle session. Homelab's equivalent files are staged,
-but Codex itself was not installed there by this setup. The homelab repository owns
-the daemon deployment runbook (`docs/usps.md`).
+Delivery uses native queue with the verified Codex CLI 0.163.0-alpha.11 contract.
+Only the USPS SessionStart binding hook remains; existing Herdr hooks are preserved.
+The Mac hook is enabled/trusted and a real USPS message woke an idle Codex thread,
+which read the exact message and recorded read_reported. The shared skill and private
+routing config keep the same locations. Homelab also has the supported runtime and
+native source; account sign-in is completed through its device-login flow. Its
+repository owns daemon operational details (`docs/usps.md`).
 
 ## Named Codex and Antigravity sessions and Herdr
 
