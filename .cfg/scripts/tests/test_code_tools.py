@@ -112,6 +112,23 @@ if [ "$1" = -s ]; then echo "${TEST_SYSTEM:-Darwin}"; else echo "${TEST_ARCH:-ar
                 self.env["TEST_ARCH"] = "x86_64"
         self.assertFalse(list((self.home / ".local/bin").glob(".px0-*")))
 
+    def test_px0_release_lookup_failure_keeps_installed_binary(self):
+        self.env.update(TEST_SYSTEM="Linux", TEST_ARCH="x86_64", FAIL_ASSET="latest")
+        self.release(platform="linux-amd64")
+        self.run_script("install_px0.sh", ok=False)
+        self.assertFalse((self.home / ".local/bin/px0").exists())
+
+        self.env.pop("FAIL_ASSET")
+        self.release(platform="linux-amd64")
+        self.run_script("install_px0.sh")
+        installed = self.home / ".local/bin/px0"
+        original = installed.read_bytes()
+        self.env["FAIL_ASSET"] = "latest"
+        self.release("0.1.11", "linux-amd64")
+        result = self.run_script("install_px0.sh")
+        self.assertIn("keeping the installed px0", result.stderr)
+        self.assertEqual(installed.read_bytes(), original)
+
     def test_pyright_default_cached_only_and_launcher(self):
         volta = self.home / ".volta/bin/volta"
         volta.parent.mkdir(parents=True)

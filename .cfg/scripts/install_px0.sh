@@ -19,8 +19,18 @@ checksums=$(mktemp "$bin/.px0-checksums.XXXXXXXX")
 download=$(mktemp "$bin/.px0-download.XXXXXXXX")
 trap 'rm -f -- "$release" "$checksums" "$download"' EXIT
 
-curl --http1.1 -fsSL --retry 2 --connect-timeout 15 --max-time 45 \
-    https://api.github.com/repos/px0-ai/px0/releases/latest -o "$release"
+# The unauthenticated GitHub API limit is shared per egress IP, so a rate-limited
+# lookup is common on rdevs. An installed, previously verified binary is kept
+# rather than failing the whole bootstrap; a missing binary still fails.
+if ! curl --http1.1 -fsSL --retry 2 --connect-timeout 15 --max-time 45 \
+    https://api.github.com/repos/px0-ai/px0/releases/latest -o "$release"; then
+    if [ -x "$bin/px0" ]; then
+        echo "WARN: could not query the latest px0 release; keeping the installed px0." >&2
+        exit 0
+    fi
+    echo "ERROR: could not query the latest px0 release and px0 is not installed." >&2
+    exit 1
+fi
 read -r version asset < <(python3 - "$release" "$platform" <<'PY'
 import json
 import re
