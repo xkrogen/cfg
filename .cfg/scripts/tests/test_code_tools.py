@@ -112,6 +112,42 @@ if [ "$1" = -s ]; then echo "${TEST_SYSTEM:-Darwin}"; else echo "${TEST_ARCH:-ar
                 self.env["TEST_ARCH"] = "x86_64"
         self.assertFalse(list((self.home / ".local/bin").glob(".px0-*")))
 
+    def test_px0_release_lookup_failure_keeps_installed_binary(self):
+        self.env.update(TEST_SYSTEM="Linux", TEST_ARCH="x86_64", FAIL_ASSET="latest")
+        self.release(platform="linux-amd64")
+        self.run_script("install_px0.sh", ok=False)
+        self.assertFalse((self.home / ".local/bin/px0").exists())
+
+        self.env.pop("FAIL_ASSET")
+        self.release(platform="linux-amd64")
+        self.run_script("install_px0.sh")
+        installed = self.home / ".local/bin/px0"
+        original = installed.read_bytes()
+        self.env["FAIL_ASSET"] = "latest"
+        self.release("0.1.11", "linux-amd64")
+        result = self.run_script("install_px0.sh")
+        self.assertIn("keeping the installed px0", result.stderr)
+        self.assertEqual(installed.read_bytes(), original)
+
+    def test_prune_brew_completions_removes_only_dangling_links(self):
+        prefix = self.root / "brew"
+        site = prefix / "share/zsh/site-functions"
+        site.mkdir(parents=True)
+        keg = self.root / "keg"
+        keg.mkdir()
+        (keg / "_good").write_text("#compdef good\n")
+        (site / "_good").symlink_to(keg / "_good")
+        (site / "_cargo").symlink_to(self.root / "Cellar/rust/1.99.1/share/zsh/site-functions/_cargo")
+        (site / "_plain").write_text("#compdef plain\n")
+        self.write_tool("brew", "#!/bin/sh\necho \"$FAKE_BREW_PREFIX\"\n")
+        self.env["FAKE_BREW_PREFIX"] = str(prefix)
+
+        self.run_script("prune_brew_completions.sh")
+
+        self.assertTrue((site / "_good").is_symlink())
+        self.assertFalse((site / "_cargo").is_symlink())
+        self.assertTrue((site / "_plain").is_file())
+
     def test_pyright_default_cached_only_and_launcher(self):
         volta = self.home / ".volta/bin/volta"
         volta.parent.mkdir(parents=True)
