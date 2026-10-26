@@ -32,7 +32,9 @@ brew_install_list=(
     jenv
     pipx
     the_silver_searcher
-    tldr
+    # Homebrew renamed the tldr client to tlrc (same `tldr` binary). An unknown
+    # formula aborts the whole brew batch, so keep this name current.
+    tlrc
     tree
     tmux
     worktrunk
