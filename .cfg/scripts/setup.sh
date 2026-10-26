@@ -55,6 +55,7 @@ if ! command -v brew &>/dev/null; then
     fi
 fi
 brew install "${brew_install_list[@]}"
+"$HOME/.cfg/scripts/prune_brew_completions.sh" || echo "WARN: pruning dangling brew zsh completions failed."
 # The other Brew packages remain best effort; Java tooling is required unless skipped.
 if [ "${CFG_SKIP_JDTLS:-0}" != "1" ]; then
     brew install jdtls || exit $?

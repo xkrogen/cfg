@@ -129,6 +129,25 @@ if [ "$1" = -s ]; then echo "${TEST_SYSTEM:-Darwin}"; else echo "${TEST_ARCH:-ar
         self.assertIn("keeping the installed px0", result.stderr)
         self.assertEqual(installed.read_bytes(), original)
 
+    def test_prune_brew_completions_removes_only_dangling_links(self):
+        prefix = self.root / "brew"
+        site = prefix / "share/zsh/site-functions"
+        site.mkdir(parents=True)
+        keg = self.root / "keg"
+        keg.mkdir()
+        (keg / "_good").write_text("#compdef good\n")
+        (site / "_good").symlink_to(keg / "_good")
+        (site / "_cargo").symlink_to(self.root / "Cellar/rust/1.99.1/share/zsh/site-functions/_cargo")
+        (site / "_plain").write_text("#compdef plain\n")
+        self.write_tool("brew", "#!/bin/sh\necho \"$FAKE_BREW_PREFIX\"\n")
+        self.env["FAKE_BREW_PREFIX"] = str(prefix)
+
+        self.run_script("prune_brew_completions.sh")
+
+        self.assertTrue((site / "_good").is_symlink())
+        self.assertFalse((site / "_cargo").is_symlink())
+        self.assertTrue((site / "_plain").is_file())
+
     def test_pyright_default_cached_only_and_launcher(self):
         volta = self.home / ".volta/bin/volta"
         volta.parent.mkdir(parents=True)
