@@ -75,8 +75,19 @@ if [ -x "$HOME/.cfg/scripts/setup.sh" ]; then
     USER="$(whoami)" CFG_SKIP_JDTLS=1 "$HOME/.cfg/scripts/setup.sh" || echo "WARN: setup.sh returned non-zero (may be safe to ignore)."
 fi
 
-# 3. Clone cfgli bare repo (re-entering init_linkedin.sh now that an agent is available)
-"$cfg_dir/init_linkedin.sh" || {
+# 3. Clone cfgli bare repo (re-entering init_linkedin.sh now that an agent is available).
+#    init_linkedin.sh ships in the cfgli overlay, not this base layer, so on a
+#    fresh rdev it is only present in the overlay checkout the rdev installer
+#    creates at ~/ekrogen-cfg-overlay. Prefer the local copy when it exists.
+overlay_init="$cfg_dir/init_linkedin.sh"
+if [ ! -x "$overlay_init" ]; then
+    overlay_init="$HOME/ekrogen-cfg-overlay/.cfg/scripts/init_linkedin.sh"
+fi
+if [ ! -x "$overlay_init" ]; then
+    echo "init_linkedin.sh not found in $cfg_dir or ~/ekrogen-cfg-overlay; cannot clone cfgli."
+    exit 1
+fi
+"$overlay_init" || {
     echo "init_linkedin.sh failed; aborting rdev_finish_setup."
     exit 1
 }
