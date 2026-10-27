@@ -77,8 +77,8 @@ user investigation.
 ## Personal USPS integration
 
 The machine-wide USPS skill lives at `~/.agents/skills/agent-mailbox/SKILL.md`.
-Its portable commands use the locally installed release under `~/.local/lib/mbox/current`
-and private routing config `~/.config/mbox/profiles/personal/hooks/codex-machine.json`.
+Its portable commands use the locally installed release under `~/.local/lib/usps/current`
+and private routing config `~/.config/usps/profiles/personal/hooks/codex-machine.json`.
 The private config, credentials, and `~/.codex/hooks.json` are not tracked. Configure
 the required USPS hooks locally without replacing existing Herdr hooks. Review and
 trust their definitions through Codex's `/hooks` UI before use.
