@@ -42,7 +42,7 @@ def native_names():
 def resolve_name(name, names):
     matches = [identity for identity, title in names.items() if title == name]
     if not matches:
-        raise SessionError(f'No native Codex session named {name!r}. Use codexn to create it.')
+        raise SessionError(f'No native Codex session named {name!r}. Use cdxn to create it.')
     if len(matches) > 1:
         raise SessionError(f'Ambiguous native session name {name!r}; resume by UUID with codex: ' + ', '.join(matches))
     return matches[0]
@@ -275,10 +275,14 @@ def hook():
 
 def main():
     if len(sys.argv) < 2:
-        raise SessionError('Usage: named-session.py new|resume NAME [codex options], or refresh')
+        raise SessionError('Usage: named-session.py upsert|new|resume [NAME] [codex options], or refresh|list')
     mode = sys.argv[1]
     if mode == 'refresh':
         refresh()
+        return
+    if mode == 'list':
+        for title in sorted(set(native_names().values())):
+            print(title)
         return
     if mode == 'hook':
         hook()
@@ -286,21 +290,35 @@ def main():
     if mode == '_watch':
         watch(sys.argv[2], sys.argv[3], int(sys.argv[4]))
         return
-    if mode not in ('new', 'resume') or len(sys.argv) < 3:
-        raise SessionError('Usage: codexn|codexr <session-name> [codex options]')
+    if mode not in ('upsert', 'new', 'resume'):
+        raise SessionError('Usage: cdx [session-name] [codex options] | cdxn|cdxr <session-name> [codex options]')
+    if mode == 'upsert':
+        if len(sys.argv) < 3:
+            os.execvp('codex', ['codex'])
+        if sys.argv[2] in ('-h', '--help'):
+            print('Usage: cdx [session-name] [codex options]')
+            return
+        if sys.argv[2].startswith('-'):
+            os.execvp('codex', ['codex', *sys.argv[2:]])
+    elif len(sys.argv) < 3:
+        raise SessionError('Usage: cdxn|cdxr <session-name> [codex options]')
     name, args = sys.argv[2], sys.argv[3:]
     if name in ('-h', '--help'):
-        print('Usage: codexn|codexr <session-name> [codex options]')
+        print('Usage: cdxn|cdxr <session-name> [codex options]')
         return
     if not name.strip() or name.startswith('-') or any(ord(c) < 32 or ord(c) == 127 for c in name):
         raise SessionError('Session name must be nonempty printable text and must not start with a dash.')
     cwd = launch_cwd(args)
+    names = native_names()
+    if mode == 'upsert':
+        matches = [identity for identity, title in names.items() if title == name]
+        mode = 'resume' if matches else 'new'
     if mode == 'new':
         codex_home().mkdir(parents=True, exist_ok=True)
         with (codex_home() / 'named-session.lock').open('a') as lock:
             fcntl.flock(lock, fcntl.LOCK_EX)
             if name in native_names().values():
-                raise SessionError(f'A native Codex session named {name!r} already exists. Use codexr.')
+                raise SessionError(f'A native Codex session named {name!r} already exists. Use cdxr.')
             with AppServer() as server:
                 thread = server.call('thread/start', {'cwd': cwd, 'ephemeral': False})['thread']
                 identity = thread['id']
@@ -311,7 +329,7 @@ def main():
         if in_herdr():
             os.environ['CODEX_THREAD_ID'] = identity
     else:
-        identity = resolve_name(name, native_names())
+        identity = resolve_name(name, names)
         if in_herdr():
             os.environ['CODEX_THREAD_ID'] = identity
 

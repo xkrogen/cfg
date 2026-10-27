@@ -23,8 +23,6 @@ class AgyNamedSessionsTests(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory(prefix='agy-wrapper-test-')
         self.addCleanup(self.tmp.cleanup)
         self.root = Path(self.tmp.name)
-        self.env = dict(os.environ, AGY_HOME=str(self.root), HERDR_ENV='0',
-                        PATH=str(self.root) + os.pathsep + os.environ['PATH'])
         self.mock = self.root / 'agy'
         self.mock.write_text('''#!/usr/bin/env python3
 import json, os, sys
@@ -33,6 +31,8 @@ home = Path(os.environ['AGY_HOME'])
 (home / 'launched.json').write_text(json.dumps(sys.argv[1:]))
 ''')
         self.mock.chmod(0o755)
+        self.env = dict(os.environ, AGY_HOME=str(self.root), AGY_BIN=str(self.mock), HERDR_ENV='0',
+                        PATH=str(self.root) + os.pathsep + os.environ['PATH'])
 
     def create_db(self, rows):
         db = self.root / 'conversation_summaries.db'
@@ -74,6 +74,26 @@ home = Path(os.environ['AGY_HOME'])
         result = self.launch('new', 'fresh-session', '--mode', 'auto')
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(json.loads((self.root / 'launched.json').read_text()), ['--mode', 'auto'])
+
+    def test_upsert_no_arg_creates_new_and_resumes_existing(self):
+        self.create_db([(ID, 'existing')])
+        # No arg starts native agy without session name
+        result = self.launch('upsert')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads((self.root / 'launched.json').read_text()), [])
+        # Existing name resumes by UUID
+        result = self.launch('upsert', 'existing', '--sandbox')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads((self.root / 'launched.json').read_text()),
+                         ['--conversation', ID, '--sandbox'])
+        # Missing name creates new named session
+        result = self.launch('upsert', 'brand-new', '--mode', 'auto')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads((self.root / 'launched.json').read_text()), ['--mode', 'auto'])
+        # Native passthrough mode forwards everything untouched
+        result = self.launch('native', '-c')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads((self.root / 'launched.json').read_text()), ['-c'])
 
     def test_persist_name_writes_pbtxt_and_updates_empty_db_title(self):
         self.create_db([(ID, '')])

@@ -292,6 +292,33 @@ if command -v fd &>/dev/null; then
       fd --type d --hidden --follow --exclude ".git" . "$1"
     }
 fi
+
+# Fuzzy-search known coding agent sessions (cplt, agy, cdx) and run the chosen command on Ctrl-S.
+if [[ -o interactive ]]; then
+    stty -ixon 2>/dev/null
+    fzf-agent-session-widget() {
+        local selected
+        setopt localoptions noglobsubst noposixbuiltins pipefail no_aliases 2>/dev/null
+        if ! command -v fzf &>/dev/null || [ ! -x "$HOME/.local/bin/agent-sessions" ]; then
+            zle reset-prompt
+            return 1
+        fi
+        selected="$("$HOME/.local/bin/agent-sessions" | \
+            FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} --reverse --bind=ctrl-s:down,ctrl-r:toggle-sort --highlight-line ${FZF_DEFAULT_OPTS-} ${FZF_CTRL_S_OPTS-}" \
+            FZF_DEFAULT_OPTS_FILE='' $(__fzfcmd 2>/dev/null || echo fzf) --query="$LBUFFER")"
+        local ret=$?
+        if [ -n "$selected" ]; then
+            BUFFER="$selected"
+            CURSOR=${#BUFFER}
+            zle accept-line
+        else
+            zle reset-prompt
+        fi
+        return $ret
+    }
+    zle -N fzf-agent-session-widget
+    bindkey '^S' fzf-agent-session-widget
+fi
 debug_timing_checkpoint "FZF"
 
 # Init 1Password CLI, if installed

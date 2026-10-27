@@ -1,0 +1,3 @@
+#!/bin/sh
+# Start or upsert a named native GitHub Copilot CLI session.
+exec python3 "$HOME/.copilot/bin/named-session.py" upsert "$@"

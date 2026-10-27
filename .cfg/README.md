@@ -43,7 +43,8 @@ where the tools read them; do not install agent configuration as symlinks into
 - `~/.codex/skills`: personal-only skills; `~/.copilot/skills`: work-only skills
   owned by cfgli/the work overlay. Shared implementations belong in personal cfg.
 - `~/.cfg/dotfiles/.agents -> ../../.agents`,
-  `~/.cfg/dotfiles/.codex -> ../../.codex`, and
+  `~/.cfg/dotfiles/.codex -> ../../.codex`,
+  `~/.cfg/dotfiles/.copilot -> ../../.copilot`, and
   `~/.cfg/dotfiles/.gemini -> ../../.gemini`: parent-directory browsing references,
   following the existing dotfiles convention. These links do not imply tracking
   every file in those runtime directories. Stage only intended configuration paths.
@@ -102,24 +103,35 @@ Shared instructions, skills, and named-session tooling remain tracked separately
 The personal USPS integration requires its private machine profile and locally
 configured hooks; pulling cfg does not enable it.
 
-## Named Codex and Antigravity sessions and Herdr
+## Named Copilot, Antigravity, and Codex sessions and Herdr
 
-`codexn <session-name> [codex options]` creates a native named Codex session;
-`codexr <session-name> [codex options]` resumes its exact UUID. Likewise,
-`agyn <session-name> [agy options]` creates a named Antigravity CLI session and
-`agyr <session-name> [agy options]` resumes its exact conversation UUID via
-`agy --conversation <uuid>`. Names with spaces must be quoted. Existing names on
-creation, and missing/ambiguous resume names, fail rather than silently choosing
-another session. Native names come from each agent's own metadata (`session_index.jsonl`
-for Codex; `annotations/*.pbtxt` and `conversation_summaries.db` for Antigravity).
+Full names (`copilot`, `antigravity`, `codex`) run the native CLI directly without
+session-name wrapper behavior (`antigravity` forwards to the underlying `agy` binary).
+
+Short names (`cplt`, `agy`, `cdx`) unify named session management across all three agents:
+
+- `cplt`, `agy`, `cdx` (no suffix): with no arguments, starts a session without a name.
+  With `<session-name> [options]`, resumes the matching session if one exists, or
+  creates a new named session if none exists (upsert).
+- `cpltn`, `agyn`, `cdxn` (`n` suffix, plus legacy `codexn`): creates a new named
+  session, failing if a session with that name already exists.
+- `cpltr`, `agyr`, `cdxr` (`r` suffix, plus legacy `codexr`): resumes an existing
+  named session by exact UUID, failing if none exists or if the name is ambiguous.
+- **Ctrl-S in zsh** (`fzf-agent-session-widget`, backed by `~/.local/bin/agent-sessions`):
+  fuzzy-matches known session commands (`cplt <name>`, `agy <name>`, `cdx <name>`)
+  from native agent metadata and executes the selected command.
+
+Names with spaces must be quoted. Native names come from each agent's own metadata
+(`~/.copilot/session-state/*/workspace.yaml` for Copilot; `annotations/*.pbtxt` and
+`conversation_summaries.db` for Antigravity; `session_index.jsonl` for Codex).
 Runtime state is not tracked; no transcript or credential is copied.
 
 Real launchers live in `.local/bin`; the implementations are
-`.codex/bin/named-session.py` and `.gemini/antigravity-cli/bin/named-session.py`.
-No extra permission flags are added. The local Codex wrappers use the supported
-stdio app-server create/name API then launch native resume; remote/worktree
-startup uses native Codex instead. New Codex wrapper sessions require Codex's
-app-server API.
+`.copilot/bin/named-session.py`, `.gemini/antigravity-cli/bin/named-session.py`, and
+`.codex/bin/named-session.py`. No extra permission flags are added. The local Codex
+wrappers use the supported stdio app-server create/name API then launch native resume;
+remote/worktree startup uses native Codex instead. New Codex wrapper sessions require
+Codex's app-server API.
 
 Herdr's Ctrl+a, Shift+R binding invokes `.local/bin/herdr-resync-display-names`,
 which dispatches to independent Copilot, Codex, and Antigravity refreshers.

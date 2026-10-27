@@ -1,0 +1,3 @@
+#!/bin/sh
+# Start or upsert a named native Codex session.
+exec python3 "$HOME/.codex/bin/named-session.py" upsert "$@"

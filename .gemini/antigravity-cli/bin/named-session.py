@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
 import sqlite3
 import subprocess
 import sys
@@ -114,6 +115,32 @@ def validate_args(args, *, mode):
             break
         if arg in ('-c', '--continue', '--conversation') or arg.startswith('--conversation='):
             raise SessionError('A named session is already selected; do not combine it with resume selectors.')
+
+
+def agy_binary():
+    override = os.environ.get('AGY_BIN')
+    if override:
+        return override
+    local_bin = (Path.home() / '.local/bin').resolve()
+    path_dirs = []
+    for entry in os.environ.get('PATH', '').split(os.pathsep):
+        if not entry:
+            continue
+        try:
+            if Path(entry).expanduser().resolve() == local_bin:
+                continue
+        except OSError:
+            pass
+        path_dirs.append(entry)
+    search_path = os.pathsep.join(path_dirs)
+    for candidate in ('agy', 'antigravity'):
+        found = shutil.which(candidate, path=search_path)
+        if found:
+            return found
+    for fallback in ('/opt/homebrew/bin/agy', '/usr/local/bin/agy', '/home/linuxbrew/.linuxbrew/bin/agy'):
+        if os.path.isfile(fallback) and os.access(fallback, os.X_OK):
+            return fallback
+    return 'agy'
 
 
 def herdr(*args):
@@ -297,10 +324,14 @@ def existing_locks():
 
 def main():
     if len(sys.argv) < 2:
-        raise SessionError('Usage: named-session.py new|resume NAME [agy options], or refresh')
+        raise SessionError('Usage: named-session.py upsert|new|resume [NAME] [agy options], or refresh|list|native')
     mode = sys.argv[1]
     if mode == 'refresh':
         refresh()
+        return
+    if mode == 'list':
+        for title in sorted(set(native_names().values())):
+            print(title)
         return
     if mode == 'hook':
         hook()
@@ -308,7 +339,20 @@ def main():
     if mode == '_watch':
         watch(sys.argv[2], sys.argv[3], int(sys.argv[4]), sys.argv[5] if len(sys.argv) > 5 else '')
         return
-    if mode not in ('new', 'resume') or len(sys.argv) < 3:
+    binary = agy_binary()
+    if mode == 'native':
+        os.execvp(binary, [binary, *sys.argv[2:]])
+    if mode not in ('upsert', 'new', 'resume'):
+        raise SessionError('Usage: agy [session-name] [agy options] | agyn|agyr <session-name> [agy options]')
+    if mode == 'upsert':
+        if len(sys.argv) < 3:
+            os.execvp(binary, [binary])
+        if sys.argv[2] in ('-h', '--help'):
+            print('Usage: agy [session-name] [agy options]')
+            return
+        if sys.argv[2].startswith('-'):
+            os.execvp(binary, [binary, *sys.argv[2:]])
+    elif len(sys.argv) < 3:
         raise SessionError('Usage: agyn|agyr <session-name> [agy options]')
     name, args = sys.argv[2], sys.argv[3:]
     if name in ('-h', '--help'):
@@ -318,6 +362,9 @@ def main():
         raise SessionError('Session name must be nonempty printable text and must not start with a dash.')
     validate_args(args, mode=mode)
     names = native_names()
+    if mode == 'upsert':
+        matches = [identity for identity, title in names.items() if title == name]
+        mode = 'resume' if matches else 'new'
     if mode == 'new':
         if name in names.values():
             raise SessionError(f'A native Antigravity session named {name!r} already exists. Use agyr.')
@@ -328,7 +375,7 @@ def main():
             start_new_session=True,
         )
         print(f'Opening new Antigravity session {name!r}', file=sys.stderr)
-        os.execvp('agy', ['agy', *args])
+        os.execvp(binary, [binary, *args])
     else:
         identity = resolve_name(name, names)
         if in_herdr():
@@ -338,7 +385,7 @@ def main():
                 start_new_session=True,
             )
         print(f'Opening Antigravity session {name!r} ({identity})', file=sys.stderr)
-        os.execvp('agy', ['agy', '--conversation', identity, *args])
+        os.execvp(binary, [binary, '--conversation', identity, *args])
 
 
 if __name__ == '__main__':

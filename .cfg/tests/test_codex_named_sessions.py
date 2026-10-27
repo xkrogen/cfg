@@ -70,6 +70,24 @@ else:
         self.assertEqual(json.loads((self.root/'launched.json').read_text()), ['resume',ID,'--search'])
         self.assertFalse((self.root/'start.json').exists())
 
+    def test_upsert_no_arg_creates_new_and_resumes_existing(self):
+        self.index([{'id': ID, 'thread_name': 'existing'}])
+        # No arg starts native codex without session name
+        result = self.launch('upsert')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads((self.root / 'launched.json').read_text()), [])
+        self.assertFalse((self.root / 'start.json').exists())
+        # Existing name resumes by UUID without creating
+        result = self.launch('upsert', 'existing', '--search')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads((self.root / 'launched.json').read_text()), ['resume', ID, '--search'])
+        self.assertFalse((self.root / 'start.json').exists())
+        # Missing name creates and names via app-server then resumes by UUID
+        result = self.launch('upsert', 'brand-new', '-m', 'chosen-model')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads((self.root / 'launched.json').read_text()), ['resume', ID, '-m', 'chosen-model'])
+        self.assertTrue((self.root / 'start.json').exists())
+
     def test_duplicate_missing_and_ambiguous_fail_without_launch(self):
         self.index([{'id':ID,'thread_name':'same'},{'id':OTHER,'thread_name':'same'}])
         for mode,name in [('new','same'),('resume','same'),('resume','missing')]:
