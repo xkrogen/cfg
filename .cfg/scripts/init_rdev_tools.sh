@@ -62,6 +62,7 @@ configure_github_https() {
 
 code_tools_present() {
     [ -x "$HOME/.local/bin/px0" ] \
+        && [ -x "$HOME/.local/bin/fzf" ] \
         && [ -x "$HOME/.local/bin/terminal-browser" ] \
         && [ -x "$HOME/.local/bin/pyright-langserver" ] \
         && [ -x "$HOME/.volta/bin/pyright-langserver" ] \
@@ -179,7 +180,7 @@ one_time() {
     fi
 
     # Persistent code tools use the public installers.
-    for tool in px0 pyright terminal_browser; do
+    for tool in px0 pyright terminal_browser fzf; do
         if ! "$HOME/.cfg/scripts/install_$tool.sh" >>"$LOG" 2>&1; then
             log "ERROR: install_$tool.sh failed (see $LOG)."
             code_tools_failed=1

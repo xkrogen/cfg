@@ -148,6 +148,51 @@ if [ "$1" = -s ]; then echo "${TEST_SYSTEM:-Darwin}"; else echo "${TEST_ARCH:-ar
         self.assertFalse((site / "_cargo").is_symlink())
         self.assertTrue((site / "_plain").is_file())
 
+    def fzf_release(self, version="0.74.5", platform="linux_amd64", *, digest=None):
+        asset = f"fzf-{version}-{platform}.tar.gz"
+        payload = f"#!/bin/sh\necho fzf {version} {platform}\n".encode()
+        buffer = BytesIO()
+        with tarfile.open(fileobj=buffer, mode="w:gz") as archive:
+            member = tarfile.TarInfo("fzf")
+            member.size = len(payload)
+            archive.addfile(member, BytesIO(payload))
+        data = buffer.getvalue()
+        (self.fixtures / asset).write_bytes(data)
+        (self.fixtures / "latest").write_text(json.dumps({
+            "tag_name": "v" + version, "draft": False, "prerelease": False,
+            "assets": [{"name": asset, "digest": f"sha256:{digest or hashlib.sha256(data).hexdigest()}"}],
+        }))
+        return payload
+
+    def test_fzf_platforms_updates_and_identical_noop(self):
+        for system, arch, platform in (("Darwin", "arm64", "darwin_arm64"),
+                                       ("Linux", "x86_64", "linux_amd64"),
+                                       ("Linux", "aarch64", "linux_arm64")):
+            with self.subTest(platform=platform):
+                self.env.update(TEST_SYSTEM=system, TEST_ARCH=arch)
+                first = self.fzf_release(platform=platform)
+                self.run_script("install_fzf.sh")
+                installed = self.home / ".local/bin/fzf"
+                self.assertEqual(installed.read_bytes(), first)
+                inode = installed.stat().st_ino
+                self.run_script("install_fzf.sh")
+                self.assertEqual(installed.stat().st_ino, inode)
+                updated = self.fzf_release("0.74.6", platform)
+                self.run_script("install_fzf.sh")
+                self.assertEqual(installed.read_bytes(), updated)
+
+    def test_fzf_digest_mismatch_preserves_existing_binary(self):
+        self.env.update(TEST_SYSTEM="Linux", TEST_ARCH="x86_64")
+        first = self.fzf_release(platform="linux_amd64")
+        self.run_script("install_fzf.sh")
+        installed = self.home / ".local/bin/fzf"
+        self.assertEqual(installed.read_bytes(), first)
+        self.fzf_release("0.74.6", "linux_amd64", digest="0" * 64)
+        result = self.run_script("install_fzf.sh", ok=False)
+        self.assertIn("checksum mismatch", result.stderr)
+        self.assertEqual(installed.read_bytes(), first)
+        self.assertFalse(list((self.home / ".local/bin").glob(".fzf-*")))
+
     def test_pyright_default_cached_only_and_launcher(self):
         volta = self.home / ".volta/bin/volta"
         volta.parent.mkdir(parents=True)
