@@ -64,6 +64,19 @@ class FinishSetupOverlayBootstrapTests(unittest.TestCase):
         self.assertTrue(marker.exists(), "overlay init_linkedin.sh was not executed")
         self.assertIn("rdev_finish_setup finished", result.stdout)
 
+    def test_unauthenticated_github_stops_before_setup_with_login_command(self):
+        self.write(self.tools / "gh", "#!/bin/sh\nexit 1\n", executable=True)
+        overlay_init = self.home / "ekrogen-cfg-overlay" / ".cfg" / "scripts" / "init_linkedin.sh"
+        overlay_init.parent.mkdir(parents=True)
+        marker = self.home / "init_linkedin_ran"
+        self.write(overlay_init, f"#!/bin/sh\ntouch '{marker}'\n", executable=True)
+
+        result = self.run_finish_setup()
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("gh auth login --git-protocol https --hostname github.com", result.stdout)
+        self.assertFalse(marker.exists(), "init_linkedin.sh ran without a GitHub login")
+
     def test_fails_clearly_when_no_init_linkedin_is_available(self):
         result = self.run_finish_setup()
 

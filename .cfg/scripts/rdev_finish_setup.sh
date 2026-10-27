@@ -33,6 +33,32 @@ if [ -z "${RDEV_ID:-}" ]; then
     exit 0
 fi
 
+cfg_dir="$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" >/dev/null 2>&1 && pwd)/scripts"
+
+# Credential helpers used by setup must share a bus instead of autolaunching.
+# This runs before the gh probe, so gh does not start its own bus.
+bash "$cfg_dir/ensure_rdev_dbus.sh" || {
+    echo "ERROR: user D-Bus bootstrap failed; aborting rdev_finish_setup."
+    exit 1
+}
+if [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
+    export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u)/bus"
+    export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+fi
+
+# Only gh is bootstrapped here, through the standard Brew helper, so the login
+# gate can run. The full Brew package set stays in setup.sh.
+if ! command -v gh >/dev/null 2>&1 && [ ! -x /home/linuxbrew/.linuxbrew/bin/gh ]; then
+    echo "gh is missing; installing it with Homebrew."
+    [ -x /home/linuxbrew/.linuxbrew/bin/brew ] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    if source "$cfg_dir/brew_standard_tools.sh" && ensure_homebrew && USER="$(id -un)" LOGNAME="$(id -un)" brew install gh; then
+        :
+    else
+        echo "WARN: could not install gh with Homebrew; the login gate below will report it."
+    fi
+fi
+[ -x /home/linuxbrew/.linuxbrew/bin/brew ] && export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+
 if ! gh auth status --hostname github.com >/dev/null 2>&1; then
     cat <<'EOF'
 rdev_finish_setup: GitHub is not authenticated for this host.
@@ -44,18 +70,7 @@ No SSH agent forwarding is needed.
 EOF
     exit 1
 fi
-
-cfg_dir="$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" >/dev/null 2>&1 && pwd)/scripts"
-
-# Credential helpers used by setup must share a bus instead of autolaunching.
-bash "$cfg_dir/ensure_rdev_dbus.sh" || {
-    echo "ERROR: user D-Bus bootstrap failed; aborting rdev_finish_setup."
-    exit 1
-}
-if [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
-    export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u)/bus"
-    export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
-fi
+gh auth setup-git --hostname github.com >/dev/null 2>&1
 
 # 1. Recover xkrogen/cfg base layer if rdev's init-phase got killed before it
 #    finished. init.sh is idempotent — it clones into ~/.cfg.git and checks
@@ -123,7 +138,7 @@ fi
 ARCHIVE_DIR="$HOME/.claude/session-archive"
 if [ ! -d "$ARCHIVE_DIR/.git" ]; then
     echo "Cloning claude-session-archive."
-    git clone --quiet ssh://git@github.com/ekrogen_LinkedIn/claude-session-archive.git "$ARCHIVE_DIR" \
+    git clone --quiet https://github.com/ekrogen_LinkedIn/claude-session-archive.git "$ARCHIVE_DIR" \
         || echo "WARN: session-archive clone failed."
     if [ -d "$ARCHIVE_DIR/.git" ]; then
         bash "$ARCHIVE_DIR/sync-archive.sh" rebuild-fts 2>/dev/null \
