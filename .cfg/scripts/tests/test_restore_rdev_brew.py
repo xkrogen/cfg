@@ -16,7 +16,7 @@ FLOCK_MOCK = f"""#!{sys.executable}
 import fcntl, sys
 flags = fcntl.LOCK_EX | (fcntl.LOCK_NB if "-n" in sys.argv else 0)
 try:
-    fcntl.flock(9, flags)
+    fcntl.flock(int(sys.argv[-1]), flags)
 except BlockingIOError:
     sys.exit(1)
 """
@@ -122,25 +122,34 @@ class RestoreRdevBrewTests(unittest.TestCase):
         self.assertFalse(self.sentinel.exists())
         self.assertIn("standard Brew restore failed", self.log())
 
-    def test_overlapping_run_coalesces_on_held_lock(self):
-        self.install_brew()
-        lock_path = self.home / ".rdev_brew_restore.lock"
+    def hold_lock(self, name):
         holder = subprocess.Popen(
             [sys.executable, "-c",
              "import fcntl,sys,time; f=open(sys.argv[1],'w'); "
              "fcntl.flock(f, fcntl.LOCK_EX); print('locked', flush=True); time.sleep(20)",
-             str(lock_path)],
+             str(self.home / name)],
             stdout=subprocess.PIPE, text=True)
         self.addCleanup(holder.wait)
         self.addCleanup(holder.kill)
         self.addCleanup(holder.stdout.close)
         self.assertEqual(holder.stdout.readline().strip(), "locked")
 
+    def test_overlapping_run_coalesces_on_held_lock(self):
+        self.install_brew()
+        self.hold_lock(".rdev_brew_restore.lock")
         result = self.run_helper()
         self.assertEqual(result.returncode, 0)
         self.assertEqual(self.recorded(), [])
         self.assertIn("coalescing", self.log())
 
+    def test_defers_while_finish_setup_holds_its_lock(self):
+        self.install_brew()
+        self.hold_lock(".rdev_finish_setup.lock")
+        result = self.run_helper()
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(self.recorded(), [])
+        self.assertIn("rdev_finish_setup is running", self.log())
+        self.assertFalse(self.sentinel.exists())
 
 if __name__ == "__main__":
     unittest.main()

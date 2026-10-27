@@ -38,6 +38,15 @@ if ! flock -n 9; then
     exit 0
 fi
 
+# rdev_finish_setup runs setup.sh, which installs the same Brew set under its
+# own lock. Probe that lock and back off, so the two installers never overlap.
+exec 8>"$HOME/.rdev_finish_setup.lock"
+if ! flock -n 8; then
+    echo "$(date -u +%Y-%m-%dT%H:%M:%SZ) rdev_finish_setup is running; deferring Brew restore" >>"$LOG"
+    exit 0
+fi
+exec 8>&-
+
 exec >>"$LOG" 2>&1
 log() { echo "[restore_rdev_brew] $(date -u +%Y-%m-%dT%H:%M:%SZ) $*"; }
 
