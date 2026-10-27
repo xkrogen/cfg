@@ -10,6 +10,7 @@
 # Keep this file to essential PATH entries only. Interactive-only setup
 # (prompt, aliases, keybindings, completions) belongs in .zshrc/.zshrc.local.
 for _dir in \
+    "/usr/local/bin" \
     "/home/linuxbrew/.linuxbrew/bin" \
     "/opt/homebrew/bin" \
     "$HOME/.local/bin" \
@@ -22,3 +23,9 @@ for _dir in \
 done
 unset _dir
 export PATH
+
+# Machine-specific PATH-only additions (e.g. work-only rdev bin dirs) live in a
+# separate private file. Keep it PATH-only and free of auth or service calls.
+if [ -r "$HOME/.zshenv.local" ]; then
+    . "$HOME/.zshenv.local"
+fi
