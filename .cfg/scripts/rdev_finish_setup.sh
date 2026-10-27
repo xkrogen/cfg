@@ -33,13 +33,14 @@ if [ -z "${RDEV_ID:-}" ]; then
     exit 0
 fi
 
-if ! ssh-add -l >/dev/null 2>&1; then
+if ! gh auth status --hostname github.com >/dev/null 2>&1; then
     cat <<'EOF'
-rdev_finish_setup: no forwarded ssh-agent identities are available.
+rdev_finish_setup: GitHub is not authenticated for this host.
 
-Reconnect with `rdev ssh <name>` (which enables ForwardAgent by default), or
-load a github-capable key into the agent, then re-run:
+Run this in a Herdr terminal, complete the browser login, then re-run:
+    gh auth login --git-protocol https --hostname github.com
     bash ~/.cfg/scripts/rdev_finish_setup.sh
+No SSH agent forwarding is needed.
 EOF
     exit 1
 fi

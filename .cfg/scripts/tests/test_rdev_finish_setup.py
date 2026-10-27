@@ -32,7 +32,7 @@ class FinishSetupOverlayBootstrapTests(unittest.TestCase):
         self.write(self.scripts / "ensure_rdev_dbus.sh", STUB)
         self.tools = self.root / "tools"
         self.tools.mkdir()
-        for name in ("ssh-add", "git", "curl", "flock"):
+        for name in ("gh", "git", "curl", "flock"):
             self.write(self.tools / name, STUB, executable=True)
         self.env = {
             **os.environ,
