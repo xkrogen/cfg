@@ -7,7 +7,7 @@
 #   - install Copilot CLI
 #   - register the Copilot marketplaces and install enabled plugins
 #   - wire herdr's native Copilot integration (session-restore identity hook)
-#   - wire the session archive into Copilot
+#   - wire the session archive into Copilot (archive clone only on role main)
 #
 # Triggered from ~/.zshrc.local on first interactive shell when RDEV_ID is set
 # and ~/.cfg.li.git/ doesn't exist yet. Safe to re-run manually:
@@ -15,15 +15,26 @@
 
 set -u
 
-# Explicit role mode for a freshly assigned main/services/backup host. It installs
-# the same Copilot and config tools as a normal initial setup, but it does not
-# clone the shared session archive or other user history. Select it with
-# RDEV_SETUP_ROLE=<role> or --role <role>; without either, the legacy behavior runs.
+# Role selection. A role host (services, backup) never clones the shared session
+# archive. Only an explicit main host clones it; with no role, the archive is
+# deferred, so a first login that passes no arguments cannot copy user history.
+# Select a role with RDEV_SETUP_ROLE=<role> or --role <role>.
 ROLE="${RDEV_SETUP_ROLE:-}"
 while [ $# -gt 0 ]; do
     case "$1" in
-        --role) ROLE="${2:-}"; shift 2 ;;
-        --role=*) ROLE="${1#--role=}"; shift ;;
+        --role)
+            if [ $# -lt 2 ] || [ -z "$2" ]; then
+                echo "rdev_finish_setup: --role requires a non-empty value" >&2
+                exit 2
+            fi
+            ROLE="$2"; shift 2 ;;
+        --role=*)
+            ROLE="${1#--role=}"
+            if [ -z "$ROLE" ]; then
+                echo "rdev_finish_setup: --role= requires a non-empty value" >&2
+                exit 2
+            fi
+            shift ;;
         *) echo "rdev_finish_setup: unknown argument '$1'" >&2; exit 2 ;;
     esac
 done
@@ -151,11 +162,16 @@ fi
 # 5. Session history: clone the shared archive repo and tag this machine with a
 #    distinct source name (rdev:<mp>/<rdev-name>) so Copilot results can be
 #    filtered. The source tag lives outside tracked configuration because it is
-#    machine-specific. Role mode skips the archive: user history is not copied
-#    onto a freshly assigned role host.
+#    machine-specific. Only an explicit main host clones the archive. Services,
+#    backup, and an unset role defer it so user history is never copied onto a
+#    role host by accident.
 ARCHIVE_DIR="$HOME/.claude/session-archive"
-if [ -n "$ROLE" ]; then
-    echo "role mode ($ROLE): skipping the shared session archive clone."
+if [ "$ROLE" != "main" ]; then
+    if [ -n "$ROLE" ]; then
+        echo "role $ROLE: skipping the shared session archive clone."
+    else
+        echo "no role set: deferring the shared session archive (set RDEV_SETUP_ROLE=main to clone it)."
+    fi
 elif [ ! -d "$ARCHIVE_DIR/.git" ]; then
     echo "Cloning claude-session-archive."
     git clone --quiet https://github.com/ekrogen_LinkedIn/claude-session-archive.git "$ARCHIVE_DIR" \

@@ -38,6 +38,8 @@ class FinishSetupOverlayBootstrapTests(unittest.TestCase):
             **os.environ,
             "HOME": str(self.home),
             "RDEV_ID": "test-rdev",
+            # Clear any caller role so each test chooses its own (empty = no role).
+            "RDEV_SETUP_ROLE": "",
             "PATH": f"{self.tools}:{os.environ['PATH']}",
         }
 
@@ -61,23 +63,42 @@ class FinishSetupOverlayBootstrapTests(unittest.TestCase):
                    f"#!/bin/sh\necho \"$*\" >> '{calls}'\nexit 0\n", executable=True)
         return calls
 
-    def test_role_mode_skips_the_session_archive_clone(self):
+    def archive_calls(self, calls):
+        return calls.read_text() if calls.exists() else ""
+
+    def test_services_role_never_clones_the_session_archive(self):
         calls = self.record_git_calls()
 
         result = self.run_finish_setup(RDEV_SETUP_ROLE="services")
 
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn("role mode (services): skipping the shared session archive", result.stdout)
-        recorded = calls.read_text() if calls.exists() else ""
-        self.assertNotIn("claude-session-archive", recorded)
+        self.assertIn("role services: skipping the shared session archive clone", result.stdout)
+        self.assertNotIn("claude-session-archive", self.archive_calls(calls))
 
-    def test_legacy_mode_still_clones_the_session_archive(self):
+    def test_backup_role_never_clones_the_session_archive(self):
+        calls = self.record_git_calls()
+
+        result = self.run_finish_setup("--role", "backup")
+
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertNotIn("claude-session-archive", self.archive_calls(calls))
+
+    def test_no_args_with_no_role_defers_the_archive_in_the_real_flow(self):
         calls = self.record_git_calls()
 
         result = self.run_finish_setup()
 
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn("claude-session-archive", calls.read_text())
+        self.assertIn("no role set: deferring the shared session archive", result.stdout)
+        self.assertNotIn("claude-session-archive", self.archive_calls(calls))
+
+    def test_explicit_main_role_clones_the_session_archive(self):
+        calls = self.record_git_calls()
+
+        result = self.run_finish_setup(RDEV_SETUP_ROLE="main")
+
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("claude-session-archive", self.archive_calls(calls))
 
     def test_unknown_role_is_rejected_before_any_setup(self):
         result = self.run_finish_setup("--role", "legacy-host")
@@ -85,6 +106,16 @@ class FinishSetupOverlayBootstrapTests(unittest.TestCase):
         self.assertEqual(result.returncode, 2)
         self.assertIn("invalid role 'legacy-host'", result.stderr)
         self.assertNotIn("rdev_finish_setup starting", result.stdout)
+
+    def test_role_flag_without_a_value_exits_usage_promptly(self):
+        for args in (["--role"], ["--role", ""], ["--role="]):
+            with self.subTest(args=args):
+                result = subprocess.run(
+                    ["bash", str(self.scripts / "rdev_finish_setup.sh"), *args],
+                    env=self.env, capture_output=True, text=True, timeout=5,
+                )
+                self.assertEqual(result.returncode, 2)
+                self.assertIn("--role", result.stderr)
 
     def test_uses_overlay_checkout_when_base_layer_lacks_init_linkedin(self):
         overlay_init = self.home / "ekrogen-cfg-overlay" / ".cfg" / "scripts" / "init_linkedin.sh"
