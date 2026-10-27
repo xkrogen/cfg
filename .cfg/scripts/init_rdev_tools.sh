@@ -136,18 +136,9 @@ every_boot() {
         log "kubectl-in already present."
     fi
 
-    # 5. Worktrunk lives on the ephemeral Homebrew volume, so restore it after
-    #    pod restarts before invoking the persistent git-sprout shim.
-    if ! command -v wt >/dev/null 2>&1; then
-        log "installing worktrunk..."
-        if USER="$(id -un)" LOGNAME="$(id -un)" command brew install worktrunk >>"$LOG" 2>&1; then
-            log "worktrunk installed."
-        else
-            log "WARN: failed to install worktrunk."
-        fi
-    else
-        log "worktrunk already present."
-    fi
+    # Worktrunk and the other Homebrew tools are restored by restore_rdev_brew.sh,
+    # which retries until it fully succeeds. Running brew here would write the
+    # sentinel even when brew is missing, so every_boot would never retry it.
 
     # Touch the sentinel only if we got this far without bailing out. Any
     # individual step failure above is logged but non-fatal — partial success

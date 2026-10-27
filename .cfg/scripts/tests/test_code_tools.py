@@ -351,7 +351,8 @@ esac
     def test_setup_propagates_required_jdtls_failure_without_changing_other_brew_failures(self):
         scripts = self.home / ".cfg/scripts"
         scripts.mkdir(parents=True)
-        (scripts / "setup.sh").write_text((SCRIPTS / "setup.sh").read_text())
+        for name in ("setup.sh", "brew_standard_tools.sh"):
+            (scripts / name).write_text((SCRIPTS / name).read_text())
         for name in ("install_git_sprout.sh", "install_pyright.sh",
                      "install_herdr_skill.sh", "install_px0.sh", "install_terminal_browser.sh"):
             installer = scripts / name

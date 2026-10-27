@@ -15,59 +15,15 @@ fi
 # brew installations
 #################################################################################
 
-# brew installs
-brew_install_list=(
-    azure-cli
-    bash
-    bat
-    cloc
-    fd
-    fzf
-    gcc
-    gh
-    alltuner/tap/git-sprout
-    googleworkspace-cli
-    gradle-completion
-    gron
-    jenv
-    pipx
-    the_silver_searcher
-    # Homebrew renamed the tldr client to tlrc (same `tldr` binary). An unknown
-    # formula aborts the whole brew batch, so keep this name current.
-    tlrc
-    tree
-    tmux
-    worktrunk
-    ripgrep
-    walk
-    wget
-    ynqa/tap/jnv
-    zsh
-    zsh-autosuggestions
-    zsh-syntax-highlighting
-)
-
-if ! command -v brew &>/dev/null; then
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    if [[ "$OS_OSX" = "false" ]]; then
-        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-        export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
-    fi
-fi
-brew install "${brew_install_list[@]}"
-"$HOME/.cfg/scripts/prune_brew_completions.sh" || echo "WARN: pruning dangling brew zsh completions failed."
+# The Brew bootstrap and package lists live in brew_standard_tools.sh, which
+# restore_rdev_brew.sh also uses.
+source "$cfg_dir/scripts/brew_standard_tools.sh"
+brew_install_standard_formulas
 # The other Brew packages remain best effort; Java tooling is required unless skipped.
 if [ "${CFG_SKIP_JDTLS:-0}" != "1" ]; then
     brew install jdtls || exit $?
 fi
-
-export PATH="$(brew --prefix)/bin:$PATH"
-if ! command -v codex &>/dev/null && [ ! -x "$HOME/.local/bin/codex" ]; then
-    brew install --cask codex
-fi
-if ! command -v agy &>/dev/null && [ ! -x "$HOME/.local/bin/agy" ]; then
-    brew install --cask antigravity-cli
-fi
+brew_install_standard_casks
 "$cfg_dir/scripts/install_git_sprout.sh"
 
 #################################################################################
