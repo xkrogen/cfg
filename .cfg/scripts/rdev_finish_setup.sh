@@ -15,6 +15,23 @@
 
 set -u
 
+# Explicit role mode for a freshly assigned main/services/backup host. It installs
+# the same Copilot and config tools as a normal initial setup, but it does not
+# clone the shared session archive or other user history. Select it with
+# RDEV_SETUP_ROLE=<role> or --role <role>; without either, the legacy behavior runs.
+ROLE="${RDEV_SETUP_ROLE:-}"
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --role) ROLE="${2:-}"; shift 2 ;;
+        --role=*) ROLE="${1#--role=}"; shift ;;
+        *) echo "rdev_finish_setup: unknown argument '$1'" >&2; exit 2 ;;
+    esac
+done
+case "$ROLE" in
+    ""|main|services|backup) ;;
+    *) echo "rdev_finish_setup: invalid role '$ROLE' (expected main, services, or backup)" >&2; exit 2 ;;
+esac
+
 LOG="$HOME/.rdev_finish_setup.log"
 LOCK="$HOME/.rdev_finish_setup.lock"
 
@@ -134,9 +151,12 @@ fi
 # 5. Session history: clone the shared archive repo and tag this machine with a
 #    distinct source name (rdev:<mp>/<rdev-name>) so Copilot results can be
 #    filtered. The source tag lives outside tracked configuration because it is
-#    machine-specific.
+#    machine-specific. Role mode skips the archive: user history is not copied
+#    onto a freshly assigned role host.
 ARCHIVE_DIR="$HOME/.claude/session-archive"
-if [ ! -d "$ARCHIVE_DIR/.git" ]; then
+if [ -n "$ROLE" ]; then
+    echo "role mode ($ROLE): skipping the shared session archive clone."
+elif [ ! -d "$ARCHIVE_DIR/.git" ]; then
     echo "Cloning claude-session-archive."
     git clone --quiet https://github.com/ekrogen_LinkedIn/claude-session-archive.git "$ARCHIVE_DIR" \
         || echo "WARN: session-archive clone failed."

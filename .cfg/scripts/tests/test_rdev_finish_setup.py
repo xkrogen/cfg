@@ -46,11 +46,45 @@ class FinishSetupOverlayBootstrapTests(unittest.TestCase):
         if executable:
             path.chmod(path.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
-    def run_finish_setup(self):
+    def run_finish_setup(self, *args, **extra):
         return subprocess.run(
-            ["bash", str(self.scripts / "rdev_finish_setup.sh")],
-            env=self.env, capture_output=True, text=True, timeout=60,
+            ["bash", str(self.scripts / "rdev_finish_setup.sh"), *args],
+            env={**self.env, **extra}, capture_output=True, text=True, timeout=60,
         )
+
+    def record_git_calls(self):
+        overlay_init = self.home / "ekrogen-cfg-overlay" / ".cfg" / "scripts" / "init_linkedin.sh"
+        overlay_init.parent.mkdir(parents=True)
+        self.write(overlay_init, "#!/bin/sh\nexit 0\n", executable=True)
+        calls = self.root / "git_calls"
+        self.write(self.tools / "git",
+                   f"#!/bin/sh\necho \"$*\" >> '{calls}'\nexit 0\n", executable=True)
+        return calls
+
+    def test_role_mode_skips_the_session_archive_clone(self):
+        calls = self.record_git_calls()
+
+        result = self.run_finish_setup(RDEV_SETUP_ROLE="services")
+
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("role mode (services): skipping the shared session archive", result.stdout)
+        recorded = calls.read_text() if calls.exists() else ""
+        self.assertNotIn("claude-session-archive", recorded)
+
+    def test_legacy_mode_still_clones_the_session_archive(self):
+        calls = self.record_git_calls()
+
+        result = self.run_finish_setup()
+
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("claude-session-archive", calls.read_text())
+
+    def test_unknown_role_is_rejected_before_any_setup(self):
+        result = self.run_finish_setup("--role", "legacy-host")
+
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("invalid role 'legacy-host'", result.stderr)
+        self.assertNotIn("rdev_finish_setup starting", result.stdout)
 
     def test_uses_overlay_checkout_when_base_layer_lacks_init_linkedin(self):
         overlay_init = self.home / "ekrogen-cfg-overlay" / ".cfg" / "scripts" / "init_linkedin.sh"
