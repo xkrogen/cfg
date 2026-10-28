@@ -16,7 +16,7 @@ fi
 #################################################################################
 
 # The Brew bootstrap and package lists live in brew_standard_tools.sh, which
-# restore_rdev_brew.sh also uses.
+# optional environment restores also use.
 source "$cfg_dir/scripts/brew_standard_tools.sh"
 brew_install_standard_formulas
 # The other Brew packages remain best effort; Java tooling is required unless skipped.

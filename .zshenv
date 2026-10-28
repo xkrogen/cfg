@@ -24,8 +24,8 @@ done
 unset _dir
 export PATH
 
-# Machine-specific PATH-only additions (e.g. work-only rdev bin dirs) live in a
-# separate private file. Keep it PATH-only and free of auth or service calls.
+# Optional machine-specific PATH-only additions live in ~/.zshenv.local.
+# Keep it PATH-only and free of auth or service calls.
 if [ -r "$HOME/.zshenv.local" ]; then
     . "$HOME/.zshenv.local"
 fi

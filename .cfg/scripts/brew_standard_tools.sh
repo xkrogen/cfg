@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 # Standard Homebrew formulae and casks. Source this file; it only defines
-# functions. setup.sh and restore_rdev_brew.sh both use it so the package list
+# functions. setup.sh and optional Brew restores both use it so the package list
 # has a single definition.
 #
-# On RDev pods /home/linuxbrew is overlayfs and disappears on pod recreation.
+# Linuxbrew under /home/linuxbrew can sit on a non-persistent filesystem.
 # Restoring Brew therefore runs only this phase, not the full setup.sh.
 
 brew_install_list=(

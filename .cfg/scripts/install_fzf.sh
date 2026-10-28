@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Install the latest official, checksum-verified fzf release into ~/.local/bin.
 #
-# fzf is a standalone binary, so it lives under $HOME and survives rdev pod
-# recreation, unlike Homebrew under /home/linuxbrew. Shell integration comes from
+# fzf is a standalone binary, so it lives under $HOME and survives host
+# reprovisioning, unlike Homebrew under /home/linuxbrew. Shell integration comes from
 # `fzf --zsh` (fzf >= 0.48), which the oh-my-zsh fzf plugin uses whenever fzf is
 # on PATH, so no separate install directory or FZF_BASE is required.
 set -euo pipefail

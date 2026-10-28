@@ -20,7 +20,7 @@ download=$(mktemp "$bin/.px0-download.XXXXXXXX")
 trap 'rm -f -- "$release" "$checksums" "$download"' EXIT
 
 # The unauthenticated GitHub API limit is shared per egress IP, so a rate-limited
-# lookup is common on rdevs. An installed, previously verified binary is kept
+# lookup is common on shared hosts. An installed, previously verified binary is kept
 # rather than failing the whole bootstrap; a missing binary still fails.
 if ! curl --http1.1 -fsSL --retry 2 --connect-timeout 15 --max-time 45 \
     https://api.github.com/repos/px0-ai/px0/releases/latest -o "$release"; then
