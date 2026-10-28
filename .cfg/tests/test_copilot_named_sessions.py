@@ -4,14 +4,20 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
 
-SCRIPT = Path.home() / '.copilot/bin/named-session.py'
-spec = importlib.util.spec_from_file_location('copilot_named_sessions', SCRIPT)
-sessions = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(sessions)
+SCRIPT = Path.home() / '.local/bin/named-session.py'
+if 'named_session' in sys.modules:
+    named_session = sys.modules['named_session']
+else:
+    spec = importlib.util.spec_from_file_location('named_session', SCRIPT)
+    named_session = importlib.util.module_from_spec(spec)
+    sys.modules['named_session'] = named_session
+    spec.loader.exec_module(named_session)
+sessions = named_session.CopilotAdapter
 
 AGENT_SESSIONS_SCRIPT = Path.home() / '.local/bin/agent-sessions'
 as_loader = SourceFileLoader('agent_sessions', str(AGENT_SESSIONS_SCRIPT))
@@ -45,7 +51,7 @@ home = Path(os.environ['COPILOT_HOME'])
         (session_dir / 'workspace.yaml').write_text(f'id: {identity}\nname: "{name}"\n', encoding='utf-8')
 
     def launch(self, *args):
-        return subprocess.run(['python3', '-B', str(SCRIPT), *args], env=self.env,
+        return subprocess.run(['python3', '-B', str(SCRIPT), 'copilot', *args], env=self.env,
                               capture_output=True, text=True, timeout=10)
 
     def test_new_creates_session_and_rejects_existing_name(self):
@@ -86,17 +92,18 @@ home = Path(os.environ['COPILOT_HOME'])
         self.assertEqual(launched[2:], ['--name', 'created-by-upsert'])
 
     def test_agent_sessions_formats_commands_across_all_three_agents(self):
-        with patch.object(agent_sessions, 'load_module') as load_mod:
-            class FakeMod:
-                def __init__(self, data):
-                    self._data = data
-                def native_names(self):
-                    return self._data
-            load_mod.side_effect = [
-                FakeMod({ID: 'cplt-one', OTHER: 'cplt two'}),
-                FakeMod({ID: 'agy-session'}),
-                FakeMod({ID: 'cdx-session'}),
-            ]
+        class FakeMod:
+            def __init__(self, data):
+                self._data = data
+            def native_names(self):
+                return self._data
+
+        fake_adapters = (
+            ('cplt', FakeMod({ID: 'cplt-one', OTHER: 'cplt two'})),
+            ('agy', FakeMod({ID: 'agy-session'})),
+            ('cdx', FakeMod({ID: 'cdx-session'})),
+        )
+        with patch.object(agent_sessions, 'AGENTS', fake_adapters):
             cmds = agent_sessions.collect_commands()
         self.assertEqual(cmds, [
             "cplt 'cplt two'",

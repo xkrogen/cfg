@@ -1,27 +1,23 @@
 #!/usr/bin/env python3
 """Emit shell-ready `<short-agent> <session-name>` commands for known agent sessions."""
+from importlib.machinery import SourceFileLoader
 import importlib.util
 from pathlib import Path
 import shlex
 import sys
 
 
+SCRIPT_PATH = Path.home() / '.local/bin/named-session.py'
+loader = SourceFileLoader('named_session', str(SCRIPT_PATH))
+spec = importlib.util.spec_from_loader('named_session', loader)
+named_session = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(named_session)
+
 AGENTS = (
-    ('cplt', 'copilot_named_sessions', Path.home() / '.copilot/bin/named-session.py'),
-    ('agy', 'agy_named_sessions', Path.home() / '.gemini/antigravity-cli/bin/named-session.py'),
-    ('cdx', 'codex_named_sessions', Path.home() / '.codex/bin/named-session.py'),
+    ('cplt', named_session.CopilotAdapter),
+    ('agy', named_session.AntigravityAdapter),
+    ('cdx', named_session.CodexAdapter),
 )
-
-
-def load_module(module_name, script_path):
-    if not script_path.is_file():
-        return None
-    spec = importlib.util.spec_from_file_location(module_name, script_path)
-    if spec is None or spec.loader is None:
-        return None
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
 
 
 def format_arg(name):
@@ -31,12 +27,9 @@ def format_arg(name):
 
 def collect_commands():
     commands = []
-    for short_cmd, module_name, script_path in AGENTS:
+    for short_cmd, adapter in AGENTS:
         try:
-            module = load_module(module_name, script_path)
-            if module is None:
-                continue
-            names = module.native_names()
+            names = adapter.native_names()
         except Exception:
             continue
         seen = set()

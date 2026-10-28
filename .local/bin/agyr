@@ -1,3 +1,3 @@
 #!/bin/sh
 # Resume exactly one saved native Antigravity CLI session by its current name.
-exec python3 "$HOME/.gemini/antigravity-cli/bin/named-session.py" resume "$@"
+exec python3 "$HOME/.local/bin/named-session.py" agy resume "$@"

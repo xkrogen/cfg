@@ -29,10 +29,8 @@ immediately runs the fuzzy-matched selection.
 
 ## Native storage and implementation
 
-Real tracked launchers live in `~/.local/bin/`; the helpers are
-`~/.copilot/bin/named-session.py`, `~/.gemini/antigravity-cli/bin/named-session.py`,
-and `~/.codex/bin/named-session.py`, all owned by personal bare cfg.
-There are no runtime-to-cfg symlinks.
+Real tracked launchers and the unified helper live in `~/.local/bin/` (`~/.local/bin/named-session.py`),
+all owned by personal bare cfg. There are no runtime-to-cfg symlinks.
 
 - **Copilot (`cplt*`)** reads `~/.copilot/session-state/<uuid>/workspace.yaml` (`COPILOT_HOME`).
 - **Antigravity (`agy*`)** reads `~/.gemini/antigravity-cli/annotations/*.pbtxt` and

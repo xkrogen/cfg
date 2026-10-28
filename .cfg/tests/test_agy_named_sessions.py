@@ -6,14 +6,20 @@ import os
 from pathlib import Path
 import sqlite3
 import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
 
-SCRIPT = Path.home() / '.gemini/antigravity-cli/bin/named-session.py'
-spec = importlib.util.spec_from_file_location('agy_named_sessions', SCRIPT)
-sessions = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(sessions)
+SCRIPT = Path.home() / '.local/bin/named-session.py'
+if 'named_session' in sys.modules:
+    named_session = sys.modules['named_session']
+else:
+    spec = importlib.util.spec_from_file_location('named_session', SCRIPT)
+    named_session = importlib.util.module_from_spec(spec)
+    sys.modules['named_session'] = named_session
+    spec.loader.exec_module(named_session)
+sessions = named_session.AntigravityAdapter
 ID = '11111111-1111-4111-8111-111111111111'
 OTHER = '22222222-2222-4222-8222-222222222222'
 
@@ -47,7 +53,7 @@ home = Path(os.environ['AGY_HOME'])
         (ann / f'{identity}.pbtxt').write_text(sessions.format_pbtxt_title(title), encoding='utf-8')
 
     def launch(self, *args):
-        return subprocess.run(['python3', '-B', str(SCRIPT), *args], env=self.env,
+        return subprocess.run(['python3', '-B', str(SCRIPT), 'agy', *args], env=self.env,
                               capture_output=True, text=True, timeout=10)
 
     def test_native_names_merges_db_and_annotations_override(self):
@@ -120,25 +126,27 @@ home = Path(os.environ['AGY_HOME'])
             {'pane_id': 'w1:p4', 'agent': 'agy', 'agent_session': {'kind': 'id', 'value': 'not-an-id'}},
         ]
         with patch.dict(os.environ, dict(self.env, HERDR_ENV='1', HERDR_PANE_ID='w1:p2')), \
-             patch.object(sessions, 'herdr', return_value={'result': {'panes': panes}}), \
-             patch.object(sessions, 'report') as report:
+             patch('named_session.herdr', return_value={'result': {'panes': panes}}), \
+             patch('named_session.report_herdr') as report:
             sessions.refresh()
             self.assertEqual(report.call_count, 2)
-            report.assert_any_call('w1:p2', ID, 'current')
-            report.assert_any_call('w1:p3', OTHER, '')
+            report.assert_any_call('w1:p2', 'agy', ID, 'current',
+                                   source='herdr:antigravity_cli', user_source='user:agy-session-name')
+            report.assert_any_call('w1:p3', 'agy', OTHER, '',
+                                   source='herdr:antigravity_cli', user_source='user:agy-session-name')
 
     def test_refresh_recovers_uuid_from_conversation_argv_only(self):
         data = {'result': {'process_info': {'foreground_processes': [
             {'name': 'unrelated', 'argv': ['tool', '--conversation', OTHER]},
             {'name': 'antigravity', 'argv': ['agy', '--conversation', ID]},
         ]}}}
-        with patch.object(sessions, 'herdr', return_value=data):
+        with patch('named_session.herdr', return_value=data):
             self.assertEqual(sessions.pane_identity({'pane_id': 'w1:p2'}), ID)
         data['result']['process_info']['foreground_processes'] = [
             {'name': 'antigravity', 'argv': ['agy', '-c']},
             {'name': 'antigravity', 'argv': ['agy', '--conversation=not-a-uuid']},
         ]
-        with patch.object(sessions, 'herdr', return_value=data):
+        with patch('named_session.herdr', return_value=data):
             self.assertIsNone(sessions.pane_identity({'pane_id': 'w1:p2'}))
 
     def test_resume_selection_flags_are_rejected(self):
@@ -149,10 +157,11 @@ home = Path(os.environ['AGY_HOME'])
     def test_hook_syncs_current_pane_display_agent(self):
         self.create_db([(ID, 'hooked-title')])
         with patch.dict(os.environ, dict(self.env, HERDR_ENV='1', HERDR_PANE_ID='w1:p2')), \
-             patch.object(sessions, 'report') as report, \
+             patch('named_session.report_herdr') as report, \
              patch('sys.stdin', io.StringIO(json.dumps({'conversationId': ID}))):
             sessions.hook()
-            report.assert_called_once_with('w1:p2', ID, 'hooked-title')
+            report.assert_called_once_with('w1:p2', 'agy', ID, 'hooked-title',
+                                           source='herdr:antigravity_cli', user_source='user:agy-session-name')
 
 
 if __name__ == '__main__':

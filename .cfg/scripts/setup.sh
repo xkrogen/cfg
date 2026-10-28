@@ -61,7 +61,7 @@ from pathlib import Path
 p = Path.home() / ".gemini/config/hooks.json"
 data = json.loads(p.read_text()) if p.is_file() else {}
 herdr = data.setdefault("herdr", {})
-cmd = "python3 \"$HOME/.gemini/antigravity-cli/bin/named-session.py\" hook"
+cmd = "python3 \"$HOME/.local/bin/named-session.py\" agy hook"
 entry = {"command": cmd, "timeout": 10, "type": "command"}
 for event in ("PreInvocation", "Stop"):
     hooks = herdr.setdefault(event, [])

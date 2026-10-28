@@ -7,16 +7,32 @@
         "type": "command"
       },
       {
-        "command": "python3 \"$HOME/.gemini/antigravity-cli/bin/named-session.py\" hook",
+        "command": "python3 \"$HOME/.local/bin/named-session.py\" agy hook",
         "timeout": 10,
         "type": "command"
       }
     ],
     "Stop": [
       {
-        "command": "python3 \"$HOME/.gemini/antigravity-cli/bin/named-session.py\" hook",
+        "command": "python3 \"$HOME/.local/bin/named-session.py\" agy hook",
         "timeout": 10,
         "type": "command"
+      }
+    ]
+  },
+  "usps": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "/Users/xkrogen/.volta/bin/node /private/tmp/usps-agy/dist/src/cli.js --profile personal agy hooks event --event SessionStart --config '/Users/xkrogen/.config/usps/profiles/personal/hooks/agy-krogbook-personal.json'",
+        "timeout": 2
+      }
+    ],
+    "PreInvocation": [
+      {
+        "type": "command",
+        "command": "/Users/xkrogen/.volta/bin/node /private/tmp/usps-agy/dist/src/cli.js --profile personal agy hooks event --event PreInvocation --config '/Users/xkrogen/.config/usps/profiles/personal/hooks/agy-krogbook-personal.json'",
+        "timeout": 2
       }
     ]
   }

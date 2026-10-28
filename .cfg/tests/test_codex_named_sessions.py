@@ -3,14 +3,20 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
 
-SCRIPT = Path.home() / '.codex/bin/named-session.py'
-spec = importlib.util.spec_from_file_location('named_sessions', SCRIPT)
-sessions = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(sessions)
+SCRIPT = Path.home() / '.local/bin/named-session.py'
+if 'named_session' in sys.modules:
+    named_session = sys.modules['named_session']
+else:
+    spec = importlib.util.spec_from_file_location('named_session', SCRIPT)
+    named_session = importlib.util.module_from_spec(spec)
+    sys.modules['named_session'] = named_session
+    spec.loader.exec_module(named_session)
+sessions = named_session.CodexAdapter
 ID = '11111111-1111-4111-8111-111111111111'
 OTHER = '22222222-2222-4222-8222-222222222222'
 
@@ -49,7 +55,7 @@ else:
         (self.root / 'session_index.jsonl').write_text(''.join(json.dumps(row)+'\n' for row in rows))
 
     def launch(self, *args):
-        return subprocess.run(['python3', '-B', str(SCRIPT), *args], env=self.env,
+        return subprocess.run(['python3', '-B', str(SCRIPT), 'codex', *args], env=self.env,
                               capture_output=True, text=True, timeout=10)
 
     def test_new_names_native_session_and_preserves_argv(self):
@@ -109,23 +115,23 @@ else:
                {'pane_id':'w1:p3','agent':'codex','agent_session':{'kind':'id','value':OTHER}},
                {'pane_id':'w1:p4','agent':'codex','agent_session':{'kind':'id','value':'not-an-id'}}]
         with patch.dict(os.environ,dict(self.env,HERDR_ENV='1',HERDR_PANE_ID='w1:p2')), \
-             patch.object(sessions,'herdr',return_value={'result':{'panes':panes}}), \
-             patch.object(sessions,'report') as report:
+             patch('named_session.herdr',return_value={'result':{'panes':panes}}), \
+             patch('named_session.report_herdr') as report:
             sessions.refresh()
             self.assertEqual(report.call_count,2)
-            report.assert_any_call('w1:p2',ID,'current')
-            report.assert_any_call('w1:p3',OTHER,'')
+            report.assert_any_call('w1:p2','codex',ID,'current')
+            report.assert_any_call('w1:p3','codex',OTHER,'')
 
     def test_refresh_recovers_uuid_from_native_resume_process_only(self):
         data={'result':{'process_info':{'foreground_processes':[
             {'name':'unrelated','argv':['tool','resume',OTHER]},
             {'name':'codex','argv':['/path/codex','resume',ID]}]}}}
-        with patch.object(sessions,'herdr',return_value=data):
+        with patch('named_session.herdr',return_value=data):
             self.assertEqual(sessions.pane_identity({'pane_id':'w1:p2'}), ID)
         data['result']['process_info']['foreground_processes']=[
             {'name':'codex','argv':['codex','resume']},
             {'name':'codex','argv':['codex','resume','ambiguous-name']}]
-        with patch.object(sessions,'herdr',return_value=data):
+        with patch('named_session.herdr',return_value=data):
             self.assertIsNone(sessions.pane_identity({'pane_id':'w1:p2'}))
 
     def test_refresh_prefers_foreground_resume_uuid_over_stale_pane_session(self):
@@ -133,7 +139,7 @@ else:
         data = {'result': {'process_info': {'foreground_processes': [
             {'name': 'codex', 'argv': ['codex', 'resume', ID]},
         ]}}}
-        with patch.object(sessions, 'herdr', return_value=data):
+        with patch('named_session.herdr', return_value=data):
             self.assertEqual(sessions.pane_identity(pane), ID)
 
     def test_refresh_resolves_unique_native_name_from_codex_terminal_title(self):
@@ -147,12 +153,12 @@ else:
         data = {'result': {'process_info': {'foreground_processes': [
             {'name': 'codex', 'argv': ['codex', 'fork', 'homelab-init']},
         ]}}}
-        with patch.object(sessions, 'herdr', return_value=data):
+        with patch('named_session.herdr', return_value=data):
             self.assertEqual(sessions.pane_identity(pane, names), ID)
 
     def test_herdr_report_accepts_success_with_empty_stdout(self):
-        with patch.object(sessions.subprocess, 'check_output', return_value=''):
-            self.assertEqual(sessions.herdr('pane', 'report-metadata', 'w1:p1'), {})
+        with patch('named_session.subprocess.check_output', return_value=''):
+            self.assertEqual(named_session.herdr('pane', 'report-metadata', 'w1:p1'), {})
 
     def test_help_and_missing_arguments_do_not_create_a_session(self):
         self.assertEqual(self.launch('new', '--help').returncode, 0)

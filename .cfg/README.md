@@ -125,9 +125,8 @@ Names with spaces must be quoted. Native names come from each agent's own metada
 `conversation_summaries.db` for Antigravity; `session_index.jsonl` for Codex).
 Runtime state is not tracked; no transcript or credential is copied.
 
-Full contracts: `.cfg/docs/named-sessions.md`. Real launchers live in `.local/bin`; the implementations are
-`.copilot/bin/named-session.py`, `.gemini/antigravity-cli/bin/named-session.py`, and
-`.codex/bin/named-session.py`. No extra permission flags are added. The local Codex
+Full contracts: `.cfg/docs/named-sessions.md`. Real launchers and the unified helper live in `.local/bin`
+(`.local/bin/named-session.py`). No extra permission flags are added. The local Codex
 wrappers use the supported stdio app-server create/name API then launch native resume;
 remote/worktree startup uses native Codex instead. New Codex wrapper sessions require
 Codex's app-server API.
