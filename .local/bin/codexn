@@ -1,3 +1,0 @@
-#!/bin/sh
-# Start a new native Codex session with a user-supplied name.
-exec python3 "$HOME/.codex/bin/named-session.py" new "$@"

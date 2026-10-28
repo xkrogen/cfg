@@ -72,8 +72,7 @@ helper on PATH. Raw transcripts and run artifacts stay under
 The former `install_codex_personal.py` and its link-installer tests were retired
 when configuration moved to real runtime paths. General personal records remain
 in agent-space; project-specific records stay in their project. No distill-knowledge,
-writing, or multi-model-comparison skill was selected. Hindsight is a pending
-user investigation.
+writing, or multi-model-comparison skill was selected. Hindsight is configured for shared personal memory; see below.
 
 ## Personal USPS integration
 
@@ -113,9 +112,9 @@ Short names (`cplt`, `agy`, `cdx`) unify named session management across all thr
 - `cplt`, `agy`, `cdx` (no suffix): with no arguments, starts a session without a name.
   With `<session-name> [options]`, resumes the matching session if one exists, or
   creates a new named session if none exists (upsert).
-- `cpltn`, `agyn`, `cdxn` (`n` suffix, plus legacy `codexn`): creates a new named
+- `cpltn`, `agyn`, `cdxn` (`n` suffix): creates a new named
   session, failing if a session with that name already exists.
-- `cpltr`, `agyr`, `cdxr` (`r` suffix, plus legacy `codexr`): resumes an existing
+- `cpltr`, `agyr`, `cdxr` (`r` suffix): resumes an existing
   named session by exact UUID, failing if none exists or if the name is ambiguous.
 - **Ctrl-S in zsh** (`fzf-agent-session-widget`, backed by `~/.local/bin/agent-sessions`):
   fuzzy-matches known session commands (`cplt <name>`, `agy <name>`, `cdx <name>`)
@@ -126,7 +125,7 @@ Names with spaces must be quoted. Native names come from each agent's own metada
 `conversation_summaries.db` for Antigravity; `session_index.jsonl` for Codex).
 Runtime state is not tracked; no transcript or credential is copied.
 
-Real launchers live in `.local/bin`; the implementations are
+Full contracts: `.cfg/docs/named-sessions.md`. Real launchers live in `.local/bin`; the implementations are
 `.copilot/bin/named-session.py`, `.gemini/antigravity-cli/bin/named-session.py`, and
 `.codex/bin/named-session.py`. No extra permission flags are added. The local Codex
 wrappers use the supported stdio app-server create/name API then launch native resume;
@@ -144,3 +143,11 @@ Run targeted regression checks with:
 ```sh
 python3 -B -m unittest discover -s "$HOME/.cfg/tests" -p "test_*_named_sessions.py" -v
 ```
+
+## Shared Hindsight memory
+
+`~/.agents/AGENTS.md` defines proactive recall and verified retention of curated
+personal knowledge for Codex and Antigravity. `~/.agents/mcp_config.json` owns the
+MCP JSON definition; `~/.gemini/config/mcp_config.json` links to it. Codex retains
+its native TOML entry. Both use bank `xkrogen`; OAuth credentials remain separate
+and untracked. No automatic transcript ingestion is installed.
