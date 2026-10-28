@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# The skills CLI requires Node 22.20+, while rdevs retain Node 20 as default.
+# The skills CLI requires Node 22.20+, while hosts keep Node 20 as their default.
 set -euo pipefail
 
 if [ -f "$HOME/.agents/skills/herdr/SKILL.md" ]; then
