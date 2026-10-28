@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-# The skills CLI requires Node 22.20+, while hosts keep Node 20 as their default.
+# The skills CLI requires Node 22.20+. When volta is installed, this script runs it
+# with volta's Node 22 and leaves the default Node version alone.
 set -euo pipefail
 
 if [ -f "$HOME/.agents/skills/herdr/SKILL.md" ]; then
