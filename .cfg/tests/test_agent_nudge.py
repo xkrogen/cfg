@@ -244,6 +244,37 @@ class TestAgentNudge(unittest.TestCase):
         finally:
             agent_nudge.read_pane_output = orig_read
 
+    def test_inspect_session_recovered_positive_credits_overrides_scrollback(self):
+        sample_output = """
+        ■ You’ve hit your usage limit. Upgrade to Pro, visit https://chatgpt.com/settings/usage or try again at 1:29 PM.
+        > continue
+        usps-setup · GPT-6.1-Sol · default · usps · Ready · 5h 100% left · weekly 35% left
+        """
+        agent_meta = {
+            "display_agent": "usps-setup",
+            "agent": "codex",
+            "agent_status": "done",
+        }
+        orig_read = agent_nudge.read_pane_output
+        try:
+            agent_nudge.read_pane_output = lambda pane_id, lines=60: sample_output
+            info = agent_nudge.inspect_session("w1:pC", agent_meta)
+            self.assertEqual(info["credit_percent"], 100)
+            self.assertEqual(info["weekly_percent"], 35)
+            self.assertFalse(info["is_currently_limited"])
+        finally:
+            agent_nudge.read_pane_output = orig_read
+
+    def test_parse_reset_datetime_recent_time_does_not_assume_tomorrow(self):
+        # If reset time was 15 minutes ago, it should remain today in the past, NOT tomorrow (+24h)
+        now = datetime.datetime.now()
+        past_time = (now - datetime.timedelta(minutes=15)).strftime("%I:%M %p")
+        text = f"■ You've hit your usage limit. Try again at {past_time}."
+        dt = agent_nudge.parse_reset_datetime(text)
+        self.assertIsNotNone(dt)
+        self.assertTrue(dt <= now)
+        self.assertEqual(dt.date(), now.date())
+
     def test_format_duration(self):
         self.assertEqual(agent_nudge.format_duration(45), "45s")
         self.assertEqual(agent_nudge.format_duration(125), "2m 05s")

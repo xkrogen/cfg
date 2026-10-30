@@ -203,9 +203,12 @@ def parse_reset_datetime(text: str) -> Optional[datetime.datetime]:
         try:
             t = datetime.datetime.strptime(m3.group(1).strip(), "%I:%M %p").time()
             target = datetime.datetime.combine(now.date(), t)
-            # If target time is more than 5 minutes in the past today, assume tomorrow
-            if target < now - datetime.timedelta(minutes=5):
-                target += datetime.timedelta(days=1)
+            if target < now:
+                # If pushing to tomorrow places reset within a plausible future limit window (<= 6 hours away),
+                # assume tomorrow morning (e.g., now=11:30 PM, reset=1:00 AM).
+                # Otherwise, the reset time was earlier today and has already passed.
+                if (target + datetime.timedelta(days=1) - now).total_seconds() <= 6 * 3600:
+                    target += datetime.timedelta(days=1)
             return target
         except ValueError:
             pass
@@ -300,24 +303,22 @@ def inspect_session(
 
     # Determine if actively limited right now
     is_currently_limited = False
-    if is_zero_credit or has_limit_notice:
-        if reset_time:
-            # If reset time is in the future, it is definitely limited
-            if reset_time > now:
-                is_currently_limited = True
-            else:
-                # Reset time passed
-                if (credit_percent is not None and credit_percent > 0) or (quota_percent is not None and quota_percent > 0):
-                    is_currently_limited = False
-                elif agent_status == "working":
-                    is_currently_limited = False
-                else:
-                    is_currently_limited = False
+
+    # Positive confirmation of available credits or active execution overrides historical limit notices in scrollback:
+    has_positive_credits = (credit_percent is not None and credit_percent > 0) or (quota_percent is not None and quota_percent > 0)
+
+    if has_positive_credits:
+        is_currently_limited = False
+    elif agent_status == "working":
+        is_currently_limited = False
+    elif is_zero_credit:
+        is_currently_limited = True
+    elif has_limit_notice:
+        if reset_time and reset_time > now:
+            is_currently_limited = True
         else:
-            if agent_status == "working":
-                is_currently_limited = False
-            else:
-                is_currently_limited = True
+            # Limit notice present, reset time either passed or unknown, but credits haven't verified > 0:
+            is_currently_limited = True
 
     # 5. Check if waiting on human intervention (other than credit limit)
     is_waiting_human = False
@@ -431,7 +432,7 @@ def monitor_agent(
     target_query: str,
     message: str,
     interval: int = 60,
-    buffer_sec: int = 30,
+    buffer_sec: int = 300,
     check_once: bool = False,
     dry_run: bool = False,
     once: bool = False,
@@ -470,18 +471,31 @@ def monitor_agent(
                 sleep_sec = remaining_sec + buffer_sec
                 reset_fmt = reset_dt.strftime("%I:%M %p")
                 reason = info.get("limit_reason") or "usage limit"
+                buf_desc = format_duration(buffer_sec)
                 print(
                     f"[{now.strftime('%H:%M:%S')}] {display_name} hit {reason}. "
                     f"Reset scheduled at {reset_fmt} (in {format_duration(remaining_sec)})."
                 )
-                print(f"Sleeping for {format_duration(sleep_sec)} (until reset + {buffer_sec}s buffer)...")
+                print(f"Sleeping for {format_duration(sleep_sec)} (until reset + {buf_desc} buffer)...")
+                
+                # Sleep in short slices (up to 30s) to detect early manual resumption or early credit reset
+                sleep_start = time.monotonic()
                 try:
-                    time.sleep(sleep_sec)
+                    while time.monotonic() - sleep_start < sleep_sec:
+                        chunk = min(30.0, sleep_sec - (time.monotonic() - sleep_start))
+                        time.sleep(chunk)
+                        early_agents = list_agents()
+                        early_target = resolve_target(target_query, early_agents)
+                        if early_target:
+                            early_info = inspect_session(early_target["pane_id"], early_target)
+                            if not early_info["is_currently_limited"]:
+                                print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] Detected early credit restoration or active execution!")
+                                break
                 except KeyboardInterrupt:
                     print("\nMonitoring cancelled by user.")
                     sys.exit(0)
 
-                # Woke up after reset time! Verify credits restored.
+                # Woke up after reset time + buffer! Verify credits restored.
                 print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] Reset window passed. Re-checking {display_name}...")
                 agents = list_agents()
                 target = resolve_target(target_query, agents)
@@ -509,11 +523,21 @@ def monitor_agent(
                         return
                     print(f"Resuming monitor for {display_name} (checking every {interval}s)...")
                 else:
-                    print(f"Warning: {display_name} still reports limited. Waiting another {interval}s...")
+                    status_note = ""
+                    if recheck["credit_percent"] is not None:
+                        status_note = f" (5h credit: {recheck['credit_percent']}% left)"
+                    elif recheck["quota_percent"] is not None:
+                        status_note = f" (quota: {recheck['quota_percent']}% left)"
+                    print(f"Warning: {display_name} still reports limited{status_note}. Waiting another {interval}s...")
             else:
                 reason = info.get("limit_reason") or "limit exhaustion"
+                status_note = ""
+                if info["credit_percent"] is not None:
+                    status_note = f" (5h credit: {info['credit_percent']}% left)"
+                elif info["quota_percent"] is not None:
+                    status_note = f" (quota: {info['quota_percent']}% left)"
                 print(
-                    f"[{now.strftime('%H:%M:%S')}] {display_name} reports {reason}. Checking again in {interval}s..."
+                    f"[{now.strftime('%H:%M:%S')}] {display_name} reports {reason}{status_note}. Checking again in {interval}s..."
                 )
 
         # 2. Check if agent was previously limited and is now ready/restored
@@ -595,8 +619,8 @@ def main() -> None:
         "--buffer",
         "-b",
         type=int,
-        default=30,
-        help="Buffer seconds to wait after scheduled reset time before sending prompt (default: 30s).",
+        default=300,
+        help="Buffer seconds to wait after scheduled reset time before sending prompt (default: 300s / 5m).",
     )
     parser.add_argument(
         "--loop",
