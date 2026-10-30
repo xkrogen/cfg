@@ -24,14 +24,14 @@
     "SessionStart": [
       {
         "type": "command",
-        "command": "/Users/xkrogen/.volta/bin/node /private/tmp/usps-agy/dist/src/cli.js --profile personal agy hooks event --event SessionStart --config '/Users/xkrogen/.config/usps/profiles/personal/hooks/agy-krogbook-personal.json'",
+        "command": "/Users/xkrogen/.volta/bin/node /Users/xkrogen/.local/lib/usps/current/dist/src/cli.js --profile personal agy hooks event --event SessionStart --config '/Users/xkrogen/.config/usps/profiles/personal/hooks/agy-krogbook-personal.json'",
         "timeout": 2
       }
     ],
     "PreInvocation": [
       {
         "type": "command",
-        "command": "/Users/xkrogen/.volta/bin/node /private/tmp/usps-agy/dist/src/cli.js --profile personal agy hooks event --event PreInvocation --config '/Users/xkrogen/.config/usps/profiles/personal/hooks/agy-krogbook-personal.json'",
+        "command": "/Users/xkrogen/.volta/bin/node /Users/xkrogen/.local/lib/usps/current/dist/src/cli.js --profile personal agy hooks event --event PreInvocation --config '/Users/xkrogen/.config/usps/profiles/personal/hooks/agy-krogbook-personal.json'",
         "timeout": 2
       }
     ]
