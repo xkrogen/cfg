@@ -340,7 +340,7 @@ def monitor_agent(
     buffer_sec: int = 30,
     check_once: bool = False,
     dry_run: bool = False,
-    loop: bool = False,
+    once: bool = False,
     verbose: bool = False,
 ) -> None:
     """Main monitoring loop."""
@@ -405,9 +405,10 @@ def monitor_agent(
                         print(f"Failed to deliver prompt to {display_name}.", file=sys.stderr)
 
                     was_limited = False
-                    if not loop:
-                        print("Nudge complete. Exiting.")
+                    if once:
+                        print("Nudge complete (--once). Exiting.")
                         return
+                    print(f"Resuming monitor for {display_name} (checking every {interval}s)...")
                 else:
                     print(f"Warning: {display_name} still reports limited. Waiting another {interval}s...")
             else:
@@ -420,9 +421,10 @@ def monitor_agent(
             print(f"[{now.strftime('%H:%M:%S')}] Credits have restored! Nudging {display_name}...")
             send_nudge(pane_id, message, dry_run=dry_run)
             was_limited = False
-            if not loop:
-                print("Nudge complete. Exiting.")
+            if once:
+                print("Nudge complete (--once). Exiting.")
                 return
+            print(f"Resuming monitor for {display_name} (checking every {interval}s)...")
 
         # 3. Agent is active/working or idle with healthy credits
         else:
@@ -465,6 +467,11 @@ def main() -> None:
         help="Inspect session status once and exit immediately without monitoring.",
     )
     parser.add_argument(
+        "--once",
+        action="store_true",
+        help="Exit after sending the first successful wake-up prompt (default is to keep monitoring continuously).",
+    )
+    parser.add_argument(
         "--message",
         "-m",
         default="Usage limit reset. Please continue.",
@@ -488,7 +495,7 @@ def main() -> None:
         "--loop",
         "-l",
         action="store_true",
-        help="Keep monitoring continuously across multiple limit/reset cycles.",
+        help=argparse.SUPPRESS,  # Deprecated alias: looping is now the default
     )
     parser.add_argument(
         "--dry-run",
@@ -537,7 +544,7 @@ def main() -> None:
         buffer_sec=args.buffer,
         check_once=args.check_once,
         dry_run=args.dry_run,
-        loop=args.loop,
+        once=args.once,
         verbose=args.verbose,
     )
 
