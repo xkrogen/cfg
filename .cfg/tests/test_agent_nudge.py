@@ -88,6 +88,32 @@ class TestAgentNudge(unittest.TestCase):
         self.assertEqual(dt.hour, 16)
         self.assertEqual(dt.minute, 30)
 
+    def test_parse_reset_datetime_relative_duration(self):
+        text = "Rate limit reached. Please try again in 15 minutes."
+        before = datetime.datetime.now()
+        dt = agent_nudge.parse_reset_datetime(text)
+        after = datetime.datetime.now()
+        self.assertIsNotNone(dt)
+        self.assertTrue(before + datetime.timedelta(minutes=14, seconds=55) <= dt <= after + datetime.timedelta(minutes=15, seconds=5))
+
+    def test_parse_reset_datetime_relative_seconds(self):
+        text = "Too Many Requests. Retry after 45s."
+        before = datetime.datetime.now()
+        dt = agent_nudge.parse_reset_datetime(text)
+        after = datetime.datetime.now()
+        self.assertIsNotNone(dt)
+        self.assertTrue(before + datetime.timedelta(seconds=40) <= dt <= after + datetime.timedelta(seconds=50))
+
+    def test_parse_reset_datetime_iso(self):
+        text = "Individual quota exceeded. Next window begins at 2026-10-30T05:00:00Z."
+        dt = agent_nudge.parse_reset_datetime(text)
+        self.assertIsNotNone(dt)
+        self.assertEqual(dt.year, 2026)
+        self.assertEqual(dt.month, 10)
+        self.assertEqual(dt.day, 30)
+        self.assertEqual(dt.hour, 5)
+        self.assertEqual(dt.minute, 0)
+
     def test_inspect_session_parsing(self):
         sample_output = """
         • Working on feature
@@ -108,6 +134,92 @@ class TestAgentNudge(unittest.TestCase):
             self.assertEqual(info["weekly_percent"], 84)
             self.assertTrue(info["has_limit_notice"])
             self.assertIsNotNone(info["reset_time"])
+        finally:
+            agent_nudge.read_pane_output = orig_read
+
+    def test_inspect_session_agy_quota(self):
+        sample_output = """
+        • Generated implementation plan
+        Quota: 0% left · auto · Gemini 3.8 Flash
+        Error: individual quota reached. Please try again at Oct 30, 2026 4:15 AM
+        """
+        agent_meta = {
+            "display_agent": "usps-agy",
+            "agent": "agy",
+            "agent_status": "idle",
+        }
+        orig_read = agent_nudge.read_pane_output
+        try:
+            agent_nudge.read_pane_output = lambda pane_id, lines=60: sample_output
+            info = agent_nudge.inspect_session("w1:p8", agent_meta)
+            self.assertEqual(info["quota_percent"], 0)
+            self.assertEqual(info["agent_type"], "agy")
+            self.assertTrue(info["has_limit_notice"])
+            self.assertIn("Individual quota reached", info["limit_reason"])
+            self.assertIsNotNone(info["reset_time"])
+            self.assertEqual(info["reset_time"].hour, 4)
+            self.assertEqual(info["reset_time"].minute, 15)
+        finally:
+            agent_nudge.read_pane_output = orig_read
+
+    def test_inspect_session_agy_capacity_exhausted(self):
+        sample_output = """
+        • Running tool
+        MODEL_CAPACITY_EXHAUSTED: Model is overloaded. Please wait 10m before retrying.
+        ? for shortcuts                                                  Quota: 100% · Gemini 3.8 Flash
+        """
+        agent_meta = {
+            "display_agent": "usps-agy",
+            "agent": "antigravity",
+            "agent_status": "idle",
+        }
+        orig_read = agent_nudge.read_pane_output
+        try:
+            agent_nudge.read_pane_output = lambda pane_id, lines=60: sample_output
+            info = agent_nudge.inspect_session("w1:p8", agent_meta)
+            self.assertEqual(info["quota_percent"], 100)
+            self.assertTrue(info["has_limit_notice"])
+            self.assertIn("Model capacity exhausted", info["limit_reason"])
+            self.assertIsNotNone(info["reset_time"])
+        finally:
+            agent_nudge.read_pane_output = orig_read
+
+    def test_inspect_session_agy_rate_limit_429(self):
+        sample_output = """
+        • Generating response
+        HTTP 429 Too Many Requests: Rate limit exceeded.
+        """
+        agent_meta = {
+            "display_agent": "usps-agy",
+            "agent": "agy",
+            "agent_status": "idle",
+        }
+        orig_read = agent_nudge.read_pane_output
+        try:
+            agent_nudge.read_pane_output = lambda pane_id, lines=60: sample_output
+            info = agent_nudge.inspect_session("w1:p8", agent_meta)
+            self.assertTrue(info["has_limit_notice"])
+            self.assertTrue(info["is_currently_limited"])
+            self.assertIn("Rate limit exceeded", info["limit_reason"])
+            self.assertIn("429 Too Many Requests", info["limit_reason"])
+        finally:
+            agent_nudge.read_pane_output = orig_read
+
+    def test_inspect_session_agy_human_blocker(self):
+        sample_output = """
+        Accept this file edit? [y/N]: 
+        """
+        agent_meta = {
+            "display_agent": "usps-agy",
+            "agent": "agy",
+            "agent_status": "blocked",
+        }
+        orig_read = agent_nudge.read_pane_output
+        try:
+            agent_nudge.read_pane_output = lambda pane_id, lines=60: sample_output
+            info = agent_nudge.inspect_session("w1:p8", agent_meta)
+            self.assertTrue(info["is_waiting_human"])
+            self.assertIn("file edit confirmation", info["human_reason"])
         finally:
             agent_nudge.read_pane_output = orig_read
 
