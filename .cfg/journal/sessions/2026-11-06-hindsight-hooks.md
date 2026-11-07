@@ -10,3 +10,13 @@
   fabricate trust hashes. Official docs distinguish local-only Work support from
   cloud orchestration, which does not load local hooks.
 - cfg remains on legacy main; unrelated pending changes preserved.
+
+## ChatGPT Work instruction follow-up
+
+- Erik authorized adding equivalent personal memory guidance to ChatGPT Work.
+- Official desktop settings docs point Personalization to selected-machine AGENTS.md;
+  existing Codex global instructions already contain the full policy.
+- Computer-use access to the ChatGPT/Codex app was explicitly denied by the tool.
+  No UI settings changed and no alternate app-access bypass was attempted.
+- Prepared docs/chatgpt-work-instructions.md with an additive instruction block
+  and verification steps; Work-specific loading and tool availability unverified.
