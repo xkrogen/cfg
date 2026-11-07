@@ -1,0 +1,421 @@
+{
+  "version": "2026.11.3",
+  "sandbox": "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-mise-history-0903_a_1",
+  "checks": [
+    {
+      "check": "second machine adopts tracked file",
+      "passed": true
+    },
+    {
+      "check": "one-shot watcher captures app edit",
+      "passed": true
+    },
+    {
+      "check": "sync leaves live file unchanged",
+      "passed": true
+    },
+    {
+      "check": "pull propagates one-sided app change",
+      "passed": true
+    },
+    {
+      "check": "same file different JSON keys conflicts",
+      "passed": true
+    },
+    {
+      "check": "conflict comparison exposes both values",
+      "passed": true
+    },
+    {
+      "check": "unresolved pull leaves live JSON intact",
+      "passed": true
+    },
+    {
+      "check": "manual combined result converges",
+      "passed": true
+    },
+    {
+      "check": "different-file edits converge without conflict",
+      "passed": true
+    },
+    {
+      "check": "watching generated target leaves template unchanged",
+      "passed": true
+    },
+    {
+      "check": "apply restores template despite captured target drift",
+      "passed": true
+    }
+  ],
+  "commands": [
+    {
+      "machine": "cfg-mise-history-0903_a_1",
+      "args": [
+        "git",
+        "init",
+        "--bare",
+        "--initial-branch=main",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-mise-history-0903_a_1/remote.git"
+      ],
+      "code": 0,
+      "stdout": "Initialized empty Git repository in /private/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-mise-history-0903_a_1/remote.git/\n",
+      "stderr": ""
+    },
+    {
+      "machine": "a",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "track",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-mise-history-0903_a_1/a/.config/demo/settings.json",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-mise-history-0903_a_1/a/.config/demo/other.txt"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": "mise history: saved baseline checkpoint 1\nmise dotfiles: tracking ~/.config/demo/settings.json (1 file, 43 B; declared in ~/.config/mise/config.toml)\nmise dotfiles: tracking ~/.config/demo/other.txt (1 file, 5 B; declared in ~/.config/mise/config.toml)\nmise WARN  history: automatic capture is inactive: declare `[bootstrap.services.mise-history] builtin = \"history-watch\"` and run `mise bootstrap` (track your mise config so other machines get it too); until then edits are saved by `mise dot save` or `mise dot watch --once`\n"
+    },
+    {
+      "machine": "a",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "origin",
+        "set",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-mise-history-0903_a_1/remote.git",
+        "--sync",
+        "manual",
+        "--yes"
+      ],
+      "code": 0,
+      "stdout": "Every committed tracked-file version is eligible for origin synchronization.\nSetup repository: /var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-mise-history-0903_a_1/remote.git (branch main)\nSync mode manual: no automatic network activity. `mise dot sync` publishes and fetches, and `mise dot pull` applies, when you run them.\nThe repository is empty: the first publication creates `main` with the mise marker.\nTracked files in the current commit:\n  tracked (home): 2 file(s)\nNot enrolled for recreating this setup: ~/.config/mise/config.toml. To include it explicitly: mise dot track '~/.config/mise/config.toml'\nAll committed versions of explicitly tracked files are eligible for synchronization. Untracking does not erase earlier versions.\n",
+      "stderr": "mise history: connected /var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-mise-history-0903_a_1/remote.git (manual); [history.origin] written to ~/.config/mise/config.local.toml\nmise history: published ee1e5c2\n"
+    },
+    {
+      "machine": "b",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "bootstrap",
+        "--adopt",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-mise-history-0903_a_1/remote.git",
+        "--yes"
+      ],
+      "code": 0,
+      "stdout": "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-mise-history-0903_a_1/remote.git is a mise setup repository (format 1); branch main.\nSync mode manual: no automatic network activity. `mise dot sync` publishes and fetches, and `mise dot pull` applies, when you run them.\nOnly explicitly enrolled files are restored to their native paths. Existing files that differ pause the whole setup until you resolve them. Recreating tools, services, and templates requires their configuration and sources to be explicitly tracked too.\n/private/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-mise-history-0903_a_1/b/.config/demo/other.txt      create  home/.config/demo/other.txt\n/private/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-mise-history-0903_a_1/b/.config/demo/settings.json  create  home/.config/demo/settings.json\nWrote 2 file(s) from /var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-mise-history-0903_a_1/remote.git.\n",
+      "stderr": "mise bootstrap: tools\nmise all tools are installed\n"
+    },
+    {
+      "machine": "a",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "watch",
+        "--once"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": "mise history watch: saved checkpoint 2 (startup reconcile): edited demo/settings.json\n"
+    },
+    {
+      "machine": "a",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "status"
+      ],
+      "code": 0,
+      "stdout": "\u2713 2 entries up to date (`--verbose` lists them)\n\nTracking\n  \u2713 2 entries \u00b7 2 files\n  \u2713 2 checkpoints \u00b7 latest 2 (edit, 2026-11-06 22:18): edited demo/settings.json\n\nRepository\n  /var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-mise-history-0903_a_1/remote.git\n  Branch: main \u00b7 Mode: manual\n  Local history: ~/.local/state/mise/history/repo.git\n  \u2191 Last published: 2026-11-06 22:18\n  \u2193 Last fetched: 2026-11-06 22:18\n  \u2193 Last pulled: never\n  notifications: disabled (history.notify = false)\n\nAutomatic capture \u26a0\n  not declared (automatic capture is inactive: declare `[bootstrap.services.mise-history] builtin = \"history-watch\"` and run `mise bootstrap` (track your mise config so other machines get it too); until then edits are saved by `mise dot save` or `mise dot watch --once`).\n  watcher health (updated 0s ago): last capture 2026-11-06 22:18, last reconcile 2026-11-06 22:18; the watcher is not running now, so this is what it last reported\n\nNext steps\n  \u2192 declare `history-watch` under [bootstrap.services] and run `mise bootstrap`\n",
+      "stderr": ""
+    },
+    {
+      "machine": "a",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "sync"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": "mise history: published 54aa366\n"
+    },
+    {
+      "machine": "b",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "sync"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": "mise history: nothing new to publish\nmise history: 1 incoming change(s) pending; `mise dot pull` applies them\n"
+    },
+    {
+      "machine": "b",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "pull"
+      ],
+      "code": 0,
+      "stdout": "/private/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-mise-history-0903_a_1/b/.config/demo/settings.json  write  home/.config/demo/settings.json\n",
+      "stderr": "mise history: applied 1 incoming change(s)\n"
+    },
+    {
+      "machine": "a",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "save"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": "mise history: saved checkpoint 3: edited demo/settings.json\n"
+    },
+    {
+      "machine": "b",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "save"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": "mise history: saved checkpoint 10: edited demo/settings.json\n"
+    },
+    {
+      "machine": "a",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "sync"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": "mise history: published 7300147\n"
+    },
+    {
+      "machine": "b",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "sync"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": "mise history: nothing new to publish\nmise history: incoming history changes no files here; `mise dot pull` records it before this machine publishes again\nmise WARN  history: 1 conflict(s) need a decision; `mise dot status` lists them\n"
+    },
+    {
+      "machine": "b",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "conflicts",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-mise-history-0903_a_1/b/.config/demo/settings.json"
+      ],
+      "code": 0,
+      "stdout": "Conflict: /private/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-mise-history-0903_a_1/b/.config/demo/settings.json (both sides changed the same lines)\ndiff --git a/private/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-mise-history-0903_a_1/b/.config/demo/settings.json (local) b/private/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-mise-history-0903_a_1/b/.config/demo/settings.json (remote)\nindex 8d430cd..b3994d3 100644\n--- a/private/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-mise-history-0903_a_1/b/.config/demo/settings.json (local)\n+++ b/private/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-mise-history-0903_a_1/b/.config/demo/settings.json (remote)\n@@ -1,4 +1,4 @@\n {\n-  \"plugin\": \"beta\",\n-  \"theme\": \"light\"\n+  \"plugin\": \"alpha\",\n+  \"theme\": \"dark\"\n }\n",
+      "stderr": ""
+    },
+    {
+      "machine": "b",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "pull"
+      ],
+      "code": 1,
+      "stdout": "",
+      "stderr": "mise ERROR sync paused: resolve all 1 conflict(s) before sharing resumes; `mise dot pull --take-remote-all` chooses the repository's version for every conflict at once, and `mise dot status` says whether any path still needs a different fix\nmise ERROR Version: 2026.11.3 macos-arm64 (2026-11-06)\nmise ERROR Run with --verbose or MISE_VERBOSE=1 for more information\n"
+    },
+    {
+      "machine": "b",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "save"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": "mise history: saved checkpoint 11: edited demo/settings.json\n"
+    },
+    {
+      "machine": "b",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "pull",
+        "--keep-local",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-mise-history-0903_a_1/b/.config/demo/settings.json"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": "mise history: recorded incoming history; no files here changed\n"
+    },
+    {
+      "machine": "b",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "sync"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": "mise history: published 22d10d3\n"
+    },
+    {
+      "machine": "a",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "sync"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": "mise history: nothing new to publish\nmise history: 1 incoming change(s) pending; `mise dot pull` applies them\n"
+    },
+    {
+      "machine": "a",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "pull"
+      ],
+      "code": 0,
+      "stdout": "/private/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-mise-history-0903_a_1/a/.config/demo/settings.json  write  home/.config/demo/settings.json\n",
+      "stderr": "mise history: applied 1 incoming change(s)\n"
+    },
+    {
+      "machine": "a",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "save"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": "mise history: saved checkpoint 16: edited demo/settings.json\n"
+    },
+    {
+      "machine": "b",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "save"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": "mise history: saved checkpoint 16: edited demo/other.txt\n"
+    },
+    {
+      "machine": "a",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "sync"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": "mise history: published 721762c\n"
+    },
+    {
+      "machine": "b",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "sync"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": "mise history: nothing new to publish\nmise history: 1 incoming change(s) pending; `mise dot pull` applies them\n"
+    },
+    {
+      "machine": "b",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "pull"
+      ],
+      "code": 0,
+      "stdout": "/private/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-mise-history-0903_a_1/b/.config/demo/settings.json  write  home/.config/demo/settings.json\n",
+      "stderr": "mise history: applied 1 incoming change(s)\n"
+    },
+    {
+      "machine": "b",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "sync"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": "mise history: published d2d5e2f\n"
+    },
+    {
+      "machine": "a",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "sync"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": "mise history: nothing new to publish\nmise history: 1 incoming change(s) pending; `mise dot pull` applies them\n"
+    },
+    {
+      "machine": "a",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "pull"
+      ],
+      "code": 0,
+      "stdout": "/private/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-mise-history-0903_a_1/a/.config/demo/other.txt  write  home/.config/demo/other.txt\n",
+      "stderr": "mise history: applied 1 incoming change(s)\n"
+    },
+    {
+      "machine": "a",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "apply"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": "mise files: rendered ~/templates/demo.tera to ~/.config/demo/rendered.toml\nmise files: applied ~/.config/demo/rendered.toml\n"
+    },
+    {
+      "machine": "a",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "track",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-mise-history-0903_a_1/a/.config/demo/rendered.toml"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": "mise history: saved baseline checkpoint 26\nmise dotfiles: tracking ~/.config/demo/rendered.toml (1 file, 13 B; declared in ~/.config/mise/conf.d/dotfiles-tracking.toml)\nmise dotfiles: ~/.config/demo/rendered.toml is also declared with mode = \"template\" in /private/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-mise-history-0903_a_1/a/.config/mise/config.toml, which was left as it is. To track it from that entry instead, replace it with { mode = \"track\" } (dropping source, content, and manifest) and remove the entry from ~/.config/mise/conf.d/dotfiles-tracking.toml\nmise WARN  history: automatic capture is inactive: declare `[bootstrap.services.mise-history] builtin = \"history-watch\"` and run `mise bootstrap` (track your mise config so other machines get it too); until then edits are saved by `mise dot save` or `mise dot watch --once`\n"
+    },
+    {
+      "machine": "a",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "watch",
+        "--once"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": "mise history watch: saved checkpoint 27 (startup reconcile): edited demo/rendered.toml\n"
+    },
+    {
+      "machine": "a",
+      "args": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "apply"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": "mise WARN  files: ~/.config/demo/rendered.toml was edited since mise last wrote it; applying overwrites the edit. Move it into ~/templates/demo.tera to keep it\nmise files: rendered ~/templates/demo.tera to ~/.config/demo/rendered.toml\nmise files: applied ~/.config/demo/rendered.toml\n"
+    }
+  ]
+}

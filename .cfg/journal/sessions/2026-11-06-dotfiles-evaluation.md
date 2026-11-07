@@ -72,3 +72,35 @@ Final contract review clarified that keeping runtime files real is distinct from
 cfg's current policy of tracking those files at their runtime paths. The report
 now calls for a deliberate policy update before a source/destination-manager
 cutover; it does not suggest that copying alone preserves the old Git model.
+
+## Follow-up: application-written config drift
+
+Erik narrowed the shortlist to dotdrop and mise. New explicit priority: detect
+application/plugin edits to live config files and reconcile concurrent changes
+across machines without losing useful changes. This is not a decision to adopt
+mise or enable sync. Reviewing pinned v2026.11.3 history, sync, track, pull,
+conflicts, managed-file capture docs and dotdrop update/compare behavior.
+Preparing two fake machine homes and a local bare Git remote to test same-file
+versus different-file changes. No live config or watcher service will be changed.
+
+The 11 follow-up assertions now pass: initial adoption, one-shot watcher capture,
+sync leaving live files untouched, pull propagation, conflict for different keys
+in the same JSON file, conflict diff, non-destructive unresolved pull, manual
+combined convergence, independent-file convergence, and tracking a rendered file
+without changing its template followed by apply restoring the original template.
+
+Initial harness assumptions were corrected after observed output: sync can return
+zero while reporting a recorded conflict; status/conflicts and a blocked pull show
+it. Independent-file convergence also requires the next sync after pull to publish
+the combined history. No data-loss bug was observed.
+
+Saved docs/dotfiles-drift-reconciliation.md, fixtures and results; qualified the
+original HTML/Markdown recommendation because the new requirement strengthens
+mise's case. Agent-space's pointer reflects the narrowed shortlist. Only the
+one-shot watcher was exercised, with a local remote; no background OS service,
+live agent config, network history origin, or real work data was involved.
+
+Personal Hindsight sync_retain confirmed the narrowed shortlist, new drift
+priority, provisional ranking, and verified follow-up results with source pointers.
+Updated HTML link and desktop/mobile structural checks passed; staged diff checks
+passed. No live configuration edits or services were introduced.

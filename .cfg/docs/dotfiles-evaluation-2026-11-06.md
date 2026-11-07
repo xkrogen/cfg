@@ -4,6 +4,8 @@ Dotdrop, GNU Stow, chezmoi, and mise dot · Research and sandbox evaluation · N
 
 ## Recommendation
 
+**Follow-up qualification:** You have since narrowed the shortlist to dotdrop and mise and emphasized application-written config drift across machines. That strengthens mise's case and makes the initial recommendation below provisional. See [the drift and reconciliation follow-up](dotfiles-drift-reconciliation.md), including 11 additional two-machine history checks.
+
 **Choose dotdrop for the cfg migration. Keep mise as the strongest alternative if you want to consolidate machine setup, package management, and development runtimes.**
 
 Dotdrop most directly matches your critical requirement: a personal base and a private work overlay in separate Git repositories, composed through explicit profiles and templates. It can retain your existing setup scripts and deploy regular files where your current agent configuration expects them. Its smaller community is active, and its approach has a substantially longer history than mise's dotfiles subsystem.

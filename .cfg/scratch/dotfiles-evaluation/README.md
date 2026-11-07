@@ -36,3 +36,8 @@ Stow's GitHub mirror is not a complete measure of its GNU ecosystem.
 Linux/server profiles were simulated as configuration data on macOS arm64.
 No native Linux deployment, real work overlay, secret-manager authentication,
 root-managed files, package installation, or production migration was tested.
+
+Follow-up: `evaluate-history.py` exercises mise 2026.11.3 with two fake machine
+homes and a local bare Git remote. `history-results.json` records all 11 passing
+assertions and CLI output, including intentional conflicts and manual resolution.
+The one-shot watcher was tested; continuous watching and OS services were not.
