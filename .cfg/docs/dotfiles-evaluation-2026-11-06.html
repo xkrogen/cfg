@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Dotdrop, GNU Stow, chezmoi, and mise dot evaluated for separate personal/work repositories and Mac/Linux machine profiles."><title>Dotfiles manager evaluation · Erik's cfg</title><style>
+:root{--ink:#172c40;--muted:#586a79;--teal:#006f68;--paper:#fff;--line:#dce5e8;--bg:#edf2f3;--amber:#9b6315}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:28px}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:var(--teal);text-decoration-thickness:1px;text-underline-offset:3px}a:hover{color:#003c39}a:focus-visible{outline:3px solid #dfab59;outline-offset:4px}::selection{background:#bee5dd}
+.layout{max-width:1510px;margin:auto;display:grid;grid-template-columns:260px minmax(0,1fr);gap:30px;padding:34px 32px 64px}.sidebar{position:sticky;top:30px;align-self:start;max-height:calc(100vh - 60px);overflow:auto}.brand{font-size:13px;font-weight:750;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);margin:4px 0 20px}.nav-title{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin:23px 0 12px}nav a{display:flex;gap:11px;align-items:baseline;color:#3f5666;font-size:13px;line-height:1.5;text-decoration:none;padding:8px 9px;border-left:2px solid transparent}nav a span{font-size:10px;color:#829399;font-variant-numeric:tabular-nums}nav a:hover,nav a.active{background:#dcebe7;border-color:var(--teal);color:#004f49}.sidebar-note{font-size:12px;line-height:1.65;border-top:1px solid #ccd9dc;margin-top:22px;padding-top:16px;color:var(--muted)}
+main{min-width:0;background:var(--paper);box-shadow:0 6px 40px #172c400a;border:1px solid var(--line);border-radius:16px;overflow:hidden}.hero{background:var(--ink);color:white;padding:50px 54px 35px;position:relative}.eyebrow{font-size:11px;letter-spacing:.17em;text-transform:uppercase;color:#98d6c8;font-weight:700}.hero h1{font-size:clamp(34px,4vw,56px);line-height:1.09;letter-spacing:-.04em;max-width:720px;margin:16px 0 22px;font-weight:750}.hero p{color:#cad8df;font-size:15px;max-width:700px;margin:0}.hero-bottom{display:flex;flex-wrap:wrap;gap:30px;border-top:1px solid #ffffff24;padding-top:23px;margin-top:30px}.hero-bottom div{font-size:12px;color:#bdced4}.hero-bottom strong{display:block;color:white;font-size:23px;line-height:1.25;letter-spacing:-.02em}
+.content{padding:8px 54px 52px}.content h2{font-size:27px;line-height:1.27;letter-spacing:-.025em;margin:52px 0 20px;padding-top:22px;border-top:1px solid var(--line);scroll-margin-top:24px}.content h2:first-child{border-top:0;margin-top:24px}.content h3{font-size:19px;line-height:1.45;margin:29px 0 12px;letter-spacing:-.01em}.content p{margin:0 0 18px}.content strong{font-weight:690}.content ol,.content ul{padding-left:24px}.content li{padding-left:5px;margin:0 0 15px}.callout{background:#eff7f4;border-left:4px solid var(--teal);padding:17px 20px;border-radius:0 8px 8px 0;font-size:14px}.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:9px;margin:22px 0 26px}table{border-collapse:collapse;width:100%;font-size:12.5px;line-height:1.55;min-width:590px}th{background:#eaf3f0;color:#154b48;text-align:left;font-weight:700;padding:13px 12px;vertical-align:top;border-bottom:1px solid #cddfd8}td{padding:12px;vertical-align:top;border-bottom:1px solid #e4ebed}tr:last-child td{border-bottom:0}tbody tr:nth-child(even){background:#f8fafb}td:first-child{font-weight:610;min-width:125px}td:not(:first-child){min-width:110px}pre{background:#142a3b;color:#e1eaf0;font-size:12px;line-height:1.65;padding:21px 24px;border-radius:9px;overflow:auto;margin:22px 0;tab-size:2}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}p code,li code,td code{font-size:.85em;background:#eef2f3;padding:2px 4px;border-radius:4px;overflow-wrap:anywhere}.footer{background:#f5f8f8;border-top:1px solid var(--line);padding:22px 54px;color:var(--muted);font-size:12px}.content>p:has(a){overflow-wrap:anywhere}
+@media(min-width:1250px){.content{font-size:16px}.table-wrap{margin-left:-15px;margin-right:-15px}}
+@media(max-width:950px){.layout{display:block;padding:15px}.sidebar{position:static;max-height:none;margin-bottom:18px}.brand{margin-bottom:8px}nav{display:none}.nav-title,.sidebar-note{display:none}.hero{padding:32px 26px}.content{padding:5px 26px 35px}.content h2{font-size:24px}.footer{padding:20px 26px}}
+@media print{body{background:white;font-size:10pt}.layout{display:block;padding:0}.sidebar{display:none}main{border:0;box-shadow:none}.hero{print-color-adjust:exact;padding:28px}.content{padding:0 10px}.content h2{break-after:avoid;font-size:18pt}.content h3{break-after:avoid}.table-wrap{overflow:visible}table{font-size:8pt;min-width:0}th,td{padding:7px}pre{white-space:pre-wrap;font-size:8pt;break-inside:avoid}.footer{display:none}}
+</style></head>
+<body><div class="layout"><aside class="sidebar"><div class="brand">CFG / Field notes</div><div class="nav-title">In this report</div><nav aria-label="Report contents"><a href="#recommendation"><span>01</span>Recommendation</a><a href="#what-your-replacement-actually-needs-to-handle"><span>02</span>What your replacement actually needs to handle</a><a href="#comparison-at-a-glance"><span>03</span>Comparison at a glance</a><a href="#the-important-distinction-three-kinds-of-layering"><span>04</span>The important distinction: three kinds of layering</a><a href="#dotdrop-the-most-direct-fit"><span>05</span>Dotdrop: the most direct fit</a><a href="#gnu-stow-a-useful-primitive-too-little-policy"><span>06</span>GNU Stow: a useful primitive, too little policy</a><a href="#chezmoi-excellent-tooling-awkward-repository-composition"><span>07</span>Chezmoi: excellent tooling, awkward repository composition</a><a href="#mise-dot-strongest-integrated-setup-option"><span>08</span>Mise dot: strongest integrated setup option</a><a href="#community-adoption-and-project-health"><span>09</span>Community adoption and project health</a><a href="#what-i-actually-tested"><span>10</span>What I actually tested</a><a href="#proposed-layout-for-your-cfg"><span>11</span>Proposed layout for your cfg</a><a href="#a-migration-plan-with-clear-stopping-points"><span>12</span>A migration plan with clear stopping points</a><a href="#decision-guide"><span>13</span>Decision guide</a></nav><div class="sidebar-note">Research snapshot<br><strong>November 6, 2026</strong><br>America/Los_Angeles<br><br>Primary documentation + isolated CLI experiments.<br>No production migration.</div></aside>
+<main><header class="hero"><div class="eyebrow">Personal infrastructure / decision report</div><h1>A better home<br>for your dotfiles.</h1><p>Four tools evaluated against your personal base, private work overlay, Mac laptop, and Linux server.</p><div class="hero-bottom"><div><strong>4 tools</strong>dotdrop · Stow · chezmoi · mise</div><div><strong>35 checks</strong>all sandbox assertions passed</div><div><strong>2 repo layers</strong>independent Git ownership</div></div></header><article class="content">
+
+<h2 id="recommendation">Recommendation</h2>
+<p><strong>Choose dotdrop for the cfg migration. Keep mise as the strongest alternative if you want to consolidate machine setup, package management, and development runtimes.</strong></p>
+<p>Dotdrop most directly matches your critical requirement: a personal base and a private work overlay in separate Git repositories, composed through explicit profiles and templates. It can retain your existing setup scripts and deploy regular files where your current agent configuration expects them. Its smaller community is active, and its approach has a substantially longer history than mise's dotfiles subsystem.</p>
+<p>Mise is a close second. Its current implementation passed the same repository-composition experiment and has the richest setup facilities. I would choose it instead if reducing the number of tools and hand-written setup steps matters more than the maturity of the dotfiles-specific workflow. This is a judgment about your priorities, not a measured reliability ranking.</p>
+<p>Chezmoi has the strongest established dotfiles-specific ecosystem here, but separate repositories require composition conventions around its deliberately single-source design. Stow is dependable at symlinking; it leaves too much of your requested functionality to scripts you would maintain. The detailed evidence follows. <a href="https://github.com/deadc0de6/dotdrop">Dotdrop project</a>, <a href="https://www.chezmoi.io/user-guide/frequently-asked-questions/design/">chezmoi design</a>, <a href="https://github.com/jdx/mise/releases/tag/v2026.6.6">mise dotfiles launch</a>, <a href="https://www.gnu.org/s/stow/manual/stow.html">Stow manual</a>.</p>
+<p class="callout"><strong>Status:</strong> research completed; 35 sandbox checks passed. No manager adopted, no production dotfiles migrated, and no work repository read.</p>
+<h2 id="what-your-replacement-actually-needs-to-handle">What your replacement actually needs to handle</h2>
+<p>I inspected the personal cfg README, tracked path inventory, <code>init.sh</code>, <code>setup.sh</code>, and <code>brew_standard_tools.sh</code>. The live arrangement remains a bare <code>~/.cfg.git</code> database with your home directory as its worktree. Its branch is <code>main</code>, and its personal origin is <code>xkrogen/cfg</code>. Existing unrelated edits were preserved.</p>
+<p>Your setup has two distinct responsibilities:</p>
+<div aria-label="Comparison table" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th>Responsibility</th>
+<th>Examples in your current cfg</th>
+<th>What the replacement should provide</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Deliver configuration</td>
+<td>Shell configuration, tmux, Git settings, shared skills, agent instructions, local launchers</td>
+<td>Select files by machine; render differences; preserve permissions and deliberate links</td>
+</tr>
+<tr>
+<td>Prepare a machine</td>
+<td>Homebrew formulae/casks, Volta and Pyright, jdtls, native px0 and terminal-browser installers, Herdr integrations, Oh My Zsh, tmux plugins</td>
+<td>Order setup operations, rerun safely, distinguish installation from update</td>
+</tr>
+</tbody>
+</table></div>
+<p>Your homelab documentation describes the Dell OptiPlex running Ubuntu Desktop as an always-on machine administered through SSH. That makes <strong>server versus laptop</strong> an independent dimension from <strong>Linux versus macOS</strong>: you should not infer the desired package set from the OS alone. I used the existing local docs; I did not connect to or change that host.</p>
+<p>The design should express these dimensions separately:</p>
+<div aria-label="Comparison table" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th>Machine</th>
+<th>Context</th>
+<th>Platform</th>
+<th>Role</th>
+<th>Configuration sources</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Personal laptop</td>
+<td>Personal</td>
+<td>macOS / arm64</td>
+<td>Laptop</td>
+<td>Personal base + Mac + laptop + personal-agent selections</td>
+</tr>
+<tr>
+<td>Work computer</td>
+<td>Work</td>
+<td>Its actual platform</td>
+<td>Workstation/laptop</td>
+<td>Shared base + applicable platform/role + private work repo</td>
+</tr>
+<tr>
+<td>Homelab</td>
+<td>Personal</td>
+<td>Linux / x86_64</td>
+<td>Server</td>
+<td>Personal base + Linux + server + personal-agent selections</td>
+</tr>
+</tbody>
+</table></div>
+<p>The work row is a design target, not an inspection of enterprise configuration. Generic reusable methods can be shared; enterprise settings, credentials, Copilot state, and work-specific instructions remain work-owned.</p>
+<p class="callout"><strong>Git requirement:</strong> desired configuration, templates, scripts, and profile definitions can all live in Git with any of these tools. They do not make credentials, installed binaries, caches, or local execution databases appropriate Git content. For reproducibility, track the machine/profile selection or the manifest that generates it as well; do not leave important desired state only in an undocumented local setting.</p>
+<h2 id="comparison-at-a-glance">Comparison at a glance</h2>
+<p>“Native” means the tool supplies the mechanism; it does not mean it clones and authenticates every repository automatically.</p>
+<div aria-label="Comparison table" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>dotdrop</th>
+<th>GNU Stow</th>
+<th>chezmoi</th>
+<th>mise dot</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Git-owned source files</td>
+<td>Yes; ordinary Git repo</td>
+<td>Yes; ordinary Git repo</td>
+<td>Yes; Git-aware workflow</td>
+<td>Yes; ordinary source repo, plus optional separate history store</td>
+</tr>
+<tr>
+<td>Templates</td>
+<td>Jinja2</td>
+<td>None</td>
+<td>Go templates</td>
+<td>Tera</td>
+</tr>
+<tr>
+<td>OS / context / role selection</td>
+<td>Named profiles, includes, variables</td>
+<td>Select packages in your own wrapper</td>
+<td>Template data and ignore rules</td>
+<td>Config environments, variants, template functions</td>
+</tr>
+<tr>
+<td>Separate base and private overlay repos</td>
+<td>Native config imports</td>
+<td>Multiple source directories</td>
+<td>Supported patterns need orchestration</td>
+<td>Native config discovery across linked repo folders</td>
+</tr>
+<tr>
+<td>Whole-file override</td>
+<td>Override the same dotfile key</td>
+<td>Conflict; choose one package yourself</td>
+<td>Apply order or composed source tree</td>
+<td>Higher-precedence declaration wins</td>
+</tr>
+<tr>
+<td>Contribute to the same file</td>
+<td>Template composition or application includes</td>
+<td>Application includes or external renderer</td>
+<td>Template composition or application includes</td>
+<td>Managed blocks, lines, structured key merges</td>
+</tr>
+<tr>
+<td>Run setup scripts</td>
+<td>Pre/post actions; explicit rerun policy</td>
+<td>External wrapper</td>
+<td>Normal, once, or content-change scripts</td>
+<td>Tasks and bootstrap phase hooks</td>
+</tr>
+<tr>
+<td>Declarative host packages</td>
+<td>Script it</td>
+<td>Script it</td>
+<td>Script/template package manifests</td>
+<td>Built-in bootstrap package facilities</td>
+</tr>
+<tr>
+<td>Regular files at runtime</td>
+<td>Default</td>
+<td>No; symlinks are the mechanism</td>
+<td>Default</td>
+<td>Copy/template modes; default is symlink</td>
+</tr>
+<tr>
+<td>Main tradeoff for you</td>
+<td>Smaller ecosystem; setup remains partly scripted</td>
+<td>You build profiles, templates, and setup</td>
+<td>Repository composition fights the default model</td>
+<td>Younger dotfiles subsystem; broader configuration surface</td>
+</tr>
+</tbody>
+</table></div>
+<p>Feature sources: <a href="https://dotdrop.readthedocs.io/en/latest/template/templating/">dotdrop templates</a>, <a href="https://dotdrop.readthedocs.io/en/latest/config/config-profiles/">profiles</a>, <a href="https://dotdrop.readthedocs.io/en/latest/config/config-actions/">actions</a>; <a href="https://www.gnu.org/s/stow/manual/stow.html">Stow manual</a>; <a href="https://www.chezmoi.io/user-guide/manage-machine-to-machine-differences/">chezmoi machine differences</a> and <a href="https://www.chezmoi.io/user-guide/use-scripts-to-perform-actions/">scripts</a>; <a href="https://mise.jdx.dev/dotfiles/managed.html">mise managed files</a>, <a href="https://mise.jdx.dev/configuration.html">configuration</a>, and <a href="https://mise.jdx.dev/bootstrap.html">bootstrap</a>.</p>
+<h2 id="the-important-distinction-three-kinds-of-layering">The important distinction: three kinds of layering</h2>
+<p><strong>Adding different files</strong> is straightforward. For example, one repo owns <code>~/.config/shell/common.zsh</code>, and the work repo owns <code>~/.config/shell/work.zsh</code>. All four tools can support this arrangement.</p>
+<p><strong>Replacing a whole file</strong> needs a defined winner. Dotdrop can override a shared dotfile key. Mise can resolve competing declarations before deployment. Stow rejects the collision. Two independent chezmoi applies can replace the file in turn; the next base apply can undo the work version. Those behaviors were observed in the sandbox.</p>
+<p><strong>Combining content inside a file</strong> needs a stronger contract. Prefer an application's own include mechanism where practical: a shared shell entrypoint can source separate fragments, and a Git configuration can include a separate local/work file. This makes ownership understandable whichever manager you choose. Mise also offers native partial-file edits, which I tested with two separately managed blocks and an existing manual line. <a href="https://mise.jdx.dev/dotfiles/edits.html">Mise partial-file edits</a>.</p>
+<p>Separate Git repositories provide access and ownership boundaries. Once deployed on a work machine, both layers' selected outputs may legitimately coexist. The essential boundary is that work content never enters the personal repository, research artifacts, or personal memory.</p>
+<h2 id="dotdrop-the-most-direct-fit">Dotdrop: the most direct fit</h2>
+<h3 id="profiles-and-repository-composition">Profiles and repository composition</h3>
+<p>Dotdrop uses YAML declarations and a directory of source files. <code>import_configs</code> brings another configuration's dotfiles, profiles, actions, and related definitions into the importing configuration. Source paths remain associated with their configuration. This works with independently cloned sibling repositories; neither needs to be nested inside the other. I verified that arrangement with two real, synthetic Git repositories. <a href="https://dotdrop.readthedocs.io/en/latest/config/config-config/">Configuration imports</a>.</p>
+<p>Profiles can include other profiles, so a machine can combine shared, platform, and role selections. Profile-specific variables can specialize shared templates. I tested personal Mac/laptop, simulated Linux/server, and work Mac/laptop profiles; the work profile reused a template owned by the base repo and supplied its work value successfully. <a href="https://dotdrop.readthedocs.io/en/latest/config/config-profiles/">Profiles</a>, <a href="https://dotdrop.readthedocs.io/en/latest/config/config-variables/">variable precedence</a>.</p>
+<p>An importing configuration can refer to profiles in the configuration it imports. The imported configuration cannot depend on profiles defined above it in the import tree. <strong>Make the private work repo import the personal base.</strong> This keeps the dependency one-way and avoids teaching the base about enterprise details. Use explicit, documented keys for replacements instead of declaring unrelated keys that happen to target the same path. <a href="https://dotdrop.readthedocs.io/en/latest/config/config-file/">Import scope</a>.</p>
+<h3 id="templates-deployment-and-editing">Templates, deployment, and editing</h3>
+<p>The template engine is Jinja2 with dotdrop-specific delimiters. It can render platform paths, role-dependent sections, and profile values. The default deployment copies files; absolute/relative links and child links are optional. A templated linked file is rendered through a work directory first, so editing its generated destination is not the same as editing its template. <a href="https://dotdrop.readthedocs.io/en/latest/template/templating/">Templating</a>, <a href="https://dotdrop.readthedocs.io/en/latest/howto/symlink-dotfiles/">link modes</a>.</p>
+<p>Your current cfg policy also tracks agent files at their actual runtime locations. A source/destination manager changes that Git ownership model: the source becomes authoritative, and the real runtime file becomes generated output. Update that policy deliberately before cutover; preserving regular files alone does not preserve the existing tracking arrangement.</p>
+<p>For agent configuration, use regular-file deployment where runtime files and directories must remain real. Preserve intentional agent-to-agent reference links separately. Avoid managing all of <code>~/.codex</code>, <code>~/.gemini</code>, or <code>~/.ssh</code> as a single wholesale directory: those parents also hold machine-local or sensitive state.</p>
+<p>Day to day, edit the source and install the selected profile. Use <code>compare</code> to detect drift. If you edit a plain deployed file, <code>update</code> can bring changes back; template changes require review rather than blindly replacing the template with one machine's rendered output. <a href="https://dotdrop.readthedocs.io/en/latest/usage/">Daily commands</a>.</p>
+<h3 id="setup-behavior-and-tradeoffs">Setup behavior and tradeoffs</h3>
+<p>Dotdrop has pre/post actions at file and profile levels. It can invoke your existing scripts without translating their logic into a new language. However, a file's normal action is skipped when the file is unchanged; I verified that a second install did not rerun its marker action. <code>--force-actions</code> explicitly reran it. Fake dotfiles can also represent always-run operations. <a href="https://dotdrop.readthedocs.io/en/latest/config/config-actions/">Actions</a>, <a href="https://dotdrop.readthedocs.io/en/latest/usage/">CLI behavior</a>.</p>
+<p>I would keep two explicit operations: <strong>apply configuration</strong> and <strong>set up/update software</strong>. A small tracked launcher can call the appropriate dotdrop profile and the existing setup scripts. That prevents a harmless configuration refresh from unexpectedly updating many tools, while still providing one bootstrap entrypoint for a new machine.</p>
+<p>The cost is Python dependencies, a smaller support ecosystem, explicit YAML bookkeeping, and no built-in package-state engine comparable to mise bootstrap. The sandbox emitted an optional <code>python-magic</code> warning; all exercised text/profile/action behavior still passed. <strong>Verdict: best conservative match for your requested repository and profile model.</strong></p>
+<h2 id="gnu-stow-a-useful-primitive-too-little-policy">GNU Stow: a useful primitive, too little policy</h2>
+<p>Stow makes source-directory packages appear in a target tree through symlinks. Git is an ordinary storage choice around it. Separate repositories can each supply packages to the same home directory, provided their installed paths do not conflict. It offers simulation, unstowing, and control over directory folding. <a href="https://www.gnu.org/s/stow/manual/stow.html">Stow manual</a>.</p>
+<p>In the experiment, base and work packages installed disjoint files successfully. When the work package also supplied the base file's path, Stow returned a conflict and preserved the original link. This is sensible behavior for a link manager, but it is not an overlay winner policy.</p>
+<p>You would need a tracked wrapper to choose package combinations such as common + Mac + laptop + work. You would also need a renderer for templates and a separate setup runner. Selecting a platform-specific package is possible, but Stow itself does not evaluate profile data or generate a file from those dimensions.</p>
+<p>Its editing model is attractive: editing a linked live file edits its Git-owned source immediately. Its minimalism and long history are strengths if you want that arrangement. For your current real-file agent configuration policy, however, adopting symlinks into a dotfiles checkout would be a deliberate policy change. Avoid <code>--adopt</code> as a casual migration switch: moving existing target content into a package deserves an explicit backup and diff review. <a href="https://www.gnu.org/s/stow/manual/stow.html">Stow options and conflicts</a>.</p>
+<p><strong>Verdict: not my recommendation here.</strong> You would replace the bare Git limitation with a custom framework around Stow. It becomes compelling only if you intentionally simplify the requirements to symlinked packages, application includes, and separately maintained setup scripts.</p>
+<h2 id="chezmoi-excellent-tooling-awkward-repository-composition">Chezmoi: excellent tooling, awkward repository composition</h2>
+<h3 id="where-it-is-strong">Where it is strong</h3>
+<p>Chezmoi maintains source state and computes the target files for each machine. Its Git-aware commands, templates, ignore rules, explicit diffs, and secret integrations make it particularly capable for diverse personal machines. macOS/Linux differences and custom laptop/server/context data are natural uses of its templates. Files are normally materialized as regular files rather than requiring a symlink tree. <a href="https://www.chezmoi.io/user-guide/setup/">Setup</a>, <a href="https://www.chezmoi.io/user-guide/manage-machine-to-machine-differences/">machine differences</a>.</p>
+<p>Script names express lifecycle behavior: normal execution, <code>run_once_</code>, <code>run_onchange_</code>, and before/after ordering. A useful subtlety is that <code>run_once_</code> is based on successfully executed script content, not a permanent “this filename has run” flag. In the sandbox, the unchanged script ran once across repeated applies, and changed content ran again. Package installation can be implemented through these scripts and tracked manifests. <a href="https://www.chezmoi.io/user-guide/use-scripts-to-perform-actions/">Script semantics</a>.</p>
+<h3 id="how-separate-repositories-would-work">How separate repositories would work</h3>
+<p>The upstream design explicitly chooses one branch in one repository as the main source of truth. It documents alternatives: multiple invocations using distinct sources/configs; assembling one source tree; or invoking another instance through a script. This is <strong>supported through orchestration</strong>, not a claim that multiple repos are impossible. <a href="https://www.chezmoi.io/user-guide/frequently-asked-questions/design/">Multiple-source design discussion</a>.</p>
+<p>A workable arrangement for you would give the base and work repo disjoint target ownership. The shared <code>.zshrc</code> or <code>.gitconfig</code> would load a separate fragment installed by the work instance. Each instance should have its own source/config and persistent-state path. I verified independent sources and state paths with one target directory.</p>
+<p>If both instances own the same file, apply order is the policy. The experiment applied base, then work, then base again: the contents changed base → work → base. An ordered wrapper can hide that churn, but each instance's view of the file can still disagree with the other. A composed source tree avoids some deployment churn at the price of your own composition and edit-routing rules.</p>
+<p>Externals and submodules help pull in other repositories, especially complete application trees. They do not automatically solve two independently authoritative templates contributing to one file. <a href="https://www.chezmoi.io/user-guide/include-files-from-elsewhere/">Externals and submodules</a>.</p>
+<p><strong>Verdict: strong third choice for this particular requirement set.</strong> It would move ahead if one primary configuration repo plus private, disjoint application fragments satisfied you. I would not recommend moving enterprise files into the personal repo merely to fit its default model.</p>
+<h2 id="mise-dot-strongest-integrated-setup-option">Mise dot: strongest integrated setup option</h2>
+<h3 id="what-exists-now">What exists now</h3>
+<p>This is the current <code>mise dotfiles</code> command family, shortened to <code>mise dot</code>, not an assumed third-party plugin. It supports repository-based deployment as links, copies, templates, and inline content. A separate tracking workflow records live-file changes in a history Git store. For your ownership model, I would start with <strong>repository-based deployment and ordinary reviewed Git commits</strong>. The optional history/watch/sync mechanism introduces another persistence model that you do not need to solve this migration. <a href="https://mise.jdx.dev/dotfiles.html">Overview</a>, <a href="https://mise.jdx.dev/dotfiles/history.html">history</a>.</p>
+<p>Current deployment features include variants, file permissions, directory deployment, and selectors. The default mode is symlink, so explicitly choose copy/template where you need regular runtime files. Tera functions can inspect the real OS and architecture, while environments select work/personal or laptop/server policy. Platform-named config files require <code>auto_env</code> to be enabled in the evaluated version; their names alone do not guarantee automatic loading. <a href="https://mise.jdx.dev/dotfiles/managed.html">Managed files</a>, <a href="https://mise.jdx.dev/configuration/environments.html">environments</a>, <a href="https://mise.jdx.dev/templates.html">templates</a>.</p>
+<h3 id="multiple-repos-work-with-an-important-trap">Multiple repos work, with an important trap</h3>
+<p>Mise can load configuration folders under <code>~/.config/mise/conf.d</code>. Those folders can be links to separate Git checkouts and keep declarations beside their source files. I tested <code>10-base</code> and <code>90-work</code> folders pointing at independent synthetic repositories; the work environment overrode the base's target declaration and supplied variables to the shared template. A fresh server selection omitted work-only targets. <a href="https://mise.jdx.dev/configuration.html#conf-d-folders">Configuration folders</a>, <a href="https://mise.jdx.dev/bootstrap/modules.html">machine modules</a>.</p>
+<p>Do not confuse this with generic <code>include = [...]</code>. In the evaluated version, included configs cannot contain <code>[dotfiles]</code> or <code>[tasks]</code>, even though other sections are accepted. I tested the rejection. <strong>Use normal config discovery/folders for the dotfiles layers</strong>, and verify precedence with <code>mise config</code>. The directory's own <code>config.toml</code> can override its fragments. <a href="https://mise.jdx.dev/configuration.html#include">Include restrictions</a>.</p>
+<p>Mise is the standout for partial-file composition. Separate layers can supply different managed block IDs, individual lines, or structured key edits. The sandbox preserved an existing manual line alongside base and work blocks. This is valuable when an application has no useful include mechanism, although competing edits to the same keys still need an ownership rule. <a href="https://mise.jdx.dev/dotfiles/edits.html">Partial-file edits</a>.</p>
+<h3 id="setup-strengths-and-lifecycle-costs">Setup strengths and lifecycle costs</h3>
+<p>Mise bootstrap covers host packages, repositories, files, services, and platform-specific setup, in addition to development tools and tasks. That gives it the clearest path to replacing substantial parts of your setup shell script. Existing installers can remain task or hook commands during a gradual transition. These facilities were reviewed in documentation; I did not execute host package or service changes. <a href="https://mise.jdx.dev/bootstrap.html">Bootstrap facilities</a>, <a href="https://mise.jdx.dev/tasks/">tasks</a>.</p>
+<p>Its pre/post dotfile hooks ran on both the initial and unchanged second apply in my fixture. Hook commands need idempotence or guards for expensive operations. A repeated apply resolved the work winner before deployment and needed no forced collision override.</p>
+<p>Removing a selected environment is also not a general uninstall operation. In the sandbox, deactivating work restored the base-owned replacement but left the previously deployed work-only file. Mise documents explicit module removal and cleanup mechanisms; you must plan them rather than assuming profile selection reverses every prior action. <a href="https://mise.jdx.dev/bootstrap/modules.html">Module removal</a>.</p>
+<p>The dotfiles workflow appeared in release <strong>2026.6.6, dated June 13, 2026</strong>. It has substantial functionality and ongoing fixes, but about five months of history at this research date. The parent project's popularity is not a measure of how many users exercise dotfiles or bootstrap. <strong>Verdict: choose it over dotdrop if integrated machine provisioning is the deciding priority; pin the version and begin with a limited pilot.</strong> <a href="https://github.com/jdx/mise/releases/tag/v2026.6.6">Launch release</a>, <a href="https://github.com/jdx/mise/releases">current releases</a>.</p>
+<h2 id="community-adoption-and-project-health">Community adoption and project health</h2>
+<p>The numbers below are a live GitHub REST API snapshot from November 6, 2026 in Los Angeles. They are signals, not installed-user counts. “Latest commit” means the sampled default-branch commit, not the repository's <code>pushed_at</code> field. Raw metadata and the sampled commit range are saved with the research.</p>
+<div aria-label="Comparison table" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th>Project</th>
+<th>Stars / forks</th>
+<th>Latest stable release</th>
+<th>Default-branch commit observed, UTC</th>
+<th>Assessment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dotdrop</td>
+<td>1,956 / 111</td>
+<td>1.18.1 · Nov 6, 2026</td>
+<td>Nov 6, 2026</td>
+<td>Smaller, longstanding, actively releasing</td>
+</tr>
+<tr>
+<td>chezmoi</td>
+<td>22,192 / 699</td>
+<td>2.74.0 · Nov 1, 2026</td>
+<td>Nov 6, 2026</td>
+<td>Large established dotfiles ecosystem; active</td>
+</tr>
+<tr>
+<td>mise</td>
+<td>35,882 / 1,528</td>
+<td>2026.11.3 · Nov 6, 2026</td>
+<td>Nov 7, 2026 UTC / Nov 6 local</td>
+<td>Very active parent project; younger subsystem</td>
+</tr>
+<tr>
+<td>Stow, GitHub mirror</td>
+<td>1,158 / 58</td>
+<td>2.4.1 · Sep 8, 2024</td>
+<td>Dec 3, 2025 in the mirror</td>
+<td>Mature and slow-moving; mirror undercounts broader GNU use</td>
+</tr>
+</tbody>
+</table></div>
+<p>Sources: <a href="https://api.github.com/repos/deadc0de6/dotdrop">dotdrop repository API</a> and <a href="https://github.com/deadc0de6/dotdrop/releases">releases</a>, <a href="https://api.github.com/repos/twpayne/chezmoi">chezmoi repository API</a> and <a href="https://github.com/twpayne/chezmoi/releases">releases</a>, <a href="https://api.github.com/repos/jdx/mise">mise repository API</a> and <a href="https://github.com/jdx/mise/releases">releases</a>, <a href="https://api.github.com/repos/aspiers/stow">Stow mirror API</a>, <a href="https://lists.gnu.org/archive/html/info-gnu/2024-09/msg00003.html">GNU release announcement</a>.</p>
+<p><strong>Dotdrop:</strong> the last four releases span May to November 2026. This is active maintenance, despite a much smaller audience. Contribution totals are heavily concentrated in the primary maintainer. That is a continuity tradeoff worth accepting consciously, rather than treating “active” as equivalent to a broad maintainer team. <a href="https://api.github.com/repos/deadc0de6/dotdrop/contributors?per_page=5">Contributor history</a>.</p>
+<p><strong>Chezmoi:</strong> recent releases span several October dates and November 1. Its latest 100 default-branch commits covered roughly six weeks. Its primary maintainer also dominates lifetime contributions, alongside recurring outside contributions. Among these options, it offers the clearest combination of substantial dotfiles-specific adoption and active development. <a href="https://api.github.com/repos/twpayne/chezmoi/commits?per_page=100">Commit sample</a>, <a href="https://api.github.com/repos/twpayne/chezmoi/contributors?per_page=5">contributors</a>.</p>
+<p><strong>Mise:</strong> releases were appearing daily in the latest sample, and 100 default-branch commits covered about four days. Several contributors have substantial lifetime totals. That indicates energy and a broad parent ecosystem, while also implying a higher update rate to follow. It does not establish adoption or stability of the dotfiles component alone. <a href="https://api.github.com/repos/jdx/mise/commits?per_page=100">Commit sample</a>, <a href="https://api.github.com/repos/jdx/mise/contributors?per_page=5">contributors</a>.</p>
+<p><strong>Stow:</strong> an older release date is not sufficient evidence of abandonment for a narrowly scoped GNU utility. The official release remains 2.4.1; the inspected mirror includes later development, but I did not establish a newer canonical release. GitHub stars are an especially incomplete comparison here. <a href="https://www.gnu.org/software/stow/">GNU project</a>, <a href="https://api.github.com/repos/aspiers/stow/commits?per_page=100">mirror commits</a>.</p>
+<p>License snapshot: dotdrop and Stow report GPLv3-family licensing; chezmoi and mise report MIT. This is project metadata, not a legal assessment. All four inspected GitHub repositories were unarchived. None of these indicators guarantees future maintenance.</p>
+<h2 id="what-i-actually-tested">What I actually tested</h2>
+<p>I installed pinned runtimes only in a temporary research directory and generated separate synthetic Git repos with fake HOME/XDG directories. All 35 assertions passed. The fixtures and full command output are retained alongside this report.</p>
+<div aria-label="Comparison table" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Executed checks</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dotdrop 1.18.1</td>
+<td>Dry runs for three profiles; imported shared templates; Mac/laptop and simulated Linux/server data; work variables; same-key replacement; unchanged and forced action reruns</td>
+<td>15 passed</td>
+</tr>
+<tr>
+<td>chezmoi 2.74.0</td>
+<td>Dry run; two sources with separate persistent state; disjoint targets; collision overwritten by last apply; base reapply; once-script rerun after content change</td>
+<td>6 passed</td>
+</tr>
+<tr>
+<td>Stow 2.4.1</td>
+<td>Simulation; two repos with disjoint links; deliberate collision</td>
+<td>3 passed; collision rejected as expected</td>
+</tr>
+<tr>
+<td>mise 2026.11.3</td>
+<td>Dry run and hooks; linked repo folders; shared template variables; resolved replacement; partial-file blocks; repeated apply; profile deactivation; fresh server role; generic include rejection</td>
+<td>11 passed</td>
+</tr>
+</tbody>
+</table></div>
+<p>Mise and chezmoi binaries matched their official release checksum files. Dotdrop came from PyPI in an isolated virtual environment. Stow was built into a temporary prefix from the official GNU source tarball. The checksums verify download integrity; I did not independently authenticate release signatures.</p>
+<p class="callout"><strong>Limits:</strong> execution was on macOS arm64. Linux/server selections were configuration simulations, not native Linux deployment. No enterprise settings, password-manager authentication, privileged operations, package installation, or real service management were exercised. These experiments validate the difficult composition behaviors; they do not certify a complete migration or production reliability.</p>
+<h2 id="proposed-layout-for-your-cfg">Proposed layout for your cfg</h2>
+<p>The following is a proposal, not an applied restructuring. Keep the base checkout available independently and have the private work repo import it only on work machines.</p>
+<pre><code class="language-text">Personal cfg repository                 Private work repository
+├── config.yaml                        ├── config.yaml
+├── files/                             │   imports ../cfg/config.yaml
+│   ├── shell/                         ├── files/
+│   ├── git/                           │   └── work-owned fragments/settings
+│   └── shared-skills/                  └── scripts/
+├── scripts/                               └── work setup
+│   └── existing reviewed installers
+└── docs/ and machine/profile records
+</code></pre>
+<p>Define reusable base, platform, and role profiles, then name the actual machine combinations. A minimal example follows the pattern exercised in the sandbox:</p>
+<pre><code class="language-yaml"># personal cfg/config.yaml: excerpt
+profiles:
+  mac-laptop:
+    include: [_common, _mac, _laptop]
+  linux-server:
+    include: [_common, _linux, _server]
+</code></pre>
+<pre><code class="language-yaml"># private work/config.yaml: excerpt
+config:
+  dotpath: files
+  import_configs: [../cfg/config.yaml]
+profiles:
+  work-mac:
+    include: [mac-laptop]
+    variables:
+      context: work
+    dotfiles: [f_work_shell, f_work_git]
+</code></pre>
+<p>These are excerpts, not standalone installable configurations. The committed experiment provides complete minimal fixtures. A real base should select context-specific agents separately from common shell/platform/role profiles. Generic shared skills can come from the base; personal Codex/Antigravity configuration belongs only in personal selections, and work-only Copilot configuration belongs in the private layer.</p>
+<p>For files shared across contexts, establish a small ownership contract:</p>
+<div aria-label="Comparison table" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th>Target</th>
+<th>Recommended owner and extension point</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Shell entrypoint</td>
+<td>Base owns entrypoint; load separate base and optional work fragments</td>
+</tr>
+<tr>
+<td>Git configuration</td>
+<td>Base owns common settings; work repo owns a separately included file</td>
+</tr>
+<tr>
+<td>SSH configuration</td>
+<td>Manage explicit non-secret config fragments; leave keys and client runtime files outside Git</td>
+</tr>
+<tr>
+<td>Shared skills</td>
+<td>Base owns approved generic skills; work-specific additions stay work-owned</td>
+</tr>
+<tr>
+<td>Agent settings</td>
+<td>Manage approved individual files; preserve ignored machine-local config/hooks/auth</td>
+</tr>
+<tr>
+<td>Complete platform-specific file</td>
+<td>Use a template or one explicit selected replacement; document its key</td>
+</tr>
+</tbody>
+</table></div>
+<p>The base should not fetch a private work repository on personal machines. The work bootstrap can clone the base and its private layer, authenticate through the work environment, and record the intended base revision. Ordinary sibling checkouts are simpler to operate initially than submodules; use a submodule or revision manifest only when reproducible cross-repo version coupling is needed.</p>
+<h2 id="a-migration-plan-with-clear-stopping-points">A migration plan with clear stopping points</h2>
+<ol>
+<li><strong>Inventory ownership and current differences.</strong> List tracked cfg paths, intended machine selections, and known overlay collisions. Do any enterprise inventory from the work environment; bring back only general requirements.</li>
+<li><strong>Pilot a narrow set.</strong> In a separate target directory, migrate a shell fragment, tmux configuration, Git includes, and one shared skill. Confirm the generated results and intended file/link types.</li>
+<li><strong>Exercise platform and role policy.</strong> Validate a personal Mac profile and perform a real Linux dry run/test on homelab before declaring Linux support verified. Keep host service/VPN management in the homelab repository.</li>
+<li><strong>Keep installers intact initially.</strong> Expose existing scripts through an explicit setup command. Record whether each command installs, upgrades, or only verifies. Change package/runtime ownership separately from changing dotfile delivery.</li>
+<li><strong>Test the work layer privately.</strong> Check both additions and at least one intentional override. Verify that no enterprise files or work repo credentials appear in the base checkout or its Git history.</li>
+<li><strong>Cut over with one owner per path.</strong> Back up existing targets and tag the old cfg state. Explicitly update the current runtime-path tracking policy for migrated agent files. Once a path is managed by the new system, stop tracking its live generated copy in the bare HOME worktree. Preserve the new source and its history; keep the old repository available for rollback.</li>
+<li><strong>Document operation and removal.</strong> Provide one apply command, one setup command, and a cleanup procedure for deactivated profiles. Removing a declaration does not generally reverse its previous side effects.</li>
+</ol>
+<p>Do not combine this migration with silently renaming cfg's legacy <code>main</code> branch. Choose branch alignment explicitly as part of the migration plan. Do not switch Volta to mise's runtime management merely because mise is installed; each runtime should have a clear owner during any transition.</p>
+<h2 id="decision-guide">Decision guide</h2>
+<div aria-label="Comparison table" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th>If this matters most</th>
+<th>Choose</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Separate repos and explicit profiles, with a focused dotfiles tool</td>
+<td><strong>dotdrop</strong></td>
+<td>Closest direct match; keep your reviewed installers</td>
+</tr>
+<tr>
+<td>One tool for files, packages, runtime tools, and machine setup</td>
+<td><strong>mise</strong></td>
+<td>Most integrated feature set; accept the younger subsystem</td>
+</tr>
+<tr>
+<td>Large established dotfiles ecosystem, with disjoint work fragments</td>
+<td><strong>chezmoi</strong></td>
+<td>Excellent workflow if its single-source preference is acceptable</td>
+</tr>
+<tr>
+<td>Minimal link management and a self-maintained setup wrapper</td>
+<td><strong>Stow</strong></td>
+<td>Small, transparent scope; you supply the rest</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>My recommendation remains dotdrop, with mise as a credible alternate architecture.</strong> The choice turns on whether you want a better configuration composition tool around your existing setup scripts, or to adopt an integrated machine setup system at the same time. Your critical repository-separation requirement can be met with either; the sandbox confirmed both paths.</p></article><footer class="footer">Prepared for Erik · cfg research · November 6, 2026 · Standalone HTML, with no external assets or network dependencies.</footer></main></div><script>const links=[...document.querySelectorAll('nav a')];const observer=new IntersectionObserver(es=>{for(const e of es){if(e.isIntersecting){links.forEach(a=>a.classList.toggle('active',a.hash==='#'+e.target.id));}}},{rootMargin:'-5% 0px -75% 0px'});document.querySelectorAll('h2').forEach(h=>observer.observe(h));</script></body></html>

@@ -1,0 +1,960 @@
+{
+  "sandbox": "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl",
+  "checks": [
+    {
+      "check": "dotdrop dry run writes no target: mac-laptop",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "dotdrop imported template/profile: mac-laptop",
+      "passed": true,
+      "detail": "persona=personal os=darwin role=laptop\n"
+    },
+    {
+      "check": "dotdrop same-key override: mac-laptop",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "dotdrop unchanged file action skipped: mac-laptop",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "dotdrop explicit force-actions reruns: mac-laptop",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "dotdrop dry run writes no target: linux-server",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "dotdrop imported template/profile: linux-server",
+      "passed": true,
+      "detail": "persona=personal os=linux role=server\n"
+    },
+    {
+      "check": "dotdrop same-key override: linux-server",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "dotdrop unchanged file action skipped: linux-server",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "dotdrop explicit force-actions reruns: linux-server",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "dotdrop dry run writes no target: work-mac",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "dotdrop imported template/profile: work-mac",
+      "passed": true,
+      "detail": "persona=work os=darwin role=laptop\n"
+    },
+    {
+      "check": "dotdrop same-key override: work-mac",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "dotdrop unchanged file action skipped: work-mac",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "dotdrop explicit force-actions reruns: work-mac",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "chezmoi dry run writes no target",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "chezmoi two repositories disjoint target",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "chezmoi last apply wins collision",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "chezmoi base reapply overwrites overlay collision",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "chezmoi run_once skipped on reapply",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "chezmoi run_once changed content runs again",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "stow dry run writes no target",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "stow separate repo disjoint targets",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "stow same target conflict rejected",
+      "passed": true,
+      "detail": "WARNING! stowing work would cause conflicts:\n  * existing target is not owned by stow: .shared\nAll operations aborted.\n"
+    },
+    {
+      "check": "mise dry run writes no target or hook marker",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "mise symlinked repo fragments template and variables",
+      "passed": true,
+      "detail": "persona=work role=laptop os=macos\n"
+    },
+    {
+      "check": "mise same-target winner precomputed",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "mise additive marker blocks preserve manual content",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "mise hooks run on unchanged second apply",
+      "passed": true,
+      "detail": "base\nwork\nbase\nwork\n"
+    },
+    {
+      "check": "mise repeated apply retains work winner",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "mise deactivated profile restores base winner",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "mise deactivated profile leaves old work file",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "mise server role selected",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "mise fresh nonwork profile excludes work target",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "mise include rejects dotfiles section",
+      "passed": true,
+      "detail": "mise ERROR error parsing config file: /private/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/mise/home/.config/mise/config.toml\nmise ERROR failed to load config include /var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/mise/base/mise.toml\nmise ERROR invalid config include /var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/mise/base/mise.toml\nmise ERROR `dotfiles` is not supported in a config include (supported: min_version, tools, tool_alias, alias, shell_alias, plugins, wrappers, hooks, env, env_path, vars, bootstrap; share tasks with `task_config.includes`)\nmise ERROR Version: 2026.11.3 macos-arm64 (2026-11-06)\nmise ERROR Run with --verbose or MISE_VERBOSE=1 for more information\n"
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "init",
+        "-q",
+        "-b",
+        "master",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/base"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "init",
+        "-q",
+        "-b",
+        "master",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/work"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/base",
+        "add",
+        "."
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/base",
+        "-c",
+        "user.name=Sandbox",
+        "-c",
+        "user.email=sandbox@example.invalid",
+        "commit",
+        "-qm",
+        "Synthetic fixture"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/work",
+        "add",
+        "."
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/work",
+        "-c",
+        "user.name=Sandbox",
+        "-c",
+        "user.email=sandbox@example.invalid",
+        "commit",
+        "-qm",
+        "Synthetic fixture"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/venv/bin/dotdrop",
+        "install",
+        "-b",
+        "-f",
+        "-c",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/base/config.yaml",
+        "-p",
+        "mac-laptop",
+        "--dry"
+      ],
+      "code": 0,
+      "stdout": "[DRY] would install /var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/mac-laptop/.shared \n[DRY] would execute post-action: marker: [post] \"echo installed >> \"$HOME/setup.log\"\" \n[DRY] would install /var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/mac-laptop/.choice \n\n2 dotfile(s) would be installed.\n",
+      "stderr": "[WARN] missing python module \"python-magic\" \n"
+    },
+    {
+      "argv": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/venv/bin/dotdrop",
+        "install",
+        "-b",
+        "-f",
+        "-c",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/base/config.yaml",
+        "-p",
+        "mac-laptop"
+      ],
+      "code": 0,
+      "stdout": "\t-> install /var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/base/files/shared to /var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/mac-laptop/.shared\n\t-> executing \"echo installed >> \"$HOME/setup.log\"\"\n\t-> install /var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/base/files/choice to /var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/mac-laptop/.choice\n\n2 dotfile(s) installed.\n",
+      "stderr": "[WARN] missing python module \"python-magic\" \n"
+    },
+    {
+      "argv": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/venv/bin/dotdrop",
+        "install",
+        "-b",
+        "-f",
+        "-c",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/base/config.yaml",
+        "-p",
+        "mac-laptop"
+      ],
+      "code": 0,
+      "stdout": "\n0 dotfile(s) installed.\n",
+      "stderr": "[WARN] missing python module \"python-magic\" \n"
+    },
+    {
+      "argv": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/venv/bin/dotdrop",
+        "install",
+        "-b",
+        "-f",
+        "-c",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/base/config.yaml",
+        "-p",
+        "mac-laptop",
+        "--force-actions"
+      ],
+      "code": 0,
+      "stdout": "\t-> executing \"echo installed >> \"$HOME/setup.log\"\"\n\n0 dotfile(s) installed.\n",
+      "stderr": "[WARN] missing python module \"python-magic\" \n"
+    },
+    {
+      "argv": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/venv/bin/dotdrop",
+        "install",
+        "-b",
+        "-f",
+        "-c",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/base/config.yaml",
+        "-p",
+        "linux-server",
+        "--dry"
+      ],
+      "code": 0,
+      "stdout": "[DRY] would install /var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/linux-server/.shared \n[DRY] would execute post-action: marker: [post] \"echo installed >> \"$HOME/setup.log\"\" \n[DRY] would install /var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/linux-server/.choice \n\n2 dotfile(s) would be installed.\n",
+      "stderr": "[WARN] missing python module \"python-magic\" \n"
+    },
+    {
+      "argv": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/venv/bin/dotdrop",
+        "install",
+        "-b",
+        "-f",
+        "-c",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/base/config.yaml",
+        "-p",
+        "linux-server"
+      ],
+      "code": 0,
+      "stdout": "\t-> install /var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/base/files/shared to /var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/linux-server/.shared\n\t-> executing \"echo installed >> \"$HOME/setup.log\"\"\n\t-> install /var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/base/files/choice to /var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/linux-server/.choice\n\n2 dotfile(s) installed.\n",
+      "stderr": "[WARN] missing python module \"python-magic\" \n"
+    },
+    {
+      "argv": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/venv/bin/dotdrop",
+        "install",
+        "-b",
+        "-f",
+        "-c",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/base/config.yaml",
+        "-p",
+        "linux-server"
+      ],
+      "code": 0,
+      "stdout": "\n0 dotfile(s) installed.\n",
+      "stderr": "[WARN] missing python module \"python-magic\" \n"
+    },
+    {
+      "argv": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/venv/bin/dotdrop",
+        "install",
+        "-b",
+        "-f",
+        "-c",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/base/config.yaml",
+        "-p",
+        "linux-server",
+        "--force-actions"
+      ],
+      "code": 0,
+      "stdout": "\t-> executing \"echo installed >> \"$HOME/setup.log\"\"\n\n0 dotfile(s) installed.\n",
+      "stderr": "[WARN] missing python module \"python-magic\" \n"
+    },
+    {
+      "argv": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/venv/bin/dotdrop",
+        "install",
+        "-b",
+        "-f",
+        "-c",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/work/config.yaml",
+        "-p",
+        "work-mac",
+        "--dry"
+      ],
+      "code": 0,
+      "stdout": "[DRY] would install /var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/work-mac/.shared \n[DRY] would execute post-action: marker: [post] \"echo installed >> \"$HOME/setup.log\"\" \n[DRY] would install /var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/work-mac/.choice \n\n2 dotfile(s) would be installed.\n",
+      "stderr": "[WARN] missing python module \"python-magic\" \n"
+    },
+    {
+      "argv": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/venv/bin/dotdrop",
+        "install",
+        "-b",
+        "-f",
+        "-c",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/work/config.yaml",
+        "-p",
+        "work-mac"
+      ],
+      "code": 0,
+      "stdout": "\t-> install /var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/base/files/shared to /var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/work-mac/.shared\n\t-> executing \"echo installed >> \"$HOME/setup.log\"\"\n\t-> install /var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/work/files/choice to /var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/work-mac/.choice\n\n2 dotfile(s) installed.\n",
+      "stderr": "[WARN] missing python module \"python-magic\" \n"
+    },
+    {
+      "argv": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/venv/bin/dotdrop",
+        "install",
+        "-b",
+        "-f",
+        "-c",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/work/config.yaml",
+        "-p",
+        "work-mac"
+      ],
+      "code": 0,
+      "stdout": "\n0 dotfile(s) installed.\n",
+      "stderr": "[WARN] missing python module \"python-magic\" \n"
+    },
+    {
+      "argv": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/venv/bin/dotdrop",
+        "install",
+        "-b",
+        "-f",
+        "-c",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/dotdrop/work/config.yaml",
+        "-p",
+        "work-mac",
+        "--force-actions"
+      ],
+      "code": 0,
+      "stdout": "\t-> executing \"echo installed >> \"$HOME/setup.log\"\"\n\n0 dotfile(s) installed.\n",
+      "stderr": "[WARN] missing python module \"python-magic\" \n"
+    },
+    {
+      "argv": [
+        "git",
+        "init",
+        "-q",
+        "-b",
+        "master",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/base"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "init",
+        "-q",
+        "-b",
+        "master",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/work"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/base",
+        "add",
+        "."
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/base",
+        "-c",
+        "user.name=Sandbox",
+        "-c",
+        "user.email=sandbox@example.invalid",
+        "commit",
+        "-qm",
+        "Synthetic fixture"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/work",
+        "add",
+        "."
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/work",
+        "-c",
+        "user.name=Sandbox",
+        "-c",
+        "user.email=sandbox@example.invalid",
+        "commit",
+        "-qm",
+        "Synthetic fixture"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/chezmoi",
+        "--source",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/base",
+        "--destination",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/home",
+        "--config",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/config.toml",
+        "--persistent-state",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/base-state.boltdb",
+        "--cache",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/home/.cache/chezmoi",
+        "--force",
+        "apply",
+        "--dry-run"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/chezmoi",
+        "--source",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/base",
+        "--destination",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/home",
+        "--config",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/config.toml",
+        "--persistent-state",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/base-state.boltdb",
+        "--cache",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/home/.cache/chezmoi",
+        "--force",
+        "apply"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/chezmoi",
+        "--source",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/work",
+        "--destination",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/home",
+        "--config",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/config.toml",
+        "--persistent-state",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/work-state.boltdb",
+        "--cache",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/home/.cache/chezmoi",
+        "--force",
+        "apply"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/chezmoi",
+        "--source",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/base",
+        "--destination",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/home",
+        "--config",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/config.toml",
+        "--persistent-state",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/base-state.boltdb",
+        "--cache",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/home/.cache/chezmoi",
+        "--force",
+        "apply"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/chezmoi",
+        "--source",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/base",
+        "--destination",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/home",
+        "--config",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/config.toml",
+        "--persistent-state",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/base-state.boltdb",
+        "--cache",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/chezmoi/home/.cache/chezmoi",
+        "--force",
+        "apply"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "init",
+        "-q",
+        "-b",
+        "master",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/stow/base"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "init",
+        "-q",
+        "-b",
+        "master",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/stow/work"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/stow/base",
+        "add",
+        "."
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/stow/base",
+        "-c",
+        "user.name=Sandbox",
+        "-c",
+        "user.email=sandbox@example.invalid",
+        "commit",
+        "-qm",
+        "Synthetic fixture"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/stow/work",
+        "add",
+        "."
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/stow/work",
+        "-c",
+        "user.name=Sandbox",
+        "-c",
+        "user.email=sandbox@example.invalid",
+        "commit",
+        "-qm",
+        "Synthetic fixture"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/stow-install/bin/stow",
+        "--no-folding",
+        "-d",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/stow/base",
+        "-t",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/stow/home",
+        "common",
+        "-n"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": "WARNING: in simulation mode so not modifying filesystem.\n"
+    },
+    {
+      "argv": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/stow-install/bin/stow",
+        "--no-folding",
+        "-d",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/stow/base",
+        "-t",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/stow/home",
+        "common"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/stow-install/bin/stow",
+        "--no-folding",
+        "-d",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/stow/work",
+        "-t",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/stow/home",
+        "work"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/stow-install/bin/stow",
+        "--no-folding",
+        "-d",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/stow/work",
+        "-t",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/stow/home",
+        "work"
+      ],
+      "code": 1,
+      "stdout": "",
+      "stderr": "WARNING! stowing work would cause conflicts:\n  * existing target is not owned by stow: .shared\nAll operations aborted.\n"
+    },
+    {
+      "argv": [
+        "git",
+        "init",
+        "-q",
+        "-b",
+        "master",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/mise/base"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "init",
+        "-q",
+        "-b",
+        "master",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/mise/work"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/mise/base",
+        "add",
+        "."
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/mise/base",
+        "-c",
+        "user.name=Sandbox",
+        "-c",
+        "user.email=sandbox@example.invalid",
+        "commit",
+        "-qm",
+        "Synthetic fixture"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/mise/work",
+        "add",
+        "."
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/mise/work",
+        "-c",
+        "user.name=Sandbox",
+        "-c",
+        "user.email=sandbox@example.invalid",
+        "commit",
+        "-qm",
+        "Synthetic fixture"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "-E",
+        "work",
+        "dot",
+        "apply",
+        "--dry-run"
+      ],
+      "code": 0,
+      "stdout": "render ~/.config/mise/conf.d/10-base/shared.tmpl -> ~/.shared (if changed)\ncp ~/.config/mise/conf.d/90-work/choice ~/.choice\nwrite inline content to ~/.work\nedit ~/.combined (block:base)\nedit ~/.combined (block:work)\nsh -o errexit -c 'echo base >> \"$HOME/setup.log\"'\nsh -o errexit -c 'echo work >> \"$HOME/setup.log\"'\n",
+      "stderr": "mise bootstrap: post-dotfiles hooks\n"
+    },
+    {
+      "argv": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "-E",
+        "work",
+        "dot",
+        "apply"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": "mise files: rendered ~/.config/mise/conf.d/10-base/shared.tmpl to ~/.shared\nmise files: copied ~/.config/mise/conf.d/90-work/choice to ~/.choice\nmise files: wrote inline content to ~/.work\nmise files: applied ~/.shared, ~/.choice, ~/.work\nmise edits: applied ~/.combined (block:base), ~/.combined (block:work)\nmise bootstrap: post-dotfiles hooks\nmise $ echo base >> \"$HOME/setup.log\"\nmise $ echo work >> \"$HOME/setup.log\"\n"
+    },
+    {
+      "argv": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "-E",
+        "work",
+        "dot",
+        "apply"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": "mise files: all files are applied\nmise edits: all edits are applied\nmise bootstrap: post-dotfiles hooks\nmise $ echo base >> \"$HOME/setup.log\"\nmise $ echo work >> \"$HOME/setup.log\"\n"
+    },
+    {
+      "argv": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "apply"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": "mise files: rendered ~/.config/mise/conf.d/10-base/shared.tmpl to ~/.shared\nmise files: copied ~/.config/mise/conf.d/10-base/choice to ~/.choice\nmise files: applied ~/.shared, ~/.choice\nmise edits: all edits are applied\nmise bootstrap: post-dotfiles hooks\nmise $ echo base >> \"$HOME/setup.log\"\n"
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/mise/base",
+        "add",
+        "."
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/mise/base",
+        "-c",
+        "user.name=Sandbox",
+        "-c",
+        "user.email=sandbox@example.invalid",
+        "commit",
+        "-qm",
+        "Synthetic fixture"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "-E",
+        "server",
+        "dot",
+        "apply"
+      ],
+      "code": 0,
+      "stdout": "",
+      "stderr": "mise files: rendered ~/.config/mise/conf.d/10-base/shared.tmpl to ~/.shared\nmise files: copied ~/.config/mise/conf.d/10-base/choice to ~/.choice\nmise files: applied ~/.shared, ~/.choice\nmise edits: applied ~/.combined (block:base)\nmise bootstrap: post-dotfiles hooks\nmise $ echo base >> \"$HOME/setup.log\"\n"
+    },
+    {
+      "argv": [
+        "/tmp/cfg-dotfiles-evaluation-2026-11-06/bin/mise",
+        "dot",
+        "status"
+      ],
+      "code": 1,
+      "stdout": "",
+      "stderr": "mise ERROR error parsing config file: /private/var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/mise/home/.config/mise/config.toml\nmise ERROR failed to load config include /var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/mise/base/mise.toml\nmise ERROR invalid config include /var/folders/vx/wrftg6kd6qv3v18qfhtgzsqr0000gn/T/cfg-dotfiles-fixtures-57tumhjl/mise/base/mise.toml\nmise ERROR `dotfiles` is not supported in a config include (supported: min_version, tools, tool_alias, alias, shell_alias, plugins, wrappers, hooks, env, env_path, vars, bootstrap; share tasks with `task_config.includes`)\nmise ERROR Version: 2026.11.3 macos-arm64 (2026-11-06)\nmise ERROR Run with --verbose or MISE_VERBOSE=1 for more information\n"
+    }
+  ]
+}

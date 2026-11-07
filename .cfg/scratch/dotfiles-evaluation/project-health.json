@@ -1,0 +1,201 @@
+{
+  "observed_local_date": "2026-11-06",
+  "source": "GitHub REST API, authenticated per command as xkrogen; Stow GitHub mirror is incomplete adoption evidence",
+  "repositories": [
+    {
+      "repository": "deadc0de6/dotdrop",
+      "stars": 1956,
+      "forks": 111,
+      "archived": false,
+      "license": "GPL-3.0",
+      "created_at": "2017-03-07T18:16:55Z",
+      "pushed_at": "2026-11-06T07:12:22Z",
+      "recent_commit_newest": "2026-11-06T07:11:43Z",
+      "recent_commit_oldest": "2024-06-27T07:14:27Z",
+      "recent_commit_count": 100,
+      "recent_commit_author_names": 10,
+      "top_contributors": [
+        {
+          "login": "deadc0de6",
+          "contributions": 1899
+        },
+        {
+          "login": "davla",
+          "contributions": 49
+        },
+        {
+          "login": "MarcelRobitaille",
+          "contributions": 42
+        },
+        {
+          "login": "jtt9340",
+          "contributions": 24
+        },
+        {
+          "login": "moyiz",
+          "contributions": 9
+        }
+      ],
+      "releases": [
+        {
+          "tag": "v1.18.1",
+          "published_at": "2026-11-06T08:48:58Z"
+        },
+        {
+          "tag": "v1.18.0",
+          "published_at": "2026-10-15T14:37:14Z"
+        },
+        {
+          "tag": "v1.17.0",
+          "published_at": "2026-09-09T08:03:30Z"
+        },
+        {
+          "tag": "v1.16.2",
+          "published_at": "2026-05-17T21:18:12Z"
+        }
+      ]
+    },
+    {
+      "repository": "twpayne/chezmoi",
+      "stars": 22192,
+      "forks": 699,
+      "archived": false,
+      "license": "MIT",
+      "created_at": "2018-11-12T16:45:43Z",
+      "pushed_at": "2026-11-07T00:33:57Z",
+      "recent_commit_newest": "2026-11-06T23:47:01Z",
+      "recent_commit_oldest": "2026-09-25T18:41:11Z",
+      "recent_commit_count": 100,
+      "recent_commit_author_names": 6,
+      "top_contributors": [
+        {
+          "login": "twpayne",
+          "contributions": 5269
+        },
+        {
+          "login": "dependabot[bot]",
+          "contributions": 162
+        },
+        {
+          "login": "KapJI",
+          "contributions": 55
+        },
+        {
+          "login": "halostatue",
+          "contributions": 51
+        },
+        {
+          "login": "bradenhilton",
+          "contributions": 32
+        }
+      ],
+      "releases": [
+        {
+          "tag": "v2.74.0",
+          "published_at": "2026-11-01T13:57:54Z"
+        },
+        {
+          "tag": "v2.73.3",
+          "published_at": "2026-10-20T15:14:47Z"
+        },
+        {
+          "tag": "v2.73.2",
+          "published_at": "2026-10-17T15:09:48Z"
+        },
+        {
+          "tag": "v2.73.1",
+          "published_at": "2026-10-11T16:51:27Z"
+        }
+      ]
+    },
+    {
+      "repository": "jdx/mise",
+      "stars": 35882,
+      "forks": 1528,
+      "archived": false,
+      "license": "MIT",
+      "created_at": "2023-01-09T14:44:21Z",
+      "pushed_at": "2026-11-07T02:47:44Z",
+      "recent_commit_newest": "2026-11-07T02:21:55Z",
+      "recent_commit_oldest": "2026-11-02T18:48:31Z",
+      "recent_commit_count": 100,
+      "recent_commit_author_names": 5,
+      "top_contributors": [
+        {
+          "login": "jdx",
+          "contributions": 6245
+        },
+        {
+          "login": "renovate[bot]",
+          "contributions": 798
+        },
+        {
+          "login": "risu729",
+          "contributions": 669
+        },
+        {
+          "login": "mise-en-dev",
+          "contributions": 565
+        },
+        {
+          "login": "JamBalaya56562",
+          "contributions": 263
+        }
+      ],
+      "releases": [
+        {
+          "tag": "v2026.11.3",
+          "published_at": "2026-11-06T11:18:41Z"
+        },
+        {
+          "tag": "v2026.11.2",
+          "published_at": "2026-11-05T12:19:06Z"
+        },
+        {
+          "tag": "v2026.11.1",
+          "published_at": "2026-11-04T19:13:36Z"
+        },
+        {
+          "tag": "v2026.11.0",
+          "published_at": "2026-11-03T15:32:56Z"
+        }
+      ]
+    },
+    {
+      "repository": "aspiers/stow",
+      "stars": 1158,
+      "forks": 58,
+      "archived": false,
+      "license": "GPL-3.0",
+      "created_at": "2011-11-09T22:41:36Z",
+      "pushed_at": "2026-11-05T01:12:20Z",
+      "recent_commit_newest": "2025-12-03T01:58:46Z",
+      "recent_commit_oldest": "2024-04-01T20:21:06Z",
+      "recent_commit_count": 100,
+      "recent_commit_author_names": 4,
+      "top_contributors": [
+        {
+          "login": "aspiers",
+          "contributions": 535
+        },
+        {
+          "login": "AitorATuin",
+          "contributions": 4
+        },
+        {
+          "login": "bricewge",
+          "contributions": 3
+        },
+        {
+          "login": "gutierri",
+          "contributions": 3
+        },
+        {
+          "login": "troywill",
+          "contributions": 2
+        }
+      ],
+      "releases": []
+    }
+  ]
+}
