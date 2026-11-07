@@ -104,3 +104,15 @@ Personal Hindsight sync_retain confirmed the narrowed shortlist, new drift
 priority, provisional ranking, and verified follow-up results with source pointers.
 Updated HTML link and desktop/mobile structural checks passed; staged diff checks
 passed. No live configuration edits or services were introduced.
+
+## Follow-up: mise overall scope and footprint
+
+Explained broader developer-tool/version, environment, task, and bootstrap scope
+versus the built-in dotfiles commands. Checked current primary installation and
+optional shell activation docs. Measured the official sandbox v2026.11.3 macOS
+arm64 executable at 141,305,312 bytes. A new fake HOME with one tracked text file,
+manual sync and no remote had a foreground watcher RSS of 25,088 KiB / 24.5 MiB,
+0.0% CPU in one ps sample after two seconds. This is a limited idle observation,
+not a workload benchmark. Terminated and waited for the watcher; no persistent
+service, real configuration, or real toolchain installation was changed.
+Saved the scope/footprint evidence in docs/dotfiles-drift-reconciliation.md.

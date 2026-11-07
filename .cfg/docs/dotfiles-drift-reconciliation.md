@@ -104,3 +104,26 @@ Initial experiment harness assumptions were corrected: conflict detection is
 reported in sync warnings/status, not necessarily a failing sync exit code;
 and a post-pull sync is needed to publish combined independent-file history.
 These were test-harness expectations, not observed data-loss bugs.
+
+## Mise overall scope and installation footprint
+
+Mise is the broader Rust CLI for development tools/version selection,
+project environments, tasks, and machine bootstrap. Dotfiles is a built-in
+command family, not a separately installed plugin. The dotfiles commands work
+without adopting runtime management or shell activation. A prebuilt release
+requires no Rust compiler; Git is needed for dotfile history. A continuous
+history watcher is optional and runs as a user process/service when enabled.
+
+Measured November 6, 2026 for the already-downloaded official v2026.11.3
+macOS arm64 binary: 141,305,312 bytes (about 141 MB / 135 MiB). A synthetic
+foreground watcher tracking one text file, with no remote and manual sync,
+showed RSS 25,088 KiB (24.5 MiB) and 0.0% CPU in one ps sample after two seconds.
+This is an idle observation, not a representative performance benchmark.
+The process was explicitly terminated; no OS service was installed. History
+storage grows with tracked data/revisions; using additional runtimes entails
+installing those runtimes separately.
+
+Sources: [mise overview](https://mise.jdx.dev/),
+[installation](https://mise.jdx.dev/installing-mise.html),
+[optional shell activation](https://mise.jdx.dev/getting-started.html),
+[standalone dotfiles functionality](https://mise.jdx.dev/dotfiles.html).
