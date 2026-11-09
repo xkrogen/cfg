@@ -13,17 +13,32 @@ fi
 
 git clone --bare "$repo_url" "$HOME/.cfg.git"
 
-# `git clone --bare` writes no fetch refspec, remote-tracking refs, or branch upstream,
-# so plain fetch/pull would be a no-op. Add those to the bare repo; explicit tracking is kept.
+# `git clone --bare` writes no fetch refspec, remote-tracking refs, or branch upstream.
+# Without a branch upstream, `git pull` cannot pick the branch to merge. This sets the
+# refspec if absent and, for the checked-out branch, a complete remote+merge pair to
+# origin/<same branch>. Complete existing tracking is left unchanged; a partial pair is
+# reported, not completed; a branch with no origin counterpart gets no upstream.
 function cfg_ensure_tracking {
-    local gd="$HOME/.cfg.git" branch remote_head
-    git --git-dir="$gd" config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*' || return 1
-    git --git-dir="$gd" fetch --quiet origin || return 1
-    git --git-dir="$gd" remote set-head origin --auto >/dev/null 2>&1 || return 1
+    local gd="$HOME/.cfg.git" branch remote merge
+    git --git-dir="$gd" config --get remote.origin.fetch >/dev/null 2>&1 \
+        || git --git-dir="$gd" config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*' || return 1
     branch=$(git --git-dir="$gd" symbolic-ref --short HEAD) || return 1
-    remote_head=$(git --git-dir="$gd" symbolic-ref --short refs/remotes/origin/HEAD) || return 1
-    git --git-dir="$gd" config --get "branch.$branch.merge" >/dev/null 2>&1 \
-        || git --git-dir="$gd" branch --set-upstream-to="$remote_head" "$branch" >/dev/null || return 1
+    remote=$(git --git-dir="$gd" config --get "branch.$branch.remote") || remote=""
+    merge=$(git --git-dir="$gd" config --get "branch.$branch.merge") || merge=""
+    if [ -n "$remote" ] && [ -n "$merge" ]; then return 0; fi
+    if [ -n "$remote$merge" ]; then
+        echo "WARN: branch $branch has partial tracking config; leaving it unchanged."
+        return 1
+    fi
+    if ! git --git-dir="$gd" rev-parse --verify --quiet "refs/remotes/origin/$branch" >/dev/null; then
+        git --git-dir="$gd" fetch --quiet origin || return 1
+    fi
+    if git --git-dir="$gd" rev-parse --verify --quiet "refs/remotes/origin/$branch" >/dev/null; then
+        git --git-dir="$gd" branch --set-upstream-to="origin/$branch" "$branch" >/dev/null || return 1
+    else
+        echo "WARN: branch $branch has no origin/$branch; it is local-only and has no upstream."
+        return 1
+    fi
 }
 cfg_ensure_tracking || echo "WARN: could not set cfg remote tracking; plain git fetch/pull may not update it."
 
