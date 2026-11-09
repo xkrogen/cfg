@@ -13,6 +13,20 @@ fi
 
 git clone --bare "$repo_url" "$HOME/.cfg.git"
 
+# `git clone --bare` writes no fetch refspec, remote-tracking refs, or branch upstream,
+# so plain fetch/pull would be a no-op. Add those to the bare repo; explicit tracking is kept.
+function cfg_ensure_tracking {
+    local gd="$HOME/.cfg.git" branch remote_head
+    git --git-dir="$gd" config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*' || return 1
+    git --git-dir="$gd" fetch --quiet origin || return 1
+    git --git-dir="$gd" remote set-head origin --auto >/dev/null 2>&1 || return 1
+    branch=$(git --git-dir="$gd" symbolic-ref --short HEAD) || return 1
+    remote_head=$(git --git-dir="$gd" symbolic-ref --short refs/remotes/origin/HEAD) || return 1
+    git --git-dir="$gd" config --get "branch.$branch.merge" >/dev/null 2>&1 \
+        || git --git-dir="$gd" branch --set-upstream-to="$remote_head" "$branch" >/dev/null || return 1
+}
+cfg_ensure_tracking || echo "WARN: could not set cfg remote tracking; plain git fetch/pull may not update it."
+
 function cfg {
    git --git-dir="$HOME/.cfg.git/" --work-tree="$HOME" "$@"
 }
