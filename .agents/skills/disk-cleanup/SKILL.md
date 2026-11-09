@@ -31,7 +31,10 @@ repos and under session/artifact directories, which are easy to miss.
 Classify each worktree by its branch's PR state, using
 `gh pr list --repo <owner/repo> --head <branch> --state all`. Derive the repo
 from the origin URL. Handle the buckets as follows:
-- MERGED and clean: removable after a recheck.
+- MERGED, clean, no unpushed commits, and not in active use: an explicit disk-cleanup
+  request authorizes automatic removal of the linked worktree and its local branch.
+  State the targets and consequences, recheck, and proceed without another approval
+  question. Keep the owning main checkout and any dependent worktrees intact.
 - MERGED but with untracked or dirty files: list the files and ask first.
 - CLOSED without merge, OPEN, or no PR: list them with size, dirty count, and
   unpushed count, then get explicit approval. Pushed does not mean merged.
@@ -64,8 +67,10 @@ out of personal cleanup unless the user explicitly authorizes that exact scope.
 
 Before destructive action, make the specific targets and consequences clear. If
 Erik already authorized exact targets or a defined cleanup policy, proceed within
-that scope without asking again. Broad requests to free space do not by themselves
-authorize deleting source, backups, persistent data, or unrelated directories.
+that scope without asking again. The verified merged-worktree policy above is
+included in an explicit disk-cleanup request. Outside that policy, broad requests
+to free space do not by themselves authorize deleting source, backups, persistent
+data, or unrelated directories.
 
 Recheck candidate identity/state immediately before deletion; use quoted paths and
 narrow commands or the tool's own cleanup operation. Avoid broad globs, following
